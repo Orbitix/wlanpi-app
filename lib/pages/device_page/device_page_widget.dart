@@ -1,3 +1,6 @@
+import 'package:wlanpi_mobile/pages/tab_pages/app_page_widget.dart';
+import 'package:wlanpi_mobile/pages/tab_pages/stats_page_widget.dart';
+
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -12,6 +15,8 @@ import 'dart:async';
 
 import 'package:wlanpi_mobile/network_utils.dart';
 
+import 'package:wlanpi_mobile/shared_methods.dart';
+
 import 'package:flutter/services.dart';
 
 class DevicePageWidget extends StatefulWidget {
@@ -24,167 +29,17 @@ class DevicePageWidget extends StatefulWidget {
 class _DevicePageWidgetState extends State<DevicePageWidget>
     with TickerProviderStateMixin {
   late DevicePageModel _model;
+  late SharedMethods _sharedMethods;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final animationsMap = <String, AnimationInfo>{};
 
-  Timer? _timer;
-
-  final Map<String, dynamic> _defaultDeviceInfo = {
-    "model": "-",
-    "name": "-",
-    "hostname": "-",
-    "software_version": "-",
-    "mode": "-"
-  };
-  final Map<String, dynamic> _defaultDeviceStats = {
-    "ip": "-",
-    "cpu": "-",
-    "ram": "- -",
-    "disk": "- -",
-    "cpu_temp": "-",
-    "uptime": "-",
-  };
-  final Map<String, dynamic> _defaultKismetStatus = {
-    "active": false,
-  };
-
-  final Map<String, dynamic> _defaultGrafanaStatus = {
-    "active": false,
-  };
-
-  Map<String, dynamic> _deviceInfo = {};
-  Map<String, dynamic> _deviceStats = {};
-  Map<String, dynamic> _kismetStatus = {};
-  Map<String, dynamic> _grafanaStatus = {};
-
-  void _initializeData() {
-    // Initialize your variables with default values or fetch data.
-    _deviceInfo = _defaultDeviceInfo;
-
-    _deviceStats = _defaultDeviceStats;
-
-    _kismetStatus = _defaultKismetStatus;
-
-    _grafanaStatus = _defaultGrafanaStatus;
-  }
-
-  Future<void> apiResponse(String response) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('API Response'),
-          content: Text("API responded with: $response"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<Map<String, dynamic>> _startStopService(
-      bool status, String service) async {
-    try {
-      if (status) {
-        return await NetworkUtils.requestEndpoint(
-            "/api/v1/system/service/stop?name=$service", "POST");
-      } else {
-        return await NetworkUtils.requestEndpoint(
-            "/api/v1/system/service/start?name=$service", "POST");
-      }
-    } catch (error) {
-      print("Error fetching data: $error");
-      if (service == "kismet") {
-        return _defaultKismetStatus;
-      } else {
-        return _defaultGrafanaStatus;
-      }
-    } finally {
-      getServiceStatus();
-    }
-  }
-
-  void getInfo() async {
-    try {
-      _deviceInfo = await NetworkUtils.requestEndpoint(
-          "/api/v1/system/device/info", "GET");
-    } catch (error) {
-      print("Error fetching data: $error");
-      _deviceInfo = _defaultDeviceInfo;
-    }
-    setState(() {});
-  }
-
-  void getServiceStatus() async {
-    try {
-      _kismetStatus = await NetworkUtils.requestEndpoint(
-          "/api/v1/system/service/status?name=kismet", "GET");
-    } catch (error) {
-      print("Error fetching data: $error");
-      _kismetStatus = _defaultKismetStatus;
-    }
-    try {
-      _grafanaStatus = await NetworkUtils.requestEndpoint(
-          "/api/v1/system/service/status?name=grafana", "GET");
-    } catch (error) {
-      print("Error fetching data: $error");
-      _grafanaStatus = _defaultGrafanaStatus;
-    }
-    setState(() {});
-  }
-
-  void startStatsTimer() async {
-    try {
-      _deviceStats = await NetworkUtils.requestEndpoint(
-          "/api/v1/system/device/stats", "GET");
-
-      _kismetStatus = await NetworkUtils.requestEndpoint(
-          "/api/v1/system/service/status?name=kismet", "GET");
-
-      _grafanaStatus = await NetworkUtils.requestEndpoint(
-          "/api/v1/system/service/status?name=grafana-server", "GET");
-    } catch (error) {
-      print("Error fetching data: $error");
-      _deviceStats = _defaultDeviceStats;
-      _kismetStatus = _defaultKismetStatus;
-      _grafanaStatus = _defaultGrafanaStatus;
-    }
-    setState(() {});
-
-    // Schedule the fetch every 2 seconds
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      try {
-        _deviceStats = await NetworkUtils.requestEndpoint(
-            "/api/v1/system/device/stats", "GET");
-
-        _kismetStatus = await NetworkUtils.requestEndpoint(
-            "/api/v1/system/service/status?name=kismet", "GET");
-
-        _grafanaStatus = await NetworkUtils.requestEndpoint(
-            "/api/v1/system/service/status?name=grafana-server", "GET");
-      } catch (error) {
-        print("Error fetching data: $error");
-        _deviceStats = _defaultDeviceStats;
-        _kismetStatus = _defaultKismetStatus;
-        _grafanaStatus = _defaultGrafanaStatus;
-      }
-      setState(() {});
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    _initializeData();
+    _sharedMethods = SharedMethods(setState, context);
+    _sharedMethods.initializeData();
     _model = createModel(context, () => DevicePageModel());
 
     _model.tabBarController = TabController(
@@ -207,14 +62,12 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
         ],
       ),
     });
-    getInfo();
-    startStatsTimer();
+    _sharedMethods.getInfo();
   }
 
   @override
   void dispose() {
     _model.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -308,7 +161,8 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                   alignment:
                                       const AlignmentDirectional(-1.0, 0.0),
                                   child: Text(
-                                    _deviceInfo['name'].toString(),
+                                    _sharedMethods.deviceInfo['name']
+                                        .toString(),
                                     style: FlutterFlowTheme.of(context)
                                         .labelLarge
                                         .override(
@@ -337,7 +191,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Model:\n${_deviceInfo['model']?.toString()}",
+                                    "Model:\n${_sharedMethods.deviceInfo['model']?.toString()}",
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -352,7 +206,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                         ),
                                   ),
                                   Text(
-                                    "Version:\n${_deviceInfo['software_version']?.toString()}",
+                                    "Version:\n${_sharedMethods.deviceInfo['software_version']?.toString()}",
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -367,7 +221,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                         ),
                                   ),
                                   Text(
-                                    "Mode:\n${_deviceInfo['mode']?.toString()}",
+                                    "Mode:\n${_sharedMethods.deviceInfo['mode']?.toString()}",
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -447,559 +301,45 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                   ),
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(
-                        0.0, 10.0, 0.0, 0.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).primaryBackground,
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(0.0),
-                          bottomRight: Radius.circular(0.0),
-                          topLeft: Radius.circular(24.0),
-                          topRight: Radius.circular(24.0),
+                  child: DefaultTabController(
+                    length: 3, // Number of tabs
+                    child: Column(
+                      children: <Widget>[
+                        TabBar(
+                          labelColor: FlutterFlowTheme.of(context).primaryText,
+                          unselectedLabelColor:
+                              FlutterFlowTheme.of(context).secondaryText,
+                          labelStyle: FlutterFlowTheme.of(context)
+                              .titleMedium
+                              .override(
+                                fontFamily: FlutterFlowTheme.of(context)
+                                    .titleMediumFamily,
+                                letterSpacing: 0.0,
+                                useGoogleFonts: GoogleFonts.asMap().containsKey(
+                                    FlutterFlowTheme.of(context)
+                                        .titleMediumFamily),
+                              ),
+                          unselectedLabelStyle: TextStyle(),
+                          indicatorColor: FlutterFlowTheme.of(context).primary,
+                          tabs: [
+                            Tab(text: 'Stats'),
+                            Tab(text: 'Apps'),
+                            Tab(text: 'Network'),
+                          ],
                         ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              height: 100.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryBackground,
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              shape: BoxShape.rectangle,
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                _deviceStats["cpu"].toString(),
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts: GoogleFonts
-                                                                  .asMap()
-                                                              .containsKey(
-                                                                  FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumFamily),
-                                                        ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          'CPU',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryBackground,
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              shape: BoxShape.rectangle,
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                _deviceStats["ram"]
-                                                    .toString()
-                                                    .split(" ")[1],
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts: GoogleFonts
-                                                                  .asMap()
-                                                              .containsKey(
-                                                                  FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumFamily),
-                                                        ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          'RAM',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryBackground,
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              shape: BoxShape.rectangle,
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                _deviceStats["disk"]
-                                                    .toString()
-                                                    .split(" ")[1],
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts: GoogleFonts
-                                                                  .asMap()
-                                                              .containsKey(
-                                                                  FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumFamily),
-                                                        ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Disk',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryBackground,
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              shape: BoxShape.rectangle,
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                _deviceStats["uptime"]
-                                                    .toString(),
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts: GoogleFonts
-                                                                  .asMap()
-                                                              .containsKey(
-                                                                  FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumFamily),
-                                                        ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Uptime',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              height: 100.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Kismet',
-                                          style: FlutterFlowTheme.of(context)
-                                              .headlineSmall
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .headlineSmallFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(FlutterFlowTheme
-                                                            .of(context)
-                                                        .headlineSmallFamily),
-                                              ),
-                                        ),
-                                        Text(
-                                          _kismetStatus["active"]
-                                              ? "Status: ON"
-                                              : "Status: OFF",
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            10.0, 0.0, 10.0, 10.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        FFButtonWidget(
-                                          onPressed: () {
-                                            _kismetStatus = _startStopService(
-                                                    _kismetStatus["active"],
-                                                    "kismet")
-                                                as Map<String, dynamic>;
-                                            setState(() {});
-                                          },
-                                          text: _kismetStatus["active"]
-                                              ? "Stop"
-                                              : "Start",
-                                          options: FFButtonOptions(
-                                            height: 30.0,
-                                            padding: const EdgeInsets.all(0.0),
-                                            iconPadding:
-                                                const EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                    0.0, 0.0, 0.0, 0.0),
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyLarge
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyLargeFamily,
-                                                      fontSize: 14.0,
-                                                      letterSpacing: 0.0,
-                                                      useGoogleFonts: GoogleFonts
-                                                              .asMap()
-                                                          .containsKey(
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyLargeFamily),
-                                                    ),
-                                            elevation: 0.0,
-                                            borderSide: const BorderSide(
-                                              color: Colors.transparent,
-                                              width: 1.0,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                        ),
-                                        Text(
-                                          'URL: http://wlanpi-bc2.local:2005',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              height: 100.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Grafana',
-                                          style: FlutterFlowTheme.of(context)
-                                              .headlineSmall
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .headlineSmallFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(FlutterFlowTheme
-                                                            .of(context)
-                                                        .headlineSmallFamily),
-                                              ),
-                                        ),
-                                        Text(
-                                          _grafanaStatus["active"]
-                                              ? "Status: ON"
-                                              : "Status: OFF",
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            10.0, 0.0, 10.0, 10.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        FFButtonWidget(
-                                          onPressed: () {
-                                            _startStopService(
-                                                _grafanaStatus["active"],
-                                                "grafana-server");
-                                          },
-                                          text: _grafanaStatus["active"]
-                                              ? "Stop"
-                                              : "Start",
-                                          options: FFButtonOptions(
-                                            height: 30.0,
-                                            padding: const EdgeInsets.all(0.0),
-                                            iconPadding:
-                                                const EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                    0.0, 0.0, 0.0, 0.0),
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyLarge
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyLargeFamily,
-                                                      fontSize: 14.0,
-                                                      letterSpacing: 0.0,
-                                                      useGoogleFonts: GoogleFonts
-                                                              .asMap()
-                                                          .containsKey(
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyLargeFamily),
-                                                    ),
-                                            elevation: 0.0,
-                                            borderSide: const BorderSide(
-                                              color: Colors.transparent,
-                                              width: 1.0,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                        ),
-                                        Text(
-                                          'URL: http://wlanpi-bc2.local:2005',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMediumFamily),
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ].divide(const SizedBox(height: 10.0)),
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              StatsPageWidget(),
+                              AppsPageWidget(),
+                              AppsPageWidget(),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
