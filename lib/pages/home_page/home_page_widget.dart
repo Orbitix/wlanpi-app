@@ -174,9 +174,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               Expanded(
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    context.pushNamed('WiFiConnection');
+                                    context.pushNamed('USBConnection');
                                   },
-                                  text: 'Network',
+                                  text: 'USB OTG',
                                   options: FFButtonOptions(
                                     height: 40.0,
                                     padding:

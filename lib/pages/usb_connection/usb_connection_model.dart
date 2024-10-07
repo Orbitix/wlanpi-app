@@ -1,8 +1,8 @@
 import '/flutter_flow/flutter_flow_util.dart';
-import 'wi_fi_connection_widget.dart' show WiFiConnectionWidget;
+import 'usb_connection_widget.dart' show USBConnectionWidget;
 import 'package:flutter/material.dart';
 
-class WiFiConnectionModel extends FlutterFlowModel<WiFiConnectionWidget> {
+class USBConnectionModel extends FlutterFlowModel<USBConnectionWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();
