@@ -25,9 +25,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _loadSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _otgController.text = prefs.getString('otgIpAddress') ?? '169.254.42.1';
-      _bluetoothController.text =
-          prefs.getString('bluetoothIpAddress') ?? '169.254.43.1';
+      _otgController.text = prefs.getString('otgIpAddress')!;
+      _bluetoothController.text = prefs.getString('bluetoothIpAddress')!;
     });
   }
 

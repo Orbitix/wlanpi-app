@@ -137,6 +137,11 @@ class SharedMethods {
     });
   }
 
+  void stopStatsTimer() {
+    print("stopped timer");
+    timer?.cancel();
+  }
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState

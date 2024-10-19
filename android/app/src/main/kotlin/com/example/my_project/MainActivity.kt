@@ -24,6 +24,7 @@ class MainActivity : FlutterActivity() {
     private val executor = Executors.newSingleThreadExecutor()
     private var isRequestingNetwork = false
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    var PRIVATE_MODE = 0
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -82,7 +83,28 @@ class MainActivity : FlutterActivity() {
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun connectToEndpoint(port: String, endpoint: String, method: String, result: MethodChannel.Result) {
-        val transportType = detectTransportType()
+        // val transportType = detectTransportType() // will be implemented when automatic detection is functional. for now it is set using a dropdown on the homepage
+
+        var transportType = NetworkCapabilities.TRANSPORT_BLUETOOTH // default transport type
+
+        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+        val transportSetting = mPrefs.getString("flutter.transportType", "")
+        var ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
+
+
+        when (transportSetting) {
+            "Bluetooth" -> {
+                Log.d("Network", "Using Bluetooth transport")
+                var ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
+                transportType = NetworkCapabilities.TRANSPORT_BLUETOOTH
+            }
+            "USB OTG" -> {
+                Log.d("Network", "Using OTG transport")
+                var ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
+                transportType = NetworkCapabilities.TRANSPORT_ETHERNET
+            }
+        }
+
         if (transportType == null) {
             result.error("NO_TRANSPORT", "No suitable transport type available", null)
             return
@@ -99,17 +121,8 @@ class MainActivity : FlutterActivity() {
                 Log.d("Network", "Network available")
                 executor.execute {
                     try {
-                        var PRIVATE_MODE = 0
-                        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
-                        var ip = null
-                        if (transportType == NetworkCapabilities.TRANSPORT_BLUETOOTH) {
-                            var ip = mPrefs.getString("flutter." + "bluetoothIpAddress", "")
-                        }
-                        else {
-                            var ip = mPrefs.getString("flutter." + "otgIpAddress", "")
-                        }
-
                         val fullURL = "http://${ip}:${port}${endpoint}"
+                        Log.d("Network", "Requesting network: ${fullURL}")
                         val url = URL(fullURL)
                         val connection = network.openConnection(url) as HttpURLConnection
                         connection.requestMethod = method

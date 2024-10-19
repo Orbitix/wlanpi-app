@@ -11,9 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'device_page_model.dart';
 export 'device_page_model.dart';
 
-
 import 'package:wlanpi_mobile/shared_methods.dart';
-
 
 class DevicePageWidget extends StatefulWidget {
   const DevicePageWidget({super.key});
@@ -64,6 +62,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
   @override
   void dispose() {
     _model.dispose();
+    _sharedMethods.stopStatsTimer();
     super.dispose();
   }
 
@@ -236,7 +235,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                         const AlignmentDirectional(0.0, 1.0),
                                     child: FFButtonWidget(
                                       onPressed: () async {
-                                        context.pushNamed(
+                                        context.pushReplacementNamed(
                                           'HomePage',
                                           extra: <String, dynamic>{
                                             kTransitionInfoKey:

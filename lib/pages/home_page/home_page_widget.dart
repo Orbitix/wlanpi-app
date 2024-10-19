@@ -1,3 +1,6 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wlanpi_mobile/network_handler.dart';
+
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -24,10 +27,81 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
   final animationsMap = <String, AnimationInfo>{};
 
+  String? transport_type = "Bluetooth";
+  final List<String> transport_types = ['Bluetooth', 'USB OTG'];
+
+  Future<void> _setTransportType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('transportType', transport_type!);
+
+    await _testDevice();
+  }
+
+  Future<void> _testDevice() async {
+    try {
+      // Create an instance of NetworkHandler
+      NetworkHandler networkHandler = NetworkHandler();
+
+      // Call the requestEndpoint method on the instance
+      Map<String, dynamic> response = await networkHandler.requestEndpoint(
+          "31415", "/api/v1/system/device/model", "GET");
+
+      if (response.containsKey("Error")) {
+        print("Failed to contact PI");
+        failedConnection();
+      } else {
+        context.pushNamed('DevicePage');
+      }
+    } catch (error) {
+      print("Error occurred while testing device: $error");
+      failedConnection(); // Call the failedConnection method on error
+    }
+  }
+
+  Future<void> failedConnection() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Device Connection Failed'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    "We couldn't contact this PI. Check that it has a PAN address on the home screen."),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _loadIPs() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString("bluetoothIpAddress") == null) {
+      await prefs.setString('bluetoothIpAddress', "169.254.43.1");
+    }
+    if (prefs.getString("otgIpAddress") == null) {
+      await prefs.setString('otgIpAddress', "169.254.42.1");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
+
+    _loadIPs();
 
     animationsMap.addAll({
       'imageOnPageLoadAnimation': AnimationInfo(
@@ -48,15 +122,16 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
   @override
   Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        backgroundColor: theme.secondaryBackground,
         appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: theme.primary,
           automaticallyImplyLeading: false,
           title: Align(
             alignment: const AlignmentDirectional(-1.0, 0.0),
@@ -100,166 +175,130 @@ class _HomePageWidgetState extends State<HomePageWidget>
               children: [
                 Container(
                   width: double.infinity,
-                  height: MediaQuery.sizeOf(context).height * 0.4,
                   decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).primaryBackground,
+                    color: theme.primaryBackground,
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context).alternate,
+                              color: theme.alternate,
                               borderRadius: BorderRadius.circular(10.0),
                               shape: BoxShape.rectangle,
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Center(
-                                child: Text(
-                                  'Connect To a PI',
-                                  style: FlutterFlowTheme.of(context)
-                                      .headlineMedium
-                                      .override(
-                                        fontFamily: FlutterFlowTheme.of(context)
-                                            .headlineMediumFamily,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w600,
-                                        useGoogleFonts: GoogleFonts.asMap()
-                                            .containsKey(
-                                                FlutterFlowTheme.of(context)
-                                                    .headlineMediumFamily),
-                                      ),
-                                ),
-                              ),
-                            )),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: CachedNetworkImage(
-                            fadeInDuration: const Duration(milliseconds: 500),
-                            fadeOutDuration: const Duration(milliseconds: 500),
-                            imageUrl:
-                                'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
-                            width: 300.0,
-                            height: 200.0,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Text(
-                          'Connect Via:',
-                          style: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .override(
-                                fontFamily: FlutterFlowTheme.of(context)
-                                    .bodyMediumFamily,
-                                letterSpacing: 0.0,
-                                useGoogleFonts: GoogleFonts.asMap().containsKey(
-                                    FlutterFlowTheme.of(context)
-                                        .bodyMediumFamily),
-                              ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: FFButtonWidget(
-                                  onPressed: () async {
-                                    context.pushNamed('USBConnection');
-                                  },
-                                  text: 'USB OTG',
-                                  options: FFButtonOptions(
-                                    height: 40.0,
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
-                                    iconPadding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 0.0, 0.0, 0.0),
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    textStyle: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .override(
-                                          fontFamily:
-                                              FlutterFlowTheme.of(context)
-                                                  .titleSmallFamily,
-                                          color: Colors.white,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .titleSmallFamily),
-                                        ),
-                                    elevation: 0.0,
-                                    borderSide: const BorderSide(
-                                      color: Colors.transparent,
-                                      width: 1.0,
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    'Connect To a PI',
+                                    style: theme.headlineMedium.override(
+                                      fontFamily: theme.headlineMediumFamily,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w600,
+                                      useGoogleFonts: GoogleFonts.asMap()
+                                          .containsKey(
+                                              theme.headlineMediumFamily),
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                ),
+                                ],
                               ),
-                              Expanded(
-                                child: FFButtonWidget(
-                                  onPressed: () async {
-                                    context.pushNamed('BluetoothConnection');
-                                  },
-                                  text: 'Bluetooth\n',
-                                  options: FFButtonOptions(
-                                    height: 40.0,
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
-                                    iconPadding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 0.0, 0.0, 0.0),
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    textStyle: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .override(
-                                          fontFamily:
-                                              FlutterFlowTheme.of(context)
-                                                  .titleSmallFamily,
-                                          color: Colors.white,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .titleSmallFamily),
-                                        ),
-                                    elevation: 0.0,
-                                    borderSide: const BorderSide(
-                                      color: Colors.transparent,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                              ),
-                            ].divide(const SizedBox(width: 8.0)),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: CachedNetworkImage(
+                              fadeInDuration: Duration(milliseconds: 500),
+                              fadeOutDuration: Duration(milliseconds: 500),
+                              imageUrl:
+                                  'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
+                              width: 300.0,
+                              height: 200.0,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Text(
+                            'Connect Via:',
+                            style: theme.bodyMedium.override(
+                              fontFamily: theme.bodyMediumFamily,
+                              letterSpacing: 0.0,
+                              useGoogleFonts: GoogleFonts.asMap()
+                                  .containsKey(theme.bodyMediumFamily),
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: theme.secondaryBackground,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: transport_type,
+                                  hint: Text('Select the connection method'),
+                                  items: transport_types.map((String type) {
+                                    return DropdownMenuItem<String>(
+                                      value: type,
+                                      child: Text(type),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      transport_type = newValue;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(2.0),
+                            child: FFButtonWidget(
+                              onPressed: () async {
+                                await _setTransportType();
+                              },
+                              text: 'Connect',
+                              options: FFButtonOptions(
+                                width: double.infinity,
+                                height: 50.0,
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    24.0, 0.0, 24.0, 0.0),
+                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                color: theme.primary,
+                                textStyle: theme.titleSmall.override(
+                                  fontFamily: theme.titleSmallFamily,
+                                  color: Colors.white,
+                                  letterSpacing: 0.0,
+                                  useGoogleFonts: GoogleFonts.asMap()
+                                      .containsKey(theme.titleSmallFamily),
+                                ),
+                                elevation: 0.0,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
+                        ].divide(SizedBox(height: 10.0)),
+                      )),
                 ),
                 Text(
-                  'V 0.1',
-                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                        fontFamily:
-                            FlutterFlowTheme.of(context).labelSmallFamily,
-                        letterSpacing: 0.0,
-                        useGoogleFonts: GoogleFonts.asMap().containsKey(
-                            FlutterFlowTheme.of(context).labelSmallFamily),
-                      ),
+                  'V 0.2',
+                  style: theme.labelSmall.override(
+                    fontFamily: theme.labelSmallFamily,
+                    letterSpacing: 0.0,
+                    useGoogleFonts:
+                        GoogleFonts.asMap().containsKey(theme.labelSmallFamily),
+                  ),
                 ),
               ].divide(const SizedBox(height: 10.0)),
             ),
