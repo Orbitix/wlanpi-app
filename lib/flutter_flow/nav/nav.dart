@@ -83,6 +83,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: '/devicePage',
           builder: (context, params) => const DevicePageWidget(),
         ),
+        FFRoute(
+          name: 'SettingsPage',
+          path: '/settingsPage',
+          builder: (context, params) => const SettingsPage(),
+        ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 

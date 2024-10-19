@@ -75,15 +75,14 @@ class _HomePageWidgetState extends State<HomePageWidget>
               alignment: const AlignmentDirectional(0.0, 1.0),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  'Mobile',
-                  style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily:
-                            FlutterFlowTheme.of(context).titleMediumFamily,
-                        letterSpacing: 0.0,
-                        useGoogleFonts: GoogleFonts.asMap().containsKey(
-                            FlutterFlowTheme.of(context).titleMediumFamily),
-                      ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.settings,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                  ),
+                  onPressed: () {
+                    context.pushNamed('SettingsPage');
+                  },
                 ),
               ),
             ),

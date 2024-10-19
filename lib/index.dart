@@ -5,3 +5,4 @@ export 'pages/usb_connection/usb_connection_widget.dart'
 export '/pages/bluetooth_connection/bluetooth_connection_widget.dart'
     show BluetoothConnectionWidget;
 export '/pages/device_page/device_page_widget.dart' show DevicePageWidget;
+export '/pages/settings.dart' show SettingsPage;

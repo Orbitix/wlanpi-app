@@ -8,11 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'bluetooth_connection_model.dart';
 export 'bluetooth_connection_model.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'dart:convert';
 
-import 'package:flutter/services.dart';
 
 class BluetoothConnectionWidget extends StatefulWidget {
   const BluetoothConnectionWidget({super.key});

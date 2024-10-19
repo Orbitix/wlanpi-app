@@ -10,14 +10,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'device_page_model.dart';
 export 'device_page_model.dart';
-import 'dart:convert';
-import 'dart:async';
 
-import 'package:wlanpi_mobile/network_utils.dart';
 
 import 'package:wlanpi_mobile/shared_methods.dart';
 
-import 'package:flutter/services.dart';
 
 class DevicePageWidget extends StatefulWidget {
   const DevicePageWidget({super.key});
@@ -319,15 +315,15 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                     FlutterFlowTheme.of(context)
                                         .titleMediumFamily),
                               ),
-                          unselectedLabelStyle: TextStyle(),
+                          unselectedLabelStyle: const TextStyle(),
                           indicatorColor: FlutterFlowTheme.of(context).primary,
-                          tabs: [
+                          tabs: const [
                             Tab(text: 'Stats'),
                             Tab(text: 'Apps'),
                             Tab(text: 'Network'),
                           ],
                         ),
-                        Expanded(
+                        const Expanded(
                           child: TabBarView(
                             children: [
                               StatsPageWidget(),
