@@ -1,4 +1,4 @@
-import 'package:wlanpi_mobile/network_utils.dart';
+import 'package:wlanpi_mobile/network_handler.dart';
 
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -22,13 +22,23 @@ class _USBConnectionWidgetState extends State<USBConnectionWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> _testDevice() async {
-    Map<String, dynamic> response = await NetworkUtils.requestEndpoint(
-        "/api/v1/system/device/model", "GET");
-    if (response.containsKey("Error")) {
-      print("Failed to contact PI");
-      failedConnection();
-    } else {
-      context.pushNamed('DevicePage');
+    try {
+      // Create an instance of NetworkHandler
+      NetworkHandler networkHandler = NetworkHandler();
+
+      // Call the requestEndpoint method on the instance
+      Map<String, dynamic> response = await networkHandler.requestEndpoint(
+          "31415", "/api/v1/system/device/model", "GET");
+
+      if (response.containsKey("Error")) {
+        print("Failed to contact PI");
+        failedConnection();
+      } else {
+        context.pushNamed('DevicePage');
+      }
+    } catch (error) {
+      print("Error occurred while testing device: $error");
+      failedConnection(); // Call the failedConnection method on error
     }
   }
 
