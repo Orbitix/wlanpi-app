@@ -1,128 +1,167 @@
-package com.mycompany.wlanpiapp
+package com.wlanpi.wlanpiapp
 
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.os.Build
+import android.util.Log
+import android.content.SharedPreferences
 import androidx.annotation.NonNull
+import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.EventChannel
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.NetworkInfo
-import android.util.Log
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.IOException
-
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "network_handler"
-    private val EVENT_CHANNEL = "network_status"
-    private var activeConnection: String? = null
-    private var eventSink: EventChannel.EventSink? = null
-    private val client = OkHttpClient() // OkHttp client for network requests
-
-    private val connectivityReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val cm = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val networkInfo: NetworkInfo? = cm.activeNetworkInfo
-
-            if (networkInfo != null && networkInfo.isConnected) {
-                eventSink?.success("Connected to ${networkInfo.typeName}")
-            } else {
-                eventSink?.success("No network connection")
-            }
-        }
-    }
+    private val CHANNEL = "network_interface_binding"
+    private var connectivityManager: ConnectivityManager? = null
+    private val executor = Executors.newSingleThreadExecutor()
+    private var isRequestingNetwork = false
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
-                "checkAndConnect" -> {
-                    val otgIp = call.argument<String>("otgIpAddress")
-                    val bluetoothIp = call.argument<String>("bluetoothIpAddress")
-                    result.success(checkAndConnect(otgIp, bluetoothIp))
-                }
-                "makeNetworkRequest" -> {
-                    val url = call.argument<String>("url")
+                "connectToEndpoint" -> {
                     val port = call.argument<String>("port")
                     val endpoint = call.argument<String>("endpoint")
                     val method = call.argument<String>("method")
 
-                    // Call the method to make the network request
-                    try {
-                        val responseJson = makeNetworkRequest(url, port, endpoint, method)
-                        result.success(responseJson)
-                    } catch (e: Exception) {
-                        result.error("NETWORK_ERROR", "Failed to make network request: ${e.message}", null)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (port != null && endpoint != null && method != null) {
+                            if (!isRequestingNetwork) {
+                                connectToEndpoint(port, endpoint, method, result)
+                            } else {
+                                result.error("TOO_MANY_REQUESTS", "A network request is already in progress", null)
+                            }
+                        } else {
+                            result.error("INVALID_ARGUMENT", "Endpoint or method argument is missing", null)
+                        }
+                    } else {
+                        result.error("UNSUPPORTED_VERSION", "Android version not supported", null)
                     }
                 }
-                else -> {
-                    result.notImplemented()
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun detectTransportType(): Int? {
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networks = connectivityManager.allNetworks // Get all available networks
+
+        for (network in networks) {
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+            Log.d("NetworkCheck", "Checking network capabilities for network: $network")
+            if (networkCapabilities != null) {
+                Log.d("NetworkCheck", "Capabilities: $networkCapabilities")
+                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.d("NetworkCheck", "Using Ethernet transport")
+                    return NetworkCapabilities.TRANSPORT_ETHERNET // Prioritize OTG
                 }
+                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH)) {
+                    Log.d("NetworkCheck", "Using Bluetooth transport")
+                    return NetworkCapabilities.TRANSPORT_BLUETOOTH // Fall back to Bluetooth
+                }
+            } else {
+                Log.d("NetworkCheck", "NetworkCapabilities is null for network: $network")
+            }
+        }
+        Log.d("NetworkCheck", "No suitable transport type found")
+        return null // No suitable transport type found
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun connectToEndpoint(port: String, endpoint: String, method: String, result: MethodChannel.Result) {
+        val transportType = detectTransportType()
+        if (transportType == null) {
+            result.error("NO_TRANSPORT", "No suitable transport type available", null)
+            return
+        }
+
+        connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkRequest = NetworkRequest.Builder()
+            .addTransportType(transportType)
+            .build()
+
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                Log.d("Network", "Network available")
+                executor.execute {
+                    try {
+                        var PRIVATE_MODE = 0
+                        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+                        var ip = null
+                        if (transportType == NetworkCapabilities.TRANSPORT_BLUETOOTH) {
+                            var ip = mPrefs.getString("flutter." + "bluetoothIpAddress", "")
+                        }
+                        else {
+                            var ip = mPrefs.getString("flutter." + "otgIpAddress", "")
+                        }
+
+                        val fullURL = "http://${ip}:${port}${endpoint}"
+                        val url = URL(fullURL)
+                        val connection = network.openConnection(url) as HttpURLConnection
+                        connection.requestMethod = method
+                        val responseCode = connection.responseCode
+                        val response = BufferedReader(InputStreamReader(connection.inputStream)).use { it.readText() }
+                        if (responseCode == 200) {
+                            result.success(response)
+                        } else {
+                            result.error("HTTP_ERROR", "HTTP error code: $responseCode", null)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("Network", "Error accessing API", e)
+                        result.error("NETWORK_ERROR", "Error accessing API", e.localizedMessage)
+                    } finally {
+                        isRequestingNetwork = false
+                        // cleanupNetworkRequest()
+                    }
+                }
+            }
+
+            override fun onUnavailable() {
+                super.onUnavailable()
+                Log.e("Network", "Bluetooth PAN network unavailable")
+                result.error("NETWORK_UNAVAILABLE", "Bluetooth PAN network unavailable", null)
+                isRequestingNetwork = false
+                cleanupNetworkRequest()
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                Log.e("Network", "Network lost")
+                result.error("NETWORK_LOST", "Network connection lost", null)
+                isRequestingNetwork = false
+                cleanupNetworkRequest()
             }
         }
 
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL).setStreamHandler(
-            object : EventChannel.StreamHandler {
-                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-                    eventSink = events
-                    registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-                }
-
-                override fun onCancel(arguments: Any?) {
-                    unregisterReceiver(connectivityReceiver)
-                    eventSink = null
-                }
-            }
-        )
-    }
-
-    private fun checkAndConnect(otgIp: String?, bluetoothIp: String?): String? {
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = cm.activeNetwork
-        val capabilities = cm.getNetworkCapabilities(network)
-
-        capabilities?.let {
-            if (it.hasTransport(NetworkCapabilities.TRANSPORT_USB)) {
-                activeConnection = "http://$otgIp"
-            } else if (it.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH)) {
-                activeConnection = "http://$bluetoothIp"
-            }
-        }
-
-        return activeConnection
-    }
-
-    private fun makeNetworkRequest(url: String?, port: String?, endpoint: String?, method: String?): String {
-        val fullUrl = "$url:$port$endpoint"
-        val requestBuilder = Request.Builder()
-            .url(fullUrl)
-    
-        when (method?.toUpperCase()) {
-            "GET" -> requestBuilder.get()
-            "POST" -> requestBuilder.post("{}".toRequestBody("application/json".toMediaTypeOrNull())) // Use your actual body if needed
-            // Handle other HTTP methods as necessary
-        }
-    
-        val request = requestBuilder.build()
-        return client.newCall(request).execute().use { response: Response ->
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
-            response.body?.string() ?: "{}" // Return an empty JSON object if body is null
+        isRequestingNetwork = true
+        try {
+            connectivityManager?.requestNetwork(networkRequest, networkCallback!!)
+        } catch (e: Exception) {
+            Log.e("Network", "Failed to request network", e)
+            result.error("NETWORK_REQUEST_FAILED", "Failed to request network", e.localizedMessage)
+            isRequestingNetwork = false
+            cleanupNetworkRequest()
         }
     }
-    
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(connectivityReceiver)
+    private fun cleanupNetworkRequest() {
+        networkCallback?.let {
+            connectivityManager?.unregisterNetworkCallback(it)
+        }
+        networkCallback = null
     }
 }

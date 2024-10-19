@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'bluetooth_connection_model.dart';
 export 'bluetooth_connection_model.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 
 class BluetoothConnectionWidget extends StatefulWidget {
   const BluetoothConnectionWidget({super.key});
@@ -20,7 +19,6 @@ class BluetoothConnectionWidget extends StatefulWidget {
 
 class _BluetoothConnectionWidgetState extends State<BluetoothConnectionWidget> {
   late BluetoothConnectionModel _model;
-  FlutterBlue flutterBlue = FlutterBlue.instance;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -110,7 +108,6 @@ class _BluetoothConnectionWidgetState extends State<BluetoothConnectionWidget> {
 
   @override
   void dispose() {
-    flutterBlue.stopScan();
     _model.dispose();
 
     super.dispose();

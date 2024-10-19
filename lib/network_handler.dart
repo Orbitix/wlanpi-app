@@ -45,52 +45,10 @@ class JsonParseException implements Exception {
 }
 
 class NetworkHandler {
-  static const MethodChannel _channel = MethodChannel('network_handler');
-  static const EventChannel _eventChannel = EventChannel('network_status');
+  static const MethodChannel _channel =
+      MethodChannel('network_interface_binding');
 
   static final _taskQueue = TaskQueue();
-
-  String? _otgIpAddress;
-  String? _bluetoothIpAddress;
-  String? _activeUrl;
-
-  NetworkHandler() {
-    _loadSettings();
-    _eventChannel.receiveBroadcastStream().listen(_onStatusChange);
-  }
-
-  Future<void> _loadSettings() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _otgIpAddress = prefs.getString('otgIpAddress') ?? '169.254.42.1';
-    _bluetoothIpAddress =
-        prefs.getString('bluetoothIpAddress') ?? '169.254.43.1';
-  }
-
-  void _onStatusChange(dynamic status) {
-    // Update connection status and attempt reconnection if needed
-    if (status == "usb_otg_connected") {
-      _activeUrl = 'http://$_otgIpAddress';
-    } else if (status == "bluetooth_connected") {
-      _activeUrl = 'http://$_bluetoothIpAddress';
-    } else {
-      _activeUrl = null;
-    }
-  }
-
-  Future<void> checkAndConnect() async {
-    try {
-      final result = await _channel.invokeMethod('checkAndConnect', {
-        'otgIpAddress': _otgIpAddress,
-        'bluetoothIpAddress': _bluetoothIpAddress,
-      });
-
-      _activeUrl = result;
-    } on PlatformException catch (e) {
-      print('Failed to connect: ${e.message}');
-    }
-  }
-
-  String? get activeUrl => _activeUrl;
 
   // Wrap your request method with the task queue
   Future<Map<String, dynamic>> requestEndpoint(
@@ -99,13 +57,8 @@ class NetworkHandler {
 
     _taskQueue.addTask(() async {
       try {
-        final dynamic result = await _channel.invokeMethod(
-            'makeNetworkRequest', {
-          'url': _activeUrl,
-          'port': port,
-          'endpoint': endpoint,
-          'method': method
-        });
+        final dynamic result = await _channel.invokeMethod('connectToEndpoint',
+            {'port': port, 'endpoint': endpoint, 'method': method});
 
         if (result == null) {
           throw NetworkException('No response from the native code');

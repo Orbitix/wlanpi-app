@@ -62,6 +62,7 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: const [Locale('en', '')],
       theme: ThemeData(
+        primaryColor: FlutterFlowTheme.of(context).primary,
         brightness: Brightness.light,
         scrollbarTheme: ScrollbarThemeData(
           thumbVisibility: WidgetStateProperty.all(false),
