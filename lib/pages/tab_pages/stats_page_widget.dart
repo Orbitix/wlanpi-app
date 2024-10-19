@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/shared_methods.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -5,8 +6,6 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-
 
 class StatsPageWidget extends StatefulWidget {
   const StatsPageWidget({super.key});
@@ -21,25 +20,19 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
 
   final animationsMap = <String, AnimationInfo>{};
 
-  late SharedMethods _sharedMethods;
-
   @override
   void initState() {
     super.initState();
-    _sharedMethods = SharedMethods(setState, context);
-    _sharedMethods.initializeData(); // Initialize shared data
-    _sharedMethods.getInfo(); // Fetch initial info
-    _sharedMethods.startStatsTimer();
   }
 
   @override
   void dispose() {
-    _sharedMethods.timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
@@ -106,7 +99,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                           child: Padding(
                                             padding: const EdgeInsets.all(10.0),
                                             child: Text(
-                                              _sharedMethods.deviceStats["cpu"]
+                                              sharedMethods.deviceStats["cpu"]
                                                   .toString(),
                                               style:
                                                   FlutterFlowTheme.of(context)
@@ -164,7 +157,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                           child: Padding(
                                             padding: const EdgeInsets.all(10.0),
                                             child: Text(
-                                              _sharedMethods.deviceStats["ram"]
+                                              sharedMethods.deviceStats["ram"]
                                                   .toString()
                                                   .split(" ")[1],
                                               style:
@@ -223,7 +216,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                           child: Padding(
                                             padding: const EdgeInsets.all(10.0),
                                             child: Text(
-                                              _sharedMethods.deviceStats["disk"]
+                                              sharedMethods.deviceStats["disk"]
                                                   .toString()
                                                   .split(" ")[1],
                                               style:
@@ -282,7 +275,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                           child: Padding(
                                             padding: const EdgeInsets.all(10.0),
                                             child: Text(
-                                              _sharedMethods
+                                              sharedMethods
                                                   .deviceStats["uptime"]
                                                   .toString(),
                                               style:

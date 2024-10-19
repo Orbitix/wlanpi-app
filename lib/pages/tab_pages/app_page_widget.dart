@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/shared_methods.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -6,8 +7,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-
 
 class AppsPageWidget extends StatefulWidget {
   const AppsPageWidget({super.key});
@@ -22,25 +21,19 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
 
   final animationsMap = <String, AnimationInfo>{};
 
-  late SharedMethods _sharedMethods;
-
   @override
   void initState() {
     super.initState();
-    _sharedMethods = SharedMethods(setState, context);
-    _sharedMethods.initializeData(); // Initialize shared data
-    _sharedMethods.getInfo(); // Fetch initial info
-    _sharedMethods.startStatsTimer();
   }
 
   @override
   void dispose() {
-    _sharedMethods.timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
@@ -112,7 +105,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                             ),
                                       ),
                                       Text(
-                                        _sharedMethods.kismetStatus["active"]
+                                        sharedMethods.kismetStatus["active"]
                                             ? "Status: ON"
                                             : "Status: OFF",
                                         style: FlutterFlowTheme.of(context)
@@ -143,20 +136,20 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     children: [
                                       FFButtonWidget(
                                         onPressed: () {
-                                          _sharedMethods.kismetStatus =
-                                              _sharedMethods
+                                          sharedMethods.kismetStatus =
+                                              sharedMethods
                                                       .startStopService(
-                                                          _sharedMethods
+                                                          sharedMethods
                                                                   .kismetStatus[
                                                               "active"],
                                                           "kismet")
                                                   as Map<String, dynamic>;
                                           setState(() {});
                                         },
-                                        text: _sharedMethods
-                                                .kismetStatus["active"]
-                                            ? "Stop"
-                                            : "Start",
+                                        text:
+                                            sharedMethods.kismetStatus["active"]
+                                                ? "Stop"
+                                                : "Start",
                                         options: FFButtonOptions(
                                           height: 30.0,
                                           padding: const EdgeInsets.all(0.0),
@@ -250,7 +243,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                             ),
                                       ),
                                       Text(
-                                        _sharedMethods.grafanaStatus["active"]
+                                        sharedMethods.grafanaStatus["active"]
                                             ? "Status: ON"
                                             : "Status: OFF",
                                         style: FlutterFlowTheme.of(context)
@@ -281,12 +274,12 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     children: [
                                       FFButtonWidget(
                                         onPressed: () {
-                                          _sharedMethods.startStopService(
-                                              _sharedMethods
+                                          sharedMethods.startStopService(
+                                              sharedMethods
                                                   .grafanaStatus["active"],
                                               "grafana-server");
                                         },
-                                        text: _sharedMethods
+                                        text: sharedMethods
                                                 .grafanaStatus["active"]
                                             ? "Stop"
                                             : "Start",

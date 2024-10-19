@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:wlanpi_mobile/network_handler.dart'; // Updated import
+import 'package:wlanpi_mobile/network_handler.dart';
 
-class SharedMethods {
-  final Function(void Function()) setStateCallback;
-  final BuildContext context;
+class SharedMethodsProvider extends ChangeNotifier {
+  // Singleton pattern
+  static final SharedMethodsProvider _instance =
+      SharedMethodsProvider._internal();
+  factory SharedMethodsProvider() => _instance;
+  SharedMethodsProvider._internal() {
+    initializeData(); // Initialize data when the instance is created
+  }
 
-  // Create an instance of NetworkHandler
   final NetworkHandler networkHandler = NetworkHandler();
-
-  SharedMethods(this.setStateCallback, this.context);
-
   Timer? timer;
 
+  // Default values
   final Map<String, dynamic> _defaultDeviceInfo = {
     "model": "-",
     "name": "-",
@@ -20,6 +22,7 @@ class SharedMethods {
     "software_version": "-",
     "mode": "-"
   };
+
   final Map<String, dynamic> _defaultDeviceStats = {
     "ip": "-",
     "cpu": "-",
@@ -28,6 +31,7 @@ class SharedMethods {
     "cpu_temp": "-",
     "uptime": "-",
   };
+
   final Map<String, dynamic> _defaultKismetStatus = {
     "active": false,
   };
@@ -36,40 +40,22 @@ class SharedMethods {
     "active": false,
   };
 
+  // Shared state
   Map<String, dynamic> deviceInfo = {};
   Map<String, dynamic> deviceStats = {};
   Map<String, dynamic> kismetStatus = {};
   Map<String, dynamic> grafanaStatus = {};
 
+  // Initialize the data
   void initializeData() {
-    // Initialize your variables with default values or fetch data.
     deviceInfo = _defaultDeviceInfo;
     deviceStats = _defaultDeviceStats;
     kismetStatus = _defaultKismetStatus;
     grafanaStatus = _defaultGrafanaStatus;
+    notifyListeners(); // Notify listeners to refresh the UI
   }
 
-  Future<void> apiResponse(String response) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('API Response'),
-          content: Text("API responded with: $response"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
+  // Start and stop service
   Future<Map<String, dynamic>> startStopService(
       bool status, String service) async {
     try {
@@ -86,6 +72,7 @@ class SharedMethods {
     }
   }
 
+  // Get device information
   void getInfo() async {
     try {
       final response = await networkHandler.requestEndpoint(
@@ -95,9 +82,10 @@ class SharedMethods {
       print("Error fetching data: $error");
       deviceInfo = _defaultDeviceInfo;
     }
-    setStateCallback(() {});
+    notifyListeners(); // Notify listeners about the change
   }
 
+  // Get service status
   void getServiceStatus() async {
     try {
       kismetStatus = await networkHandler.requestEndpoint(
@@ -106,6 +94,7 @@ class SharedMethods {
       print("Error fetching data: $error");
       kismetStatus = _defaultKismetStatus;
     }
+
     try {
       grafanaStatus = await networkHandler.requestEndpoint(
           "31415", "/api/v1/system/service/status?name=grafana", "GET");
@@ -113,9 +102,10 @@ class SharedMethods {
       print("Error fetching data: $error");
       grafanaStatus = _defaultGrafanaStatus;
     }
-    setStateCallback(() {});
+    notifyListeners();
   }
 
+  // Start timer
   void startStatsTimer() async {
     timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       try {
@@ -133,18 +123,13 @@ class SharedMethods {
         kismetStatus = _defaultKismetStatus;
         grafanaStatus = _defaultGrafanaStatus;
       }
-      setStateCallback(() {});
+      notifyListeners(); // Notify listeners every time data is updated
     });
   }
 
+  // Stop timer
   void stopStatsTimer() {
-    print("stopped timer");
     timer?.cancel();
-  }
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
+    notifyListeners(); // Optionally notify listeners when the timer stops
   }
 }

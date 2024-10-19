@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/app_page_widget.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/stats_page_widget.dart';
 
@@ -23,18 +24,24 @@ class DevicePageWidget extends StatefulWidget {
 class _DevicePageWidgetState extends State<DevicePageWidget>
     with TickerProviderStateMixin {
   late DevicePageModel _model;
-  late SharedMethods _sharedMethods;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final animationsMap = <String, AnimationInfo>{};
 
+  SharedMethodsProvider? _sharedMethodsProvider;
+
   @override
   void initState() {
     super.initState();
-    _sharedMethods = SharedMethods(setState, context);
-    _sharedMethods.initializeData();
     _model = createModel(context, () => DevicePageModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _sharedMethodsProvider =
+          Provider.of<SharedMethodsProvider>(context, listen: false);
+      _sharedMethodsProvider?.getInfo();
+      _sharedMethodsProvider?.startStatsTimer();
+    });
 
     _model.tabBarController = TabController(
       vsync: this,
@@ -56,18 +63,21 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
         ],
       ),
     });
-    _sharedMethods.getInfo();
   }
 
   @override
   void dispose() {
     _model.dispose();
-    _sharedMethods.stopStatsTimer();
+    Future.microtask(() {
+      _sharedMethodsProvider?.stopStatsTimer();
+    });
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
+
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -156,8 +166,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                   alignment:
                                       const AlignmentDirectional(-1.0, 0.0),
                                   child: Text(
-                                    _sharedMethods.deviceInfo['name']
-                                        .toString(),
+                                    sharedMethods.deviceInfo['name'].toString(),
                                     style: FlutterFlowTheme.of(context)
                                         .labelLarge
                                         .override(
@@ -186,7 +195,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Model:\n${_sharedMethods.deviceInfo['model']?.toString()}",
+                                    "Model:\n${sharedMethods.deviceInfo['model']?.toString()}",
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -201,7 +210,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                         ),
                                   ),
                                   Text(
-                                    "Version:\n${_sharedMethods.deviceInfo['software_version']?.toString()}",
+                                    "Version:\n${sharedMethods.deviceInfo['software_version']?.toString()}",
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -216,7 +225,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                         ),
                                   ),
                                   Text(
-                                    "Mode:\n${_sharedMethods.deviceInfo['mode']?.toString()}",
+                                    "Mode:\n${sharedMethods.deviceInfo['mode']?.toString()}",
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
