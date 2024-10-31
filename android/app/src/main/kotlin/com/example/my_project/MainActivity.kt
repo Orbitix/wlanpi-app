@@ -118,16 +118,17 @@ class MainActivity : FlutterActivity() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                Log.d("Network", "Network available")
                 executor.execute {
+                    var connection: HttpURLConnection? = null
                     try {
                         val fullURL = "http://${ip}:${port}${endpoint}"
-                        Log.d("Network", "Requesting network: ${fullURL}")
+                        Log.d("Network", "Requesting network: $fullURL")
                         val url = URL(fullURL)
-                        val connection = network.openConnection(url) as HttpURLConnection
+                        connection = network.openConnection(url) as HttpURLConnection
                         connection.requestMethod = method
                         val responseCode = connection.responseCode
                         val response = BufferedReader(InputStreamReader(connection.inputStream)).use { it.readText() }
+
                         if (responseCode == 200) {
                             result.success(response)
                         } else {
@@ -137,15 +138,15 @@ class MainActivity : FlutterActivity() {
                         Log.e("Network", "Error accessing API", e)
                         result.error("NETWORK_ERROR", "Error accessing API", e.localizedMessage)
                     } finally {
+                        connection?.disconnect() // Close the connection
                         isRequestingNetwork = false
-                        // cleanupNetworkRequest()
+                        cleanupNetworkRequest()
                     }
                 }
             }
 
             override fun onUnavailable() {
                 super.onUnavailable()
-                Log.e("Network", "Bluetooth PAN network unavailable")
                 result.error("NETWORK_UNAVAILABLE", "Bluetooth PAN network unavailable", null)
                 isRequestingNetwork = false
                 cleanupNetworkRequest()
@@ -153,7 +154,6 @@ class MainActivity : FlutterActivity() {
 
             override fun onLost(network: Network) {
                 super.onLost(network)
-                Log.e("Network", "Network lost")
                 result.error("NETWORK_LOST", "Network connection lost", null)
                 isRequestingNetwork = false
                 cleanupNetworkRequest()

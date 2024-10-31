@@ -97,7 +97,7 @@ class SharedMethodsProvider extends ChangeNotifier {
 
     try {
       grafanaStatus = await networkHandler.requestEndpoint(
-          "31415", "/api/v1/system/service/status?name=grafana", "GET");
+          "31415", "/api/v1/system/service/status?name=grafana-server", "GET");
     } catch (error) {
       print("Error fetching data: $error");
       grafanaStatus = _defaultGrafanaStatus;
