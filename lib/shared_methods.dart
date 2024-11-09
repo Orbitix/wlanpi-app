@@ -2,6 +2,36 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:wlanpi_mobile/network_handler.dart';
 
+String parseJsonToReadableText(dynamic json, {int indentLevel = 0}) {
+  String result = "";
+
+  String indent = ' ' * (indentLevel * 2); // Indentation for each level
+
+  if (json is Map<String, dynamic>) {
+    // If it's a Map, iterate through each key-value pair
+    json.forEach((key, value) {
+      if (value is Map || value is List) {
+        // If the value is a Map or List, recursively call the function
+        result +=
+            "$indent$key:\n${parseJsonToReadableText(value, indentLevel: indentLevel + 1)}\n";
+      } else {
+        result += "$indent$key: $value\n";
+      }
+    });
+  } else if (json is List) {
+    // If it's a List, iterate through the list and display each item
+    for (var item in json) {
+      result +=
+          "$indent- ${parseJsonToReadableText(item, indentLevel: indentLevel)}"; // No newline here
+    }
+  } else {
+    // For any other type, just display the value
+    result += "$indent$json\n";
+  }
+
+  return result;
+}
+
 class SharedMethodsProvider extends ChangeNotifier {
   // Singleton pattern
   static final SharedMethodsProvider _instance =
