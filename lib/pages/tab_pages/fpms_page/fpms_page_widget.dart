@@ -1,6 +1,5 @@
-import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/shared_methods.dart';
-import 'package:wlanpi_mobile/pages/tab_pages/fpms_page/dymanic_menu_page.dart';
+import 'package:wlanpi_mobile/pages/tab_pages/fpms_page/dynamic_menu_page.dart';
 import 'package:wlanpi_mobile/network_handler.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -14,7 +13,7 @@ class FPMSPageWidget extends StatefulWidget {
   State<FPMSPageWidget> createState() => _FPMSPageWidgetState();
 }
 
-void show_popup(BuildContext context, String title, String message) {
+void showPopup(BuildContext context, String title, String message) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -35,7 +34,7 @@ void show_popup(BuildContext context, String title, String message) {
   );
 }
 
-Future<String> action_func(String endpoint, String method) async {
+Future<String> actionFunc(String endpoint, String method) async {
   try {
     final response =
         await NetworkHandler().requestEndpoint("31415", endpoint, method);
@@ -46,37 +45,37 @@ Future<String> action_func(String endpoint, String method) async {
   }
 }
 
-Future<void> pressed_func(
+Future<void> pressedFunc(
     BuildContext context, String title, String endpoint, String method) async {
   try {
     final response =
         await NetworkHandler().requestEndpoint("31415", endpoint, method);
     String message = parseJsonToReadableText(response);
-    show_popup(context, title, message);
+    showPopup(context, title, message);
   } catch (e) {
-    show_popup(context, title, "$e");
+    showPopup(context, title, "$e");
   }
 }
 
-Future<void> bluetooth_on(BuildContext context) async {
+Future<void> bluetoothOn(BuildContext context) async {
   try {
     final response = await NetworkHandler()
         .requestEndpoint("31415", "/api/v1/bluetooth/power/on", "POST");
     String message = parseJsonToReadableText(response);
-    show_popup(context, "Bluetooth Power", message);
+    showPopup(context, "Bluetooth Power", message);
   } catch (e) {
-    show_popup(context, "Bluetooth Power", "$e");
+    showPopup(context, "Bluetooth Power", "$e");
   }
 }
 
-Future<void> bluetooth_off(BuildContext context) async {
+Future<void> bluetoothOff(BuildContext context) async {
   try {
     final response = await NetworkHandler()
         .requestEndpoint("31415", "/api/v1/bluetooth/power/off", "POST");
     String message = parseJsonToReadableText(response);
-    show_popup(context, "Bluetooth Power", message);
+    showPopup(context, "Bluetooth Power", message);
   } catch (e) {
-    show_popup(context, "Bluetooth Power", "$e");
+    showPopup(context, "Bluetooth Power", "$e");
   }
 }
 
@@ -87,7 +86,7 @@ final List<MenuItem> menuData = [
     subItems: [
       MenuItem(
           title: "Network Info",
-          action: () => action_func("/api/v1/network/info", "GET")),
+          action: () => actionFunc("/api/v1/network/info", "GET")),
     ],
   ),
   MenuItem(
@@ -95,9 +94,9 @@ final List<MenuItem> menuData = [
     subItems: [
       MenuItem(
           title: "Status",
-          action: () => action_func("/api/v1/bluetooth/status", "GET")),
-      MenuItem(title: "Turn On", onPressed: bluetooth_on),
-      MenuItem(title: "Turn Off", onPressed: bluetooth_off),
+          action: () => actionFunc("/api/v1/bluetooth/status", "GET")),
+      MenuItem(title: "Turn On", onPressed: bluetoothOn),
+      MenuItem(title: "Turn Off", onPressed: bluetoothOff),
     ],
   ),
   MenuItem(
@@ -105,16 +104,16 @@ final List<MenuItem> menuData = [
     subItems: [
       MenuItem(
           title: "Reachability",
-          action: () => action_func("/api/v1/utils/reachability", "GET")),
+          action: () => actionFunc("/api/v1/utils/reachability", "GET")),
       MenuItem(
           title: "Speedtest",
-          action: () => action_func("/api/v1/utils/speedtest", "GET")),
+          action: () => actionFunc("/api/v1/utils/speedtest", "GET")),
       MenuItem(
           title: "USB Devices",
-          action: () => action_func("/api/v1/utils/usb", "GET")),
+          action: () => actionFunc("/api/v1/utils/usb", "GET")),
       MenuItem(
           title: "UFW Ports",
-          action: () => action_func("/api/v1/utils/ufw", "GET")),
+          action: () => actionFunc("/api/v1/utils/ufw", "GET")),
     ],
   ),
   MenuItem(
@@ -125,11 +124,11 @@ final List<MenuItem> menuData = [
         subItems: [
           MenuItem(
               title: "Start",
-              action: () => action_func(
+              action: () => actionFunc(
                   "/api/v1/system/service/start?name=kismet", "POST")),
           MenuItem(
               title: "Stop",
-              action: () => action_func(
+              action: () => actionFunc(
                   "/api/v1/system/service/stop?name=kismet", "POST")),
         ],
       ),
@@ -138,22 +137,22 @@ final List<MenuItem> menuData = [
         subItems: [
           MenuItem(
               title: "Scan",
-              action: () => action_func("/api/v1/utils/ufw", "GET")),
+              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
           MenuItem(
               title: "Scan (no hidden)",
-              action: () => action_func("/api/v1/utils/ufw", "GET")),
+              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
           MenuItem(
               title: "Scan to CSV",
-              action: () => action_func("/api/v1/utils/ufw", "GET")),
+              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
           MenuItem(
             title: "Scan to PCAP",
             subItems: [
               MenuItem(
                   title: "Start",
-                  action: () => action_func("/api/v1/utils/ufw", "GET")),
+                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
               MenuItem(
                   title: "Stop",
-                  action: () => action_func("/api/v1/utils/ufw", "GET")),
+                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
             ],
           ),
         ],
@@ -165,15 +164,15 @@ final List<MenuItem> menuData = [
     subItems: [
       MenuItem(
           title: "About",
-          action: () => action_func("/api/v1/utils/ufw", "GET")),
+          action: () => actionFunc("/api/v1/utils/ufw", "GET")),
       MenuItem(
-          title: "Help", action: () => action_func("/api/v1/utils/ufw", "GET")),
+          title: "Help", action: () => actionFunc("/api/v1/utils/ufw", "GET")),
       MenuItem(
           title: "Summary",
-          action: () => action_func("/api/v1/system/device/stats", "GET")),
+          action: () => actionFunc("/api/v1/system/device/stats", "GET")),
       MenuItem(
           title: "Battery",
-          action: () => action_func("/api/v1/utils/ufw", "GET")),
+          action: () => actionFunc("/api/v1/utils/ufw", "GET")),
       MenuItem(
         title: "Settings",
         subItems: [
@@ -182,13 +181,13 @@ final List<MenuItem> menuData = [
             subItems: [
               MenuItem(
                   title: "Show Time & Zone",
-                  action: () => action_func("/api/v1/utils/ufw", "GET")),
+                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
               MenuItem(
                 title: "Set Timezone",
                 subItems: [
                   MenuItem(
                       title: "Auto",
-                      action: () => action_func("/api/v1/utils/ufw", "GET")),
+                      action: () => actionFunc("/api/v1/utils/ufw", "GET")),
                   // Add other time zone actions here
                 ],
               ),
@@ -199,13 +198,13 @@ final List<MenuItem> menuData = [
             subItems: [
               MenuItem(
                   title: "Show Domain",
-                  action: () => action_func("/api/v1/utils/ufw", "GET")),
+                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
               // Add other RF Domain settings here
             ],
           ),
           MenuItem(
               title: "Rotate Display",
-              action: () => action_func("/api/v1/utils/ufw", "GET")),
+              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
         ],
       ),
       MenuItem(
@@ -213,7 +212,7 @@ final List<MenuItem> menuData = [
         subItems: [
           MenuItem(
               title: "Confirm",
-              action: () => action_func("/api/v1/utils/ufw", "GET"))
+              action: () => actionFunc("/api/v1/utils/ufw", "GET"))
         ],
       ),
       MenuItem(
@@ -221,7 +220,7 @@ final List<MenuItem> menuData = [
         subItems: [
           MenuItem(
               title: "Confirm",
-              action: () => action_func("/api/v1/utils/ufw", "GET"))
+              action: () => actionFunc("/api/v1/utils/ufw", "GET"))
         ],
       ),
     ],
@@ -257,7 +256,6 @@ class _FPMSPageWidgetState extends State<FPMSPageWidget>
 
   @override
   Widget build(BuildContext context) {
-    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
