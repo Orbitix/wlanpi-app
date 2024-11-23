@@ -1,6 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/app_page_widget.dart';
-import 'package:wlanpi_mobile/pages/tab_pages/fpms_page/fpms_page_widget.dart';
+import 'package:wlanpi_mobile/pages/tab_pages/control_panel_page/control_panel_page_widget.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/stats_page_widget.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -329,7 +329,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                           tabs: const [
                             Tab(text: 'Stats'),
                             Tab(text: 'Apps'),
-                            Tab(text: 'FPMS'),
+                            Tab(text: 'Control Panel'),
                           ],
                         ),
                         const Expanded(
@@ -337,7 +337,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                             children: [
                               StatsPageWidget(),
                               AppsPageWidget(),
-                              FPMSPageWidget(),
+                              ControlPanelPageWidget(),
                             ],
                           ),
                         ),

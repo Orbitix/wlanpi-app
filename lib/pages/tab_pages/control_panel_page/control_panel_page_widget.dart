@@ -1,16 +1,16 @@
 import 'package:wlanpi_mobile/shared_methods.dart';
-import 'package:wlanpi_mobile/pages/tab_pages/fpms_page/dynamic_menu_page.dart';
+import 'package:wlanpi_mobile/pages/tab_pages/control_panel_page/dynamic_menu_page.dart';
 import 'package:wlanpi_mobile/network_handler.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 
-class FPMSPageWidget extends StatefulWidget {
-  const FPMSPageWidget({super.key});
+class ControlPanelPageWidget extends StatefulWidget {
+  const ControlPanelPageWidget({super.key});
 
   @override
-  State<FPMSPageWidget> createState() => _FPMSPageWidgetState();
+  State<ControlPanelPageWidget> createState() => _ControlPanelPageWidgetState();
 }
 
 void showPopup(BuildContext context, String title, String message) {
@@ -106,9 +106,6 @@ final List<MenuItem> menuData = [
           title: "Reachability",
           action: () => actionFunc("/api/v1/utils/reachability", "GET")),
       MenuItem(
-          title: "Speedtest",
-          action: () => actionFunc("/api/v1/utils/speedtest", "GET")),
-      MenuItem(
           title: "USB Devices",
           action: () => actionFunc("/api/v1/utils/usb", "GET")),
       MenuItem(
@@ -162,11 +159,6 @@ final List<MenuItem> menuData = [
   MenuItem(
     title: "System",
     subItems: [
-      MenuItem(
-          title: "About",
-          action: () => actionFunc("/api/v1/utils/ufw", "GET")),
-      MenuItem(
-          title: "Help", action: () => actionFunc("/api/v1/utils/ufw", "GET")),
       MenuItem(
           title: "Summary",
           action: () => actionFunc("/api/v1/system/device/stats", "GET")),
@@ -242,7 +234,7 @@ class MenuItem {
   });
 }
 
-class _FPMSPageWidgetState extends State<FPMSPageWidget>
+class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
     with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -252,7 +244,6 @@ class _FPMSPageWidgetState extends State<FPMSPageWidget>
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
