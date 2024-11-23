@@ -1,19 +1,14 @@
-import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/fpms_page/retractable_card.dart';
-import 'package:wlanpi_mobile/shared_methods.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/fpms_page/fpms_page_widget.dart';
 
-import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DynamicMenuPage extends StatefulWidget {
   final List<MenuItem> menuItems;
 
-  DynamicMenuPage({required this.menuItems});
+  const DynamicMenuPage({super.key, required this.menuItems});
 
   @override
   _DynamicMenuPageState createState() => _DynamicMenuPageState();

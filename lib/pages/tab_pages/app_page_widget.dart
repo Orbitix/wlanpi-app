@@ -26,10 +26,6 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

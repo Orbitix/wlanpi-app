@@ -39,12 +39,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
   Future<void> _testDevice() async {
     try {
-      // Create an instance of NetworkHandler
-      NetworkHandler networkHandler = NetworkHandler();
-
-      // Call the requestEndpoint method on the instance
-      Map<String, dynamic> response = await networkHandler.requestEndpoint(
-          "31415", "/api/v1/system/device/model", "GET");
+      Map<String, dynamic> response = await NetworkHandler()
+          .requestEndpoint("31415", "/api/v1/system/device/model", "GET");
 
       if (response.containsKey("Error")) {
         print("Failed to contact PI");
@@ -215,8 +211,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: CachedNetworkImage(
-                              fadeInDuration: Duration(milliseconds: 500),
-                              fadeOutDuration: Duration(milliseconds: 500),
+                              fadeInDuration: const Duration(milliseconds: 500),
+                              fadeOutDuration: const Duration(milliseconds: 500),
                               imageUrl:
                                   'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
                               width: 300.0,
@@ -245,7 +241,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: transport_type,
-                                  hint: Text('Select the connection method'),
+                                  hint: const Text('Select the connection method'),
                                   items: transport_types.map((String type) {
                                     return DropdownMenuItem<String>(
                                       value: type,
@@ -262,7 +258,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(2.0),
+                            padding: const EdgeInsets.all(2.0),
                             child: FFButtonWidget(
                               onPressed: () async {
                                 await _setTransportType();
@@ -271,9 +267,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               options: FFButtonOptions(
                                 width: double.infinity,
                                 height: 50.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 0.0),
                                 color: theme.primary,
                                 textStyle: theme.titleSmall.override(
@@ -288,7 +284,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               ),
                             ),
                           ),
-                        ].divide(SizedBox(height: 10.0)),
+                        ].divide(const SizedBox(height: 10.0)),
                       )),
                 ),
                 Text(

@@ -25,10 +25,6 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -31,6 +31,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace 'com.wlanpi.wlanpiapp'
     compileSdkVersion 34
     
     compileOptions {
@@ -83,9 +84,9 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10"
-    implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'androidx.core:core-ktx:1.13.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10"
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'androidx.core:core-ktx:1.13.1'
     // implementation 'com.squareup.okhttp3:okhttp:4.9.3' // OkHttp for HTTP requests
     // implementation 'androidx.preference:preference:1.2.0' // For shared preferences
     // implementation 'com.github.nukleon:usb-serial-for-android:3.3.0' // For USB OTG

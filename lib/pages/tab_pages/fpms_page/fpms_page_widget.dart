@@ -5,10 +5,7 @@ import 'package:wlanpi_mobile/network_handler.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class FPMSPageWidget extends StatefulWidget {
   const FPMSPageWidget({super.key});
@@ -128,10 +125,12 @@ final List<MenuItem> menuData = [
         subItems: [
           MenuItem(
               title: "Start",
-              action: () => action_func("/api/v1/utils/ufw", "GET")),
+              action: () => action_func(
+                  "/api/v1/system/service/start?name=kismet", "POST")),
           MenuItem(
               title: "Stop",
-              action: () => action_func("/api/v1/utils/ufw", "GET")),
+              action: () => action_func(
+                  "/api/v1/system/service/stop?name=kismet", "POST")),
         ],
       ),
       MenuItem(
@@ -255,10 +254,6 @@ class _FPMSPageWidgetState extends State<FPMSPageWidget>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -18,11 +18,13 @@ class AppStateNotifier extends ChangeNotifier {
   static AppStateNotifier? _instance;
   static AppStateNotifier get instance => _instance ??= AppStateNotifier._();
 
-  bool showSplashImage = true;
+  bool showSplashImage =
+      false; //  temporarlily disabled because splash screen is hanging
 
   void stopShowingSplashImage() {
     showSplashImage = false;
     notifyListeners();
+    debugPrint('Splash image stopped. showSplashImage: $showSplashImage');
   }
 }
 
@@ -48,20 +50,24 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) => appStateNotifier.showSplashImage
-              ? Builder(
-                  builder: (context) => Container(
-                    color: FlutterFlowTheme.of(context).primary,
-                    child: Center(
-                      child: Image.asset(
-                        'assets/images/WLANPI_Mobile_Logo_(1).png',
-                        width: MediaQuery.sizeOf(context).width * 0.5,
-                        fit: BoxFit.contain,
+          builder: (context, _) {
+            debugPrint(
+                'Building _initialize route. showSplashImage: ${appStateNotifier.showSplashImage}');
+            return appStateNotifier.showSplashImage
+                ? Builder(
+                    builder: (context) => Container(
+                      color: FlutterFlowTheme.of(context).primary,
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/WLANPI_Mobile_Logo_(1).png',
+                          width: MediaQuery.sizeOf(context).width * 0.5,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                  ),
-                )
-              : const HomePageWidget(),
+                  )
+                : const HomePageWidget();
+          },
         ),
         FFRoute(
           name: 'HomePage',

@@ -109,12 +109,14 @@ class MainActivity : FlutterActivity() {
             result.error("NO_TRANSPORT", "No suitable transport type available", null)
             return
         }
-
+        
         connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkRequest = NetworkRequest.Builder()
-            .addTransportType(transportType)
-            .build()
+        .addTransportType(transportType)
+        .build()
 
+        Log.d("Network", "Finished network setup")
+        
         networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
@@ -138,15 +140,16 @@ class MainActivity : FlutterActivity() {
                         Log.e("Network", "Error accessing API", e)
                         result.error("NETWORK_ERROR", "Error accessing API", e.localizedMessage)
                     } finally {
-                        connection?.disconnect() // Close the connection
+//                        connection?.disconnect() // Close the connection
                         isRequestingNetwork = false
-                        cleanupNetworkRequest()
+//                        cleanupNetworkRequest()
                     }
                 }
             }
 
             override fun onUnavailable() {
                 super.onUnavailable()
+                Log.e("Network", "Bluetooth PAN network unavailable")
                 result.error("NETWORK_UNAVAILABLE", "Bluetooth PAN network unavailable", null)
                 isRequestingNetwork = false
                 cleanupNetworkRequest()
@@ -154,6 +157,7 @@ class MainActivity : FlutterActivity() {
 
             override fun onLost(network: Network) {
                 super.onLost(network)
+                Log.e("Network", "Network connection lost")
                 result.error("NETWORK_LOST", "Network connection lost", null)
                 isRequestingNetwork = false
                 cleanupNetworkRequest()
@@ -172,6 +176,7 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun cleanupNetworkRequest() {
+        Log.e("Network", "Cleaning up network request")
         networkCallback?.let {
             connectivityManager?.unregisterNetworkCallback(it)
         }

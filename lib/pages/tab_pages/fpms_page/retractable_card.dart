@@ -5,7 +5,7 @@ class RetractableCard extends StatefulWidget {
   final String title;
   final Future<String> Function() fetchContent;
 
-  RetractableCard({required this.title, required this.fetchContent});
+  const RetractableCard({super.key, required this.title, required this.fetchContent});
 
   @override
   _RetractableCardState createState() => _RetractableCardState();
