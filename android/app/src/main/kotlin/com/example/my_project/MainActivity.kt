@@ -17,13 +17,15 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
+import java.util.concurrent.LinkedBlockingQueue
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "network_interface_binding"
     private var connectivityManager: ConnectivityManager? = null
-    private val executor = Executors.newSingleThreadExecutor()
-    private var isRequestingNetwork = false
+    private val executor = Executors.newSingleThreadExecutor()  // Single-thread executor to ensure requests are processed one by one
+    private val requestQueue = LinkedBlockingQueue<Runnable>()  // Queue to hold requests
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private var isRequestingNetwork = false
     var PRIVATE_MODE = 0
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -37,11 +39,7 @@ class MainActivity : FlutterActivity() {
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         if (port != null && endpoint != null && method != null) {
-                            if (!isRequestingNetwork) {
-                                connectToEndpoint(port, endpoint, method, result)
-                            } else {
-                                result.error("TOO_MANY_REQUESTS", "A network request is already in progress", null)
-                            }
+                            queueRequest(port, endpoint, method, result)
                         } else {
                             result.error("INVALID_ARGUMENT", "Endpoint or method argument is missing", null)
                         }
@@ -80,27 +78,41 @@ class MainActivity : FlutterActivity() {
         return null // No suitable transport type found
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun queueRequest(port: String, endpoint: String, method: String, result: MethodChannel.Result) {
+        val requestRunnable = Runnable {
+            if (!isRequestingNetwork) {
+                connectToEndpoint(port, endpoint, method, result)
+            } else {
+                // If a request is already in progress, enqueue the new one
+                Log.d("Network", "Request queued: $endpoint")
+                try {
+                    requestQueue.put(Runnable {
+                        connectToEndpoint(port, endpoint, method, result)
+                    })
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                    result.error("QUEUE_ERROR", "Error queuing request", e.localizedMessage)
+                }
+            }
+        }
+        executor.execute(requestRunnable)  // Execute the queue handler
+    }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun connectToEndpoint(port: String, endpoint: String, method: String, result: MethodChannel.Result) {
-        // val transportType = detectTransportType() // will be implemented when automatic detection is functional. for now it is set using a dropdown on the homepage
-
-        var transportType = NetworkCapabilities.TRANSPORT_BLUETOOTH // default transport type
-
+        var transportType = NetworkCapabilities.TRANSPORT_BLUETOOTH // Default transport type
         val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
         val transportSetting = mPrefs.getString("flutter.transportType", "")
         var ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
 
-
         when (transportSetting) {
             "Bluetooth" -> {
                 Log.d("Network", "Using Bluetooth transport")
-                var ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
                 transportType = NetworkCapabilities.TRANSPORT_BLUETOOTH
             }
             "USB OTG" -> {
                 Log.d("Network", "Using OTG transport")
-                var ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
                 transportType = NetworkCapabilities.TRANSPORT_ETHERNET
             }
         }
@@ -109,14 +121,10 @@ class MainActivity : FlutterActivity() {
             result.error("NO_TRANSPORT", "No suitable transport type available", null)
             return
         }
-        
-        connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkRequest = NetworkRequest.Builder()
-        .addTransportType(transportType)
-        .build()
 
-        Log.d("Network", "Finished network setup")
-        
+        connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkRequest = NetworkRequest.Builder().addTransportType(transportType).build()
+
         networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
@@ -140,9 +148,8 @@ class MainActivity : FlutterActivity() {
                         Log.e("Network", "Error accessing API", e)
                         result.error("NETWORK_ERROR", "Error accessing API", e.localizedMessage)
                     } finally {
-//                        connection?.disconnect() // Close the connection
                         isRequestingNetwork = false
-//                        cleanupNetworkRequest()
+                        processNextRequest()  // Process next request in queue
                     }
                 }
             }
@@ -152,7 +159,7 @@ class MainActivity : FlutterActivity() {
                 Log.e("Network", "Bluetooth PAN network unavailable")
                 result.error("NETWORK_UNAVAILABLE", "Bluetooth PAN network unavailable", null)
                 isRequestingNetwork = false
-                cleanupNetworkRequest()
+                processNextRequest()  // Process next request in queue
             }
 
             override fun onLost(network: Network) {
@@ -160,7 +167,7 @@ class MainActivity : FlutterActivity() {
                 Log.e("Network", "Network connection lost")
                 result.error("NETWORK_LOST", "Network connection lost", null)
                 isRequestingNetwork = false
-                cleanupNetworkRequest()
+                processNextRequest()  // Process next request in queue
             }
         }
 
@@ -171,7 +178,13 @@ class MainActivity : FlutterActivity() {
             Log.e("Network", "Failed to request network", e)
             result.error("NETWORK_REQUEST_FAILED", "Failed to request network", e.localizedMessage)
             isRequestingNetwork = false
-            cleanupNetworkRequest()
+            processNextRequest()  // Process next request in queue
+        }
+    }
+
+    private fun processNextRequest() {
+        if (!requestQueue.isEmpty()) {
+            executor.execute(requestQueue.take())  // Take the next request from the queue and execute it
         }
     }
 
