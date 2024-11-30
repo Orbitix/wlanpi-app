@@ -114,49 +114,6 @@ final List<MenuItem> menuData = [
     ],
   ),
   MenuItem(
-    title: "Apps",
-    subItems: [
-      MenuItem(
-        title: "Kismet",
-        subItems: [
-          MenuItem(
-              title: "Start",
-              action: () => actionFunc(
-                  "/api/v1/system/service/start?name=kismet", "POST")),
-          MenuItem(
-              title: "Stop",
-              action: () => actionFunc(
-                  "/api/v1/system/service/stop?name=kismet", "POST")),
-        ],
-      ),
-      MenuItem(
-        title: "Scanner",
-        subItems: [
-          MenuItem(
-              title: "Scan",
-              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
-          MenuItem(
-              title: "Scan (no hidden)",
-              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
-          MenuItem(
-              title: "Scan to CSV",
-              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
-          MenuItem(
-            title: "Scan to PCAP",
-            subItems: [
-              MenuItem(
-                  title: "Start",
-                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
-              MenuItem(
-                  title: "Stop",
-                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
-            ],
-          ),
-        ],
-      ),
-    ],
-  ),
-  MenuItem(
     title: "System",
     subItems: [
       MenuItem(
