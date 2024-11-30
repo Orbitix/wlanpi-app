@@ -17,15 +17,14 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
-import java.util.concurrent.LinkedBlockingQueue
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "network_interface_binding"
     private var connectivityManager: ConnectivityManager? = null
-    private val executor = Executors.newSingleThreadExecutor()  // Single-thread executor to ensure requests are processed one by one
-    private val requestQueue = LinkedBlockingQueue<Runnable>()  // Queue to hold requests
-    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private val executor = Executors.newSingleThreadExecutor()
     private var isRequestingNetwork = false
+    private var activeNetwork: Network? = null
+    private var activeNetworkCallback: ConnectivityManager.NetworkCallback? = null
     var PRIVATE_MODE = 0
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -39,7 +38,7 @@ class MainActivity : FlutterActivity() {
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         if (port != null && endpoint != null && method != null) {
-                            queueRequest(port, endpoint, method, result)
+                            connectToEndpoint(port, endpoint, method, result)
                         } else {
                             result.error("INVALID_ARGUMENT", "Endpoint or method argument is missing", null)
                         }
@@ -78,121 +77,110 @@ class MainActivity : FlutterActivity() {
         return null // No suitable transport type found
     }
 
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun queueRequest(port: String, endpoint: String, method: String, result: MethodChannel.Result) {
-        val requestRunnable = Runnable {
-            if (!isRequestingNetwork) {
-                connectToEndpoint(port, endpoint, method, result)
-            } else {
-                // If a request is already in progress, enqueue the new one
-                Log.d("Network", "Request queued: $endpoint")
-                try {
-                    requestQueue.put(Runnable {
-                        connectToEndpoint(port, endpoint, method, result)
-                    })
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                    result.error("QUEUE_ERROR", "Error queuing request", e.localizedMessage)
+    private fun performRequest(network: Network, port: String, endpoint: String, method: String, result: MethodChannel.Result) {
+        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+        var ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
+
+        executor.execute {
+            var connection: HttpURLConnection? = null
+            try {
+                val fullURL = "http://${ip}:${port}${endpoint}"
+                Log.d("Network", "Performing request: $fullURL")
+                val url = URL(fullURL)
+                connection = network.openConnection(url) as HttpURLConnection
+                connection.requestMethod = method
+                val responseCode = connection.responseCode
+                val response = BufferedReader(InputStreamReader(connection.inputStream)).use { it.readText() }
+
+                if (responseCode == 200) {
+                    result.success(response)
+                } else {
+                    result.error("HTTP_ERROR", "HTTP error code: $responseCode", null)
                 }
+            } catch (e: Exception) {
+                Log.e("Network", "Error performing request", e)
+                // result.error("NETWORK_ERROR", "Error performing request", e.localizedMessage)
+            } finally {
+                connection?.disconnect()
             }
         }
-        executor.execute(requestRunnable)  // Execute the queue handler
     }
+
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun connectToEndpoint(port: String, endpoint: String, method: String, result: MethodChannel.Result) {
         var transportType = NetworkCapabilities.TRANSPORT_BLUETOOTH // Default transport type
         val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
         val transportSetting = mPrefs.getString("flutter.transportType", "")
-        var ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
 
-        when (transportSetting) {
-            "Bluetooth" -> {
-                Log.d("Network", "Using Bluetooth transport")
-                transportType = NetworkCapabilities.TRANSPORT_BLUETOOTH
+        transportType = when (transportSetting) {
+            "Bluetooth" -> NetworkCapabilities.TRANSPORT_BLUETOOTH
+            "USB OTG" -> NetworkCapabilities.TRANSPORT_ETHERNET
+            else -> {
+                result.error("NO_TRANSPORT", "No suitable transport type available", null)
+                return
             }
-            "USB OTG" -> {
-                Log.d("Network", "Using OTG transport")
-                transportType = NetworkCapabilities.TRANSPORT_ETHERNET
-            }
-        }
-
-        if (transportType == null) {
-            result.error("NO_TRANSPORT", "No suitable transport type available", null)
-            return
         }
 
         connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkRequest = NetworkRequest.Builder().addTransportType(transportType).build()
 
-        networkCallback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                executor.execute {
-                    var connection: HttpURLConnection? = null
-                    try {
-                        val fullURL = "http://${ip}:${port}${endpoint}"
-                        Log.d("Network", "Requesting network: $fullURL")
-                        val url = URL(fullURL)
-                        connection = network.openConnection(url) as HttpURLConnection
-                        connection.requestMethod = method
-                        val responseCode = connection.responseCode
-                        val response = BufferedReader(InputStreamReader(connection.inputStream)).use { it.readText() }
-
-                        if (responseCode == 200) {
-                            result.success(response)
-                        } else {
-                            result.error("HTTP_ERROR", "HTTP error code: $responseCode", null)
-                        }
-                    } catch (e: Exception) {
-                        Log.e("Network", "Error accessing API", e)
-                        result.error("NETWORK_ERROR", "Error accessing API", e.localizedMessage)
-                    } finally {
-                        isRequestingNetwork = false
-                        processNextRequest()  // Process next request in queue
+        if (activeNetwork != null) {
+            Log.d("Network", "Reusing active network")
+            performRequest(activeNetwork!!, port, endpoint, method, result)
+        } else {
+            val networkRequest = NetworkRequest.Builder().addTransportType(transportType).build()
+    
+            val networkCallback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    Log.d("Network", "Network available: $network")
+                    activeNetwork = network
+                    activeNetworkCallback = this
+                    performRequest(network, port, endpoint, method, result)
+                }
+                
+    
+                override fun onUnavailable() {
+                    super.onUnavailable()
+                    Log.e("Network", "Bluetooth PAN network unavailable")
+                    result.error("NETWORK_UNAVAILABLE", "Bluetooth PAN network unavailable", null)
+                }
+    
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    Log.e("Network", "Network connection lost")
+                    if (network == activeNetwork) {
+                        activeNetwork = null
+                        activeNetworkCallback = null
                     }
                 }
             }
-
-            override fun onUnavailable() {
-                super.onUnavailable()
-                Log.e("Network", "Bluetooth PAN network unavailable")
-                result.error("NETWORK_UNAVAILABLE", "Bluetooth PAN network unavailable", null)
-                isRequestingNetwork = false
-                processNextRequest()  // Process next request in queue
-            }
-
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                Log.e("Network", "Network connection lost")
-                result.error("NETWORK_LOST", "Network connection lost", null)
-                isRequestingNetwork = false
-                processNextRequest()  // Process next request in queue
+    
+            connectivityManager?.registerNetworkCallback(networkRequest, networkCallback)
+    
+            if (activeNetworkCallback == null) {
+                try {
+                    connectivityManager?.requestNetwork(networkRequest, networkCallback)
+                } catch (e: Exception) {
+                    Log.e("Network", "Failed to request network", e)
+                    result.error("NETWORK_REQUEST_FAILED", "Failed to request network", e.localizedMessage)
+                } finally {
+                    processNextRequest()
+                }
+            } else {
+                Log.d("Network", "Network callback already registered")
             }
         }
+    }
 
-        isRequestingNetwork = true
+    private fun cleanupNetworkRequest(callback: ConnectivityManager.NetworkCallback) {
+        Log.d("Network", "Cleaning up network request")
         try {
-            connectivityManager?.requestNetwork(networkRequest, networkCallback!!)
+            connectivityManager?.unregisterNetworkCallback(callback)
         } catch (e: Exception) {
-            Log.e("Network", "Failed to request network", e)
-            result.error("NETWORK_REQUEST_FAILED", "Failed to request network", e.localizedMessage)
-            isRequestingNetwork = false
-            processNextRequest()  // Process next request in queue
+            Log.e("Network", "Error cleaning up network request", e)
         }
-    }
-
-    private fun processNextRequest() {
-        if (!requestQueue.isEmpty()) {
-            executor.execute(requestQueue.take())  // Take the next request from the queue and execute it
-        }
-    }
-
-    private fun cleanupNetworkRequest() {
-        Log.e("Network", "Cleaning up network request")
-        networkCallback?.let {
-            connectivityManager?.unregisterNetworkCallback(it)
-        }
-        networkCallback = null
     }
 }
