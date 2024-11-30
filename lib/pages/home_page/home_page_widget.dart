@@ -212,7 +212,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                             borderRadius: BorderRadius.circular(8.0),
                             child: CachedNetworkImage(
                               fadeInDuration: const Duration(milliseconds: 500),
-                              fadeOutDuration: const Duration(milliseconds: 500),
+                              fadeOutDuration:
+                                  const Duration(milliseconds: 500),
                               imageUrl:
                                   'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
                               width: 300.0,
@@ -241,7 +242,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: transport_type,
-                                  hint: const Text('Select the connection method'),
+                                  hint: const Text(
+                                      'Select the connection method'),
                                   items: transport_types.map((String type) {
                                     return DropdownMenuItem<String>(
                                       value: type,
@@ -269,8 +271,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                 height: 50.0,
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
-                                iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
+                                iconPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
                                 color: theme.primary,
                                 textStyle: theme.titleSmall.override(
                                   fontFamily: theme.titleSmallFamily,

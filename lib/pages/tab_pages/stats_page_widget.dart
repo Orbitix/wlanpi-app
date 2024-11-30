@@ -25,7 +25,6 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);

@@ -26,7 +26,6 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);
