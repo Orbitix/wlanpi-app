@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wlanpi_mobile/network_handler.dart';
 
@@ -35,6 +37,14 @@ class _HomePageWidgetState extends State<HomePageWidget>
     await prefs.setString('transportType', transport_type!);
 
     await _testDevice();
+  }
+
+  Future<void> _handleButton() async {
+    try {
+      final result = await _setTransportType().timeout(Duration(seconds: 10), onTimeout: () {throw TimeoutException("Operation Timed Out");});
+    }
+    catch(e) {print(e);}
+
   }
 
   Future<void> _testDevice() async {
@@ -263,7 +273,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                             padding: const EdgeInsets.all(2.0),
                             child: FFButtonWidget(
                               onPressed: () async {
-                                await _setTransportType();
+                                await _handleButton();
                               },
                               text: 'Connect',
                               options: FFButtonOptions(
