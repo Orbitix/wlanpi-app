@@ -75,16 +75,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => const HomePageWidget(),
         ),
         FFRoute(
-          name: 'USBConnection',
-          path: '/USBConnection',
-          builder: (context, params) => const USBConnectionWidget(),
-        ),
-        FFRoute(
-          name: 'BluetoothConnection',
-          path: '/bluetoothConnection',
-          builder: (context, params) => const BluetoothConnectionWidget(),
-        ),
-        FFRoute(
           name: 'DevicePage',
           path: '/devicePage',
           builder: (context, params) => const DevicePageWidget(),
