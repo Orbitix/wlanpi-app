@@ -32,6 +32,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
   String? transport_type = "Bluetooth";
   final List<String> transport_types = ['Bluetooth', 'USB OTG'];
 
+  bool useCustomTransport = false;
+
   Future<void> _setTransportType() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('transportType', transport_type!);
@@ -39,12 +41,27 @@ class _HomePageWidgetState extends State<HomePageWidget>
     await _testDevice();
   }
 
+  Future<void> _setUseCustomTransport(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('useCustomTransport', value);
+  }
+
   Future<void> _handleButton() async {
     try {
-      final result = await _setTransportType().timeout(Duration(seconds: 10), onTimeout: () {throw TimeoutException("Operation Timed Out");});
+      await _setTransportType().timeout(Duration(seconds: 10), onTimeout: () {
+        throw TimeoutException("Operation Timed Out");
+      });
+    } catch (e) {
+      print(e);
     }
-    catch(e) {print(e);}
+  }
 
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      useCustomTransport = prefs.getBool('useCustomTransport') ?? false;
+      transport_type = prefs.getString('transportType') ?? 'Bluetooth';
+    });
   }
 
   Future<void> _testDevice() async {
@@ -108,6 +125,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
     _model = createModel(context, () => HomePageModel());
 
     _loadIPs();
+    _loadPreferences();
 
     animationsMap.addAll({
       'imageOnPageLoadAnimation': AnimationInfo(
@@ -231,43 +249,54 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               fit: BoxFit.cover,
                             ),
                           ),
-                          Text(
-                            'Connect Via:',
-                            style: theme.bodyMedium.override(
-                              fontFamily: theme.bodyMediumFamily,
-                              letterSpacing: 0.0,
-                              useGoogleFonts: GoogleFonts.asMap()
-                                  .containsKey(theme.bodyMediumFamily),
-                            ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: theme.secondaryBackground,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  value: transport_type,
-                                  hint: const Text(
-                                      'Select the connection method'),
-                                  items: transport_types.map((String type) {
-                                    return DropdownMenuItem<String>(
-                                      value: type,
-                                      child: Text(type),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      transport_type = newValue;
-                                    });
-                                  },
-                                ),
+                          Column(
+                            children: [
+                              SwitchListTile(
+                                title: Text('Connection Method Override'),
+                                value: useCustomTransport,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    useCustomTransport = value;
+                                  });
+                                  _setUseCustomTransport(value);
+                                },
+                                activeColor: theme.primary,
+                                activeTrackColor: theme.accent1,
+                                inactiveTrackColor: theme.primaryBackground,
                               ),
-                            ),
+                              if (useCustomTransport) ...[
+                                Container(
+                                  width: double.infinity,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: theme.secondaryBackground,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value: transport_type,
+                                        hint: const Text(
+                                            'Select the connection method'),
+                                        items:
+                                            transport_types.map((String type) {
+                                          return DropdownMenuItem<String>(
+                                            value: type,
+                                            child: Text(type),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            transport_type = newValue;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                           Padding(
                             padding: const EdgeInsets.all(2.0),

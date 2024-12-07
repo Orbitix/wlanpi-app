@@ -6,7 +6,6 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import android.util.Log
-import android.content.SharedPreferences
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
@@ -31,7 +30,9 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
+                call,
+                result ->
             when (call.method) {
                 "connectToEndpoint" -> {
                     val port = call.argument<String>("port")
@@ -42,7 +43,11 @@ class MainActivity : FlutterActivity() {
                         if (port != null && endpoint != null && method != null) {
                             connectToEndpoint(port, endpoint, method, result)
                         } else {
-                            result.error("INVALID_ARGUMENT", "Endpoint or method argument is missing", null)
+                            result.error(
+                                    "INVALID_ARGUMENT",
+                                    "Endpoint or method argument is missing",
+                                    null
+                            )
                         }
                     } else {
                         result.error("UNSUPPORTED_VERSION", "Android version not supported", null)
@@ -56,30 +61,25 @@ class MainActivity : FlutterActivity() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun detectTransportType(): Int? {
         val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networks = connectivityManager.allNetworks // Get all available networks
-
-        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+        val networks = connectivityManager.allNetworks
 
         for (network in networks) {
             val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
 
-            Log.d("Network", "cap: $networkCapabilities")
+            // Log.d("Network", "cap: $networkCapabilities")
 
             if (networkCapabilities != null) {
 
                 if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
                     Log.d("NetworkCheck", "Using Ethernet transport")
-                    ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
                     return NetworkCapabilities.TRANSPORT_ETHERNET
                 }
                 if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_USB)) {
                     Log.d("NetworkCheck", "Using USB transport")
-                    ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
                     return NetworkCapabilities.TRANSPORT_USB
                 }
                 if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH)) {
                     Log.d("NetworkCheck", "Using Bluetooth transport")
-                    ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
                     return NetworkCapabilities.TRANSPORT_BLUETOOTH
                 }
             } else {
@@ -90,9 +90,29 @@ class MainActivity : FlutterActivity() {
         return null // No suitable transport type found
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun setIPAddress() {
+        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+
+        if (transportType == NetworkCapabilities.TRANSPORT_ETHERNET) {
+            ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
+        } else if (transportType == NetworkCapabilities.TRANSPORT_USB) {
+            ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
+        } else if (transportType == NetworkCapabilities.TRANSPORT_BLUETOOTH) {
+            ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
+        } else {
+            Log.d("NetworkCheck", "No IP address found for transport type: $transportType")
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun performRequest(network: Network, port: String, endpoint: String, method: String, result: MethodChannel.Result) {
+    private fun performRequest(
+            network: Network,
+            port: String,
+            endpoint: String,
+            method: String,
+            result: MethodChannel.Result
+    ) {
         executor.execute {
             var connection: HttpURLConnection? = null
             try {
@@ -102,7 +122,10 @@ class MainActivity : FlutterActivity() {
                 connection = network.openConnection(url) as HttpURLConnection
                 connection.requestMethod = method
                 val responseCode = connection.responseCode
-                val response = BufferedReader(InputStreamReader(connection.inputStream)).use { it.readText() }
+                val response =
+                        BufferedReader(InputStreamReader(connection.inputStream)).use {
+                            it.readText()
+                        }
 
                 if (responseCode == 200) {
                     result.success(response)
@@ -118,66 +141,82 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun connectToEndpoint(port: String, endpoint: String, method: String, result: MethodChannel.Result) {
-//        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
-//        val transportSetting = mPrefs.getString("flutter.transportType", "")
-//
-//        val transportType = when (transportSetting) {
-//            "Bluetooth" -> NetworkCapabilities.TRANSPORT_BLUETOOTH
-//            "USB OTG" -> NetworkCapabilities.TRANSPORT_ETHERNET
-//            else -> {
-//                result.error("NO_TRANSPORT", "No suitable transport type available", null)
-//                return
-//            }
-//        }
+    private fun connectToEndpoint(
+            port: String,
+            endpoint: String,
+            method: String,
+            result: MethodChannel.Result
+    ) {
+        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+        val customTransportType = mPrefs.getBoolean("flutter.useCustomTransport", false)
+        val transportSetting = mPrefs.getString("flutter.transportType", "")
 
-        transportType = detectTransportType()
+        if (customTransportType) {
+            transportType =
+                    when (transportSetting) {
+                        "Bluetooth" -> NetworkCapabilities.TRANSPORT_BLUETOOTH
+                        "USB OTG" -> NetworkCapabilities.TRANSPORT_ETHERNET
+                        else -> {
+                            result.error(
+                                    "NO_TRANSPORT",
+                                    "No suitable transport type available",
+                                    null
+                            )
+                            return
+                        }
+                    }
+        } else {
+            transportType = detectTransportType()
+        }
 
         val currentTransportType = transportType
 
+        setIPAddress()
+
         Log.d("Network", "Transport type: $currentTransportType")
+        Log.d("Network", "IP Address: $ip")
 
         if (currentTransportType == null) {
             result.error("NETWORK_FAILED", "No suitable transport type found.", null)
             return
         }
-        
+
         connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 
         if (activeNetwork != null) {
             Log.d("Network", "Reusing active network")
             performRequest(activeNetwork!!, port, endpoint, method, result)
         } else {
-            val networkRequest = NetworkRequest.Builder().addTransportType(currentTransportType).build()
-            
-            val networkCallback = object : ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network: Network) {
-                    super.onAvailable(network)
-                    Log.d("Network", "Network available: $network")
-                    activeNetwork = network
-                    activeNetworkCallback = this
-                    performRequest(network, port, endpoint, method, result)
-                }
-                
-                
-                override fun onUnavailable() {
-                    super.onUnavailable()
-                    Log.e("Network", "network unavailable")
-                    result.error("NETWORK_UNAVAILABLE", "network unavailable", null)
-                }
-                
-                override fun onLost(network: Network) {
-                    super.onLost(network)
-                    Log.e("Network", "Network connection lost")
-                    if (network == activeNetwork) {
-                        activeNetwork = null
-                        activeNetworkCallback = null
+            val networkRequest =
+                    NetworkRequest.Builder().addTransportType(currentTransportType).build()
+
+            val networkCallback =
+                    object : ConnectivityManager.NetworkCallback() {
+                        override fun onAvailable(network: Network) {
+                            super.onAvailable(network)
+                            Log.d("Network", "Network available: $network")
+                            activeNetwork = network
+                            activeNetworkCallback = this
+                            performRequest(network, port, endpoint, method, result)
+                        }
+
+                        override fun onUnavailable() {
+                            super.onUnavailable()
+                            Log.e("Network", "network unavailable")
+                            result.error("NETWORK_UNAVAILABLE", "network unavailable", null)
+                        }
+
+                        override fun onLost(network: Network) {
+                            super.onLost(network)
+                            Log.e("Network", "Network connection lost")
+                            if (network == activeNetwork) {
+                                activeNetwork = null
+                                activeNetworkCallback = null
+                            }
+                        }
                     }
-                }
-            }
-            
+
             Log.d("Network", "active network callback: $activeNetworkCallback")
             if (activeNetworkCallback == null) {
                 Log.d("Network", "No active callback. Requesting network")
@@ -185,7 +224,11 @@ class MainActivity : FlutterActivity() {
                     connectivityManager?.requestNetwork(networkRequest, networkCallback)
                 } catch (e: Exception) {
                     Log.e("Network", "Failed to request network", e)
-                    result.error("NETWORK_REQUEST_FAILED", "Failed to request network", e.localizedMessage)
+                    result.error(
+                            "NETWORK_REQUEST_FAILED",
+                            "Failed to request network",
+                            e.localizedMessage
+                    )
                 }
             } else {
                 Log.d("Network", "Network callback already registered")
