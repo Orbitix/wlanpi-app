@@ -61,32 +61,32 @@ class MainActivity : FlutterActivity() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun detectTransportType(): Int? {
         val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networks = connectivityManager.allNetworks
 
-        // Get the currently active network
-        val activeNetwork = connectivityManager.activeNetwork
-        if (activeNetwork != null) {
-            val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+        for (network in networks) {
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+
+            // Log.d("Network", "cap: $networkCapabilities")
+
             if (networkCapabilities != null) {
-                when {
-                    networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                        Log.d("NetworkCheck", "Using Ethernet transport")
-                        return NetworkCapabilities.TRANSPORT_ETHERNET
-                    }
-                    networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_USB) -> {
-                        Log.d("NetworkCheck", "Using USB transport")
-                        return NetworkCapabilities.TRANSPORT_USB
-                    }
-                    networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> {
-                        Log.d("NetworkCheck", "Using Bluetooth transport")
-                        return NetworkCapabilities.TRANSPORT_BLUETOOTH
-                    }
+
+                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.d("NetworkCheck", "Using Ethernet transport")
+                    return NetworkCapabilities.TRANSPORT_ETHERNET
+                }
+                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_USB)) {
+                    Log.d("NetworkCheck", "Using USB transport")
+                    return NetworkCapabilities.TRANSPORT_USB
+                }
+                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH)) {
+                    Log.d("NetworkCheck", "Using Bluetooth transport")
+                    return NetworkCapabilities.TRANSPORT_BLUETOOTH
                 }
             } else {
-                Log.d("NetworkCheck", "NetworkCapabilities is null for the active network")
+                Log.d("NetworkCheck", "NetworkCapabilities is null for network: $network")
             }
-        } else {
-            Log.d("NetworkCheck", "No active network")
         }
+        Log.d("NetworkCheck", "No suitable transport type found")
         return null // No suitable transport type found
     }
 
