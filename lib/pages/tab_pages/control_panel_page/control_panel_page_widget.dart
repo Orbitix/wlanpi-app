@@ -120,9 +120,6 @@ final List<MenuItem> menuData = [
           title: "Summary",
           action: () => actionFunc("/api/v1/system/device/stats", "GET")),
       MenuItem(
-          title: "Battery",
-          action: () => actionFunc("/api/v1/utils/ufw", "GET")),
-      MenuItem(
         title: "Settings",
         subItems: [
           MenuItem(
