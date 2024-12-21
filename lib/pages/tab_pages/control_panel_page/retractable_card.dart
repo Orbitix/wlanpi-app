@@ -30,6 +30,7 @@ class _RetractableCardState extends State<RetractableCard> {
     return Card(
       color: FlutterFlowTheme.of(context).secondaryBackground,
       // margin: const EdgeInsets.all(8),
+      shadowColor: Colors.transparent,
       child: Column(
         children: [
           ListTile(
