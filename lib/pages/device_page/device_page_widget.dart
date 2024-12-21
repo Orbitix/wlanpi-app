@@ -132,142 +132,130 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: theme.primaryBackground,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20.0),
-                      bottomRight: Radius.circular(20.0),
-                      topLeft: Radius.circular(0.0),
-                      topRight: Radius.circular(0.0),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 92.0,
+                    decoration: BoxDecoration(
+                      color: theme.secondaryBackground,
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(color: theme.alternate, width: 2),
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 92.0,
-                      decoration: BoxDecoration(
-                        color: theme.secondaryBackground,
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(color: theme.alternate, width: 2),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Row(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
+                                child: Text(
+                                  sharedMethods.deviceInfo['name'].toString(),
+                                  style: theme.labelLarge.override(
+                                    fontFamily: theme.labelLargeFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(theme.labelLargeFamily),
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.circle,
+                                color: theme.secondary,
+                                size: 16.0,
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Align(
-                                  alignment:
-                                      const AlignmentDirectional(-1.0, 0.0),
-                                  child: Text(
-                                    sharedMethods.deviceInfo['name'].toString(),
-                                    style: theme.labelLarge.override(
-                                      fontFamily: theme.labelLargeFamily,
-                                      letterSpacing: 0.0,
-                                      useGoogleFonts: GoogleFonts.asMap()
-                                          .containsKey(theme.labelLargeFamily),
-                                    ),
+                                Text(
+                                  "Model:\n${sharedMethods.deviceInfo['model']?.toString()}",
+                                  style: theme.labelMedium.override(
+                                    fontFamily: theme.labelMediumFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(theme.labelMediumFamily),
                                   ),
                                 ),
-                                Icon(
-                                  Icons.circle,
-                                  color: theme.secondary,
-                                  size: 16.0,
+                                Text(
+                                  "Version:\n${sharedMethods.deviceInfo['software_version']?.toString()}",
+                                  style: theme.labelMedium.override(
+                                    fontFamily: theme.labelMediumFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(theme.labelMediumFamily),
+                                  ),
+                                ),
+                                Text(
+                                  "Mode:\n${sharedMethods.deviceInfo['mode']?.toString()}",
+                                  style: theme.labelMedium.override(
+                                    fontFamily: theme.labelMediumFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(theme.labelMediumFamily),
+                                  ),
+                                ),
+                                Align(
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 1.0),
+                                  child: FFButtonWidget(
+                                    onPressed: () async {
+                                      context.pushReplacementNamed(
+                                        'HomePage',
+                                        extra: <String, dynamic>{
+                                          kTransitionInfoKey:
+                                              const TransitionInfo(
+                                            hasTransition: true,
+                                            transitionType:
+                                                PageTransitionType.leftToRight,
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                          ),
+                                        },
+                                      );
+                                    },
+                                    text: 'Disconnect',
+                                    options: FFButtonOptions(
+                                      height: 40.0,
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
+                                      iconPadding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 0.0, 0.0),
+                                      color: theme.primary,
+                                      textStyle: theme.titleSmall.override(
+                                        fontFamily: theme.titleSmallFamily,
+                                        color: theme.primaryText,
+                                        fontSize: 14.0,
+                                        letterSpacing: 0.0,
+                                        useGoogleFonts: GoogleFonts.asMap()
+                                            .containsKey(
+                                                FlutterFlowTheme.of(context)
+                                                    .titleSmallFamily),
+                                      ),
+                                      elevation: 0.0,
+                                      borderSide: const BorderSide(
+                                        color: Colors.transparent,
+                                        width: 1.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                            Expanded(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Model:\n${sharedMethods.deviceInfo['model']?.toString()}",
-                                    style: theme.labelMedium.override(
-                                      fontFamily: theme.labelMediumFamily,
-                                      letterSpacing: 0.0,
-                                      useGoogleFonts: GoogleFonts.asMap()
-                                          .containsKey(theme.labelMediumFamily),
-                                    ),
-                                  ),
-                                  Text(
-                                    "Version:\n${sharedMethods.deviceInfo['software_version']?.toString()}",
-                                    style: theme.labelMedium.override(
-                                      fontFamily: theme.labelMediumFamily,
-                                      letterSpacing: 0.0,
-                                      useGoogleFonts: GoogleFonts.asMap()
-                                          .containsKey(theme.labelMediumFamily),
-                                    ),
-                                  ),
-                                  Text(
-                                    "Mode:\n${sharedMethods.deviceInfo['mode']?.toString()}",
-                                    style: theme.labelMedium.override(
-                                      fontFamily: theme.labelMediumFamily,
-                                      letterSpacing: 0.0,
-                                      useGoogleFonts: GoogleFonts.asMap()
-                                          .containsKey(theme.labelMediumFamily),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment:
-                                        const AlignmentDirectional(0.0, 1.0),
-                                    child: FFButtonWidget(
-                                      onPressed: () async {
-                                        context.pushReplacementNamed(
-                                          'HomePage',
-                                          extra: <String, dynamic>{
-                                            kTransitionInfoKey:
-                                                const TransitionInfo(
-                                              hasTransition: true,
-                                              transitionType: PageTransitionType
-                                                  .leftToRight,
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                            ),
-                                          },
-                                        );
-                                      },
-                                      text: 'Disconnect',
-                                      options: FFButtonOptions(
-                                        height: 40.0,
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
-                                        iconPadding: const EdgeInsetsDirectional
-                                            .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                        color: theme.primary,
-                                        textStyle: theme.titleSmall.override(
-                                          fontFamily: theme.titleSmallFamily,
-                                          color: theme.primaryText,
-                                          fontSize: 14.0,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .titleSmallFamily),
-                                        ),
-                                        elevation: 0.0,
-                                        borderSide: const BorderSide(
-                                          color: Colors.transparent,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ].divide(const SizedBox(height: 2.0)),
-                        ),
+                          ),
+                        ].divide(const SizedBox(height: 2.0)),
                       ),
                     ),
                   ),

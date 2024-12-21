@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wlanpi_mobile/flutter_flow/flutter_flow_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RetractableCard extends StatefulWidget {
   final String title;
@@ -27,10 +28,20 @@ class _RetractableCardState extends State<RetractableCard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+
     return Column(
       children: [
         ListTile(
-          title: Text(widget.title),
+          title: Text(
+            widget.title,
+            style: theme.bodyLarge.override(
+              fontFamily: theme.bodyLargeFamily,
+              letterSpacing: 0.0,
+              useGoogleFonts:
+                  GoogleFonts.asMap().containsKey(theme.bodyLargeFamily),
+            ),
+          ),
           trailing: Icon(
             _isExpanded ? Icons.expand_less : Icons.expand_more,
           ),

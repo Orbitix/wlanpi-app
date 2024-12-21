@@ -75,7 +75,7 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
                       margin: const EdgeInsets.symmetric(vertical: 4.0),
                       decoration: BoxDecoration(
                         color: theme.secondaryBackground,
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(color: theme.alternate, width: 2),
                       ),
                       child: item.action == null
