@@ -76,12 +76,35 @@ class SharedMethodsProvider extends ChangeNotifier {
   Map<String, dynamic> kismetStatus = {};
   Map<String, dynamic> grafanaStatus = {};
 
+  List<double> _cpuHistory = [0];
+  List<double> _cpuTempHistory = [0];
+  List<double> _ramHistory = [0];
+  List<double> _diskHistory = [0];
+
+  List<double> cpuHistory = [];
+  List<double> cpuTempHistory = [];
+  List<double> ramHistory = [];
+  List<double> diskHistory = [];
+
+  // Add methods to update the data and notify listeners
+  void updateHistory() {
+    cpuHistory = _cpuHistory;
+    cpuTempHistory = _cpuTempHistory;
+    diskHistory = _diskHistory;
+    ramHistory = _ramHistory;
+    notifyListeners();
+  }
+
   // Initialize the data
   void initializeData() {
     deviceInfo = _defaultDeviceInfo;
     deviceStats = _defaultDeviceStats;
     kismetStatus = _defaultKismetStatus;
     grafanaStatus = _defaultGrafanaStatus;
+    cpuHistory = _cpuHistory;
+    cpuTempHistory = _cpuTempHistory;
+    diskHistory = _diskHistory;
+    ramHistory = _ramHistory;
     notifyListeners(); // Notify listeners to refresh the UI
   }
 
@@ -141,6 +164,30 @@ class SharedMethodsProvider extends ChangeNotifier {
       try {
         deviceStats = await networkHandler.requestEndpoint(
             "31415", "/api/v1/system/device/stats", "GET");
+
+        // Parse and update CPU history
+        double cpuUsage = double.parse(deviceStats["cpu"].replaceAll('%', ''));
+        _cpuHistory.add(cpuUsage);
+        if (_cpuHistory.length > 20) _cpuHistory.removeAt(0);
+
+        double cpuTemp =
+            double.parse(deviceStats["cpu_temp"].replaceAll('C', ''));
+        _cpuTempHistory.add(cpuTemp);
+        if (_cpuTempHistory.length > 20) _cpuTempHistory.removeAt(0);
+
+        // Parse and update RAM history
+        double ramUsage =
+            double.parse(deviceStats["ram"].split(' ')[1].replaceAll('%', ''));
+        _ramHistory.add(ramUsage);
+        if (_ramHistory.length > 20) _ramHistory.removeAt(0);
+
+        // Parse and update Disk history
+        double diskUsage =
+            double.parse(deviceStats["disk"].split(' ')[1].replaceAll('%', ''));
+        _diskHistory.add(diskUsage);
+        if (_diskHistory.length > 20) _diskHistory.removeAt(0);
+
+        updateHistory();
 
         kismetStatus = await networkHandler.requestEndpoint(
             "31415", "/api/v1/system/service/status?name=kismet", "GET");
