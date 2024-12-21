@@ -286,7 +286,12 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                             useGoogleFonts: GoogleFonts.asMap()
                                 .containsKey(theme.titleMediumFamily),
                           ),
-                          unselectedLabelStyle: const TextStyle(),
+                          unselectedLabelStyle: theme.titleMedium.override(
+                            fontFamily: theme.titleMediumFamily,
+                            letterSpacing: 0.0,
+                            useGoogleFonts: GoogleFonts.asMap()
+                                .containsKey(theme.titleMediumFamily),
+                          ),
                           indicator: BoxDecoration(
                             color: theme.secondaryBackground,
                             borderRadius: BorderRadius.circular(15.0),
