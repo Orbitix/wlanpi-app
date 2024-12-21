@@ -299,20 +299,21 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                   },
                                   activeColor: theme.primary,
                                   activeTrackColor: theme.accent1,
-                                  inactiveTrackColor: theme.primaryBackground,
+                                  inactiveTrackColor: theme.secondaryBackground,
                                 ),
                                 if (useCustomTransport) ...[
                                   Container(
                                     width: double.infinity,
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      color: theme.secondaryBackground,
+                                      color: theme.alternate,
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(10.0),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<String>(
+                                          dropdownColor: theme.alternate,
                                           value: transport_type,
                                           hint: const Text(
                                               'Select the connection method'),
