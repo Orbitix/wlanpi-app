@@ -78,16 +78,16 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
   @override
   Widget build(BuildContext context) {
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);
-
+    final theme = FlutterFlowTheme.of(context);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        backgroundColor: theme.primaryBackground,
         appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: theme.primary,
           automaticallyImplyLeading: false,
           title: Align(
             alignment: const AlignmentDirectional(-1.0, 0.0),
@@ -108,13 +108,12 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
                   'Mobile',
-                  style: FlutterFlowTheme.of(context).titleMedium.override(
-                        fontFamily:
-                            FlutterFlowTheme.of(context).titleMediumFamily,
-                        letterSpacing: 0.0,
-                        useGoogleFonts: GoogleFonts.asMap().containsKey(
-                            FlutterFlowTheme.of(context).titleMediumFamily),
-                      ),
+                  style: theme.titleMedium.override(
+                    fontFamily: theme.titleMediumFamily,
+                    letterSpacing: 0.0,
+                    useGoogleFonts: GoogleFonts.asMap()
+                        .containsKey(theme.titleMediumFamily),
+                  ),
                 ),
               ),
             ),
@@ -128,7 +127,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
-              color: FlutterFlowTheme.of(context).secondaryBackground,
+              color: theme.primaryBackground,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -136,7 +135,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).primaryBackground,
+                    color: theme.primaryBackground,
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(20.0),
                       bottomRight: Radius.circular(20.0),
@@ -150,8 +149,9 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                       width: double.infinity,
                       height: 92.0,
                       decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                        color: theme.secondaryBackground,
                         borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(color: theme.alternate, width: 2),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
@@ -168,23 +168,17 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                       const AlignmentDirectional(-1.0, 0.0),
                                   child: Text(
                                     sharedMethods.deviceInfo['name'].toString(),
-                                    style: FlutterFlowTheme.of(context)
-                                        .labelLarge
-                                        .override(
-                                          fontFamily:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelLargeFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelLargeFamily),
-                                        ),
+                                    style: theme.labelLarge.override(
+                                      fontFamily: theme.labelLargeFamily,
+                                      letterSpacing: 0.0,
+                                      useGoogleFonts: GoogleFonts.asMap()
+                                          .containsKey(theme.labelLargeFamily),
+                                    ),
                                   ),
                                 ),
                                 Icon(
                                   Icons.circle,
-                                  color: FlutterFlowTheme.of(context).secondary,
+                                  color: theme.secondary,
                                   size: 16.0,
                                 ),
                               ],
@@ -197,48 +191,30 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                 children: [
                                   Text(
                                     "Model:\n${sharedMethods.deviceInfo['model']?.toString()}",
-                                    style: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          fontFamily:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelMediumFamily),
-                                        ),
+                                    style: theme.labelMedium.override(
+                                      fontFamily: theme.labelMediumFamily,
+                                      letterSpacing: 0.0,
+                                      useGoogleFonts: GoogleFonts.asMap()
+                                          .containsKey(theme.labelMediumFamily),
+                                    ),
                                   ),
                                   Text(
                                     "Version:\n${sharedMethods.deviceInfo['software_version']?.toString()}",
-                                    style: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          fontFamily:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelMediumFamily),
-                                        ),
+                                    style: theme.labelMedium.override(
+                                      fontFamily: theme.labelMediumFamily,
+                                      letterSpacing: 0.0,
+                                      useGoogleFonts: GoogleFonts.asMap()
+                                          .containsKey(theme.labelMediumFamily),
+                                    ),
                                   ),
                                   Text(
                                     "Mode:\n${sharedMethods.deviceInfo['mode']?.toString()}",
-                                    style: FlutterFlowTheme.of(context)
-                                        .labelMedium
-                                        .override(
-                                          fontFamily:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelMediumFamily),
-                                        ),
+                                    style: theme.labelMedium.override(
+                                      fontFamily: theme.labelMediumFamily,
+                                      letterSpacing: 0.0,
+                                      useGoogleFonts: GoogleFonts.asMap()
+                                          .containsKey(theme.labelMediumFamily),
+                                    ),
                                   ),
                                   Align(
                                     alignment:
@@ -266,26 +242,17 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                             .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                         iconPadding: const EdgeInsetsDirectional
                                             .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .titleSmall
-                                            .override(
-                                              fontFamily:
+                                        color: theme.primary,
+                                        textStyle: theme.titleSmall.override(
+                                          fontFamily: theme.titleSmallFamily,
+                                          color: theme.primaryText,
+                                          fontSize: 14.0,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .titleSmallFamily,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              fontSize: 14.0,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .titleSmallFamily),
-                                            ),
+                                                      .titleSmallFamily),
+                                        ),
                                         elevation: 0.0,
                                         borderSide: const BorderSide(
                                           color: Colors.transparent,
@@ -311,21 +278,27 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                     child: Column(
                       children: <Widget>[
                         TabBar(
-                          labelColor: FlutterFlowTheme.of(context).primaryText,
-                          unselectedLabelColor:
-                              FlutterFlowTheme.of(context).secondaryText,
-                          labelStyle: FlutterFlowTheme.of(context)
-                              .titleMedium
-                              .override(
-                                fontFamily: FlutterFlowTheme.of(context)
-                                    .titleMediumFamily,
-                                letterSpacing: 0.0,
-                                useGoogleFonts: GoogleFonts.asMap().containsKey(
-                                    FlutterFlowTheme.of(context)
-                                        .titleMediumFamily),
-                              ),
+                          labelColor: theme.primaryText,
+                          unselectedLabelColor: theme.secondaryText,
+                          labelStyle: theme.titleMedium.override(
+                            fontFamily: theme.titleMediumFamily,
+                            letterSpacing: 0.0,
+                            useGoogleFonts: GoogleFonts.asMap()
+                                .containsKey(theme.titleMediumFamily),
+                          ),
                           unselectedLabelStyle: const TextStyle(),
-                          indicatorColor: FlutterFlowTheme.of(context).primary,
+                          indicator: BoxDecoration(
+                            color: theme.secondaryBackground,
+                            borderRadius: BorderRadius.circular(15.0),
+                            border: Border.all(
+                              color: theme.alternate,
+                              width: 2,
+                            ),
+                          ),
+                          indicatorPadding:
+                              const EdgeInsets.fromLTRB(-12, 0, -12, 0),
+                          dividerColor: Colors.transparent,
+                          dividerHeight: 0.0,
                           tabs: const [
                             Tab(text: 'Stats'),
                             Tab(text: 'Apps'),

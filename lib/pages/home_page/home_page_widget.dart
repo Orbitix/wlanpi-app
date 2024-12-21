@@ -169,7 +169,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
               style: theme.bodyMedium.override(
                 fontFamily: theme.bodyMediumFamily,
                 fontSize: 16.0,
-                color: Color.fromARGB(255, 226, 226, 226),
                 useGoogleFonts:
                     GoogleFonts.asMap().containsKey(theme.bodyMediumFamily),
               ),
@@ -189,7 +188,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: theme.secondaryBackground,
+        backgroundColor: theme.primaryBackground,
         appBar: AppBar(
           backgroundColor: theme.primary,
           automaticallyImplyLeading: false,
@@ -237,7 +236,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: theme.primaryBackground,
+                      color: theme.secondaryBackground,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Padding(
@@ -370,7 +369,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: theme.primaryBackground,
+                      color: theme.secondaryBackground,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Padding(

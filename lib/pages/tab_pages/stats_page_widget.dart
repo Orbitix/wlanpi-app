@@ -28,16 +28,17 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
   @override
   Widget build(BuildContext context) {
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);
+    final theme = FlutterFlowTheme.of(context);
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
         child: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).secondaryBackground,
+            color: theme.primaryBackground,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -49,7 +50,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).primaryBackground,
+                      color: theme.primaryBackground,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(0.0),
                         bottomRight: Radius.circular(0.0),
@@ -66,9 +67,10 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                             width: double.infinity,
                             height: 100.0,
                             decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
+                              color: theme.secondaryBackground,
                               borderRadius: BorderRadius.circular(10.0),
+                              border:
+                                  Border.all(color: theme.alternate, width: 2),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(15.0),
@@ -85,8 +87,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                       Flexible(
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBackground,
+                                            color: theme.primaryBackground,
                                             borderRadius:
                                                 BorderRadius.circular(5.0),
                                             shape: BoxShape.rectangle,
@@ -96,42 +97,32 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                             child: Text(
                                               sharedMethods.deviceStats["cpu"]
                                                   .toString(),
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        letterSpacing: 0.0,
-                                                        useGoogleFonts: GoogleFonts
-                                                                .asMap()
-                                                            .containsKey(
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily),
-                                                      ),
+                                              style: theme.bodyMedium.override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts: GoogleFonts
+                                                        .asMap()
+                                                    .containsKey(
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                       Text(
                                         'CPU',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -143,8 +134,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                       Flexible(
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBackground,
+                                            color: theme.primaryBackground,
                                             borderRadius:
                                                 BorderRadius.circular(5.0),
                                             shape: BoxShape.rectangle,
@@ -155,42 +145,32 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                               sharedMethods.deviceStats["ram"]
                                                   .toString()
                                                   .split(" ")[1],
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        letterSpacing: 0.0,
-                                                        useGoogleFonts: GoogleFonts
-                                                                .asMap()
-                                                            .containsKey(
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily),
-                                                      ),
+                                              style: theme.bodyMedium.override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts: GoogleFonts
+                                                        .asMap()
+                                                    .containsKey(
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                       Text(
                                         'RAM',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -202,8 +182,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                       Flexible(
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBackground,
+                                            color: theme.primaryBackground,
                                             borderRadius:
                                                 BorderRadius.circular(5.0),
                                             shape: BoxShape.rectangle,
@@ -214,42 +193,32 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                               sharedMethods.deviceStats["disk"]
                                                   .toString()
                                                   .split(" ")[1],
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        letterSpacing: 0.0,
-                                                        useGoogleFonts: GoogleFonts
-                                                                .asMap()
-                                                            .containsKey(
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily),
-                                                      ),
+                                              style: theme.bodyMedium.override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts: GoogleFonts
+                                                        .asMap()
+                                                    .containsKey(
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                       Text(
                                         'Disk',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -261,8 +230,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                       Flexible(
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBackground,
+                                            color: theme.primaryBackground,
                                             borderRadius:
                                                 BorderRadius.circular(5.0),
                                             shape: BoxShape.rectangle,
@@ -273,42 +241,32 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                               sharedMethods
                                                   .deviceStats["uptime"]
                                                   .toString(),
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        letterSpacing: 0.0,
-                                                        useGoogleFonts: GoogleFonts
-                                                                .asMap()
-                                                            .containsKey(
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily),
-                                                      ),
+                                              style: theme.bodyMedium.override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts: GoogleFonts
+                                                        .asMap()
+                                                    .containsKey(
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                       Text(
                                         'Uptime',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),

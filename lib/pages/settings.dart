@@ -60,6 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final typography = theme.typography; // Access typography styles
 
     return Scaffold(
+      backgroundColor: theme.primaryBackground,
       appBar: AppBar(
         title: Text('Settings', style: typography.titleLarge),
         backgroundColor: theme.primary,
@@ -68,8 +69,8 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Container(
           decoration: BoxDecoration(
-            color: theme.primaryBackground,
-            borderRadius: BorderRadius.circular(30.0),
+            color: theme.secondaryBackground,
+            borderRadius: BorderRadius.circular(20.0),
           ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
@@ -80,8 +81,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: theme.secondaryBackground,
-                    borderRadius: BorderRadius.circular(20.0),
+                    color: theme.alternate,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -97,8 +98,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: theme.secondaryBackground,
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),

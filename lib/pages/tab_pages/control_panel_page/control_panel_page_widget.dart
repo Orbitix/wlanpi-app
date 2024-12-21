@@ -198,16 +198,17 @@ class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
 
   @override
   Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
         child: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).secondaryBackground,
+            color: theme.primaryBackground,
           ),
           child: DynamicMenuPage(menuItems: menuData),
         ),

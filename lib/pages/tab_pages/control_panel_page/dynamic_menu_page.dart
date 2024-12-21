@@ -48,8 +48,9 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
     return Container(
-      color: FlutterFlowTheme.of(context).secondaryBackground,
+      color: theme.primaryBackground,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -73,34 +74,26 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
                   return Container(
                       margin: const EdgeInsets.symmetric(vertical: 4.0),
                       decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).primaryBackground,
+                        color: theme.secondaryBackground,
                         borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(
-                            color: FlutterFlowTheme.of(context).alternate,
-                            width: 1),
+                        border: Border.all(color: theme.alternate, width: 2),
                       ),
                       child: item.action == null
                           ? ListTile(
                               title: Text(
                                 item.title,
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: FlutterFlowTheme.of(context)
-                                          .bodyLargeFamily,
-                                      letterSpacing: 0.0,
-                                      useGoogleFonts: GoogleFonts.asMap()
-                                          .containsKey(
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyLargeFamily),
-                                    ),
+                                style: theme.bodyLarge.override(
+                                  fontFamily: theme.bodyLargeFamily,
+                                  letterSpacing: 0.0,
+                                  useGoogleFonts: GoogleFonts.asMap()
+                                      .containsKey(theme.bodyLargeFamily),
+                                ),
                               ),
                               onTap: () => onItemTap(item),
                               trailing: item.onPressed == null
                                   ? Icon(
                                       Icons.arrow_forward_ios_rounded,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
+                                      color: theme.primaryText,
                                     )
                                   : null,
                             )

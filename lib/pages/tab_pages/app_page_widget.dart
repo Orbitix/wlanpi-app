@@ -28,17 +28,18 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
 
   @override
   Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
         child: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).secondaryBackground,
+            color: theme.primaryBackground,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -50,7 +51,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).primaryBackground,
+                      color: theme.primaryBackground,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(0.0),
                         bottomRight: Radius.circular(0.0),
@@ -67,9 +68,10 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                             width: double.infinity,
                             height: 100.0,
                             decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
+                              color: theme.secondaryBackground,
                               borderRadius: BorderRadius.circular(10.0),
+                              border:
+                                  Border.all(color: theme.alternate, width: 2),
                             ),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -84,39 +86,27 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     children: [
                                       Text(
                                         'Kismet',
-                                        style: FlutterFlowTheme.of(context)
-                                            .headlineSmall
-                                            .override(
-                                              fontFamily:
+                                        style: theme.headlineSmall.override(
+                                          fontFamily: theme.headlineSmallFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .headlineSmallFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .headlineSmallFamily),
-                                            ),
+                                                      .headlineSmallFamily),
+                                        ),
                                       ),
                                       Text(
                                         sharedMethods.kismetStatus["active"]
                                             ? "Status: ON"
                                             : "Status: OFF",
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -151,24 +141,22 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                           iconPadding:
                                               const EdgeInsetsDirectional
                                                   .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primary,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyLarge
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLargeFamily,
-                                                fontSize: 14.0,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyLargeFamily),
-                                              ),
+                                          color: theme.primary,
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyLarge
+                                                  .override(
+                                                    fontFamily:
+                                                        theme.bodyLargeFamily,
+                                                    fontSize: 14.0,
+                                                    letterSpacing: 0.0,
+                                                    useGoogleFonts: GoogleFonts
+                                                            .asMap()
+                                                        .containsKey(
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyLargeFamily),
+                                                  ),
                                           elevation: 0.0,
                                           borderSide: const BorderSide(
                                             color: Colors.transparent,
@@ -180,20 +168,14 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                       ),
                                       Text(
                                         'URL: http://wlanpi-bc2.local:2005',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -205,9 +187,10 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                             width: double.infinity,
                             height: 100.0,
                             decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
+                              color: theme.secondaryBackground,
                               borderRadius: BorderRadius.circular(10.0),
+                              border:
+                                  Border.all(color: theme.alternate, width: 2),
                             ),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -222,39 +205,27 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     children: [
                                       Text(
                                         'Grafana',
-                                        style: FlutterFlowTheme.of(context)
-                                            .headlineSmall
-                                            .override(
-                                              fontFamily:
+                                        style: theme.headlineSmall.override(
+                                          fontFamily: theme.headlineSmallFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .headlineSmallFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .headlineSmallFamily),
-                                            ),
+                                                      .headlineSmallFamily),
+                                        ),
                                       ),
                                       Text(
                                         sharedMethods.grafanaStatus["active"]
                                             ? "Status: ON"
                                             : "Status: OFF",
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -284,24 +255,22 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                           iconPadding:
                                               const EdgeInsetsDirectional
                                                   .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primary,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyLarge
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLargeFamily,
-                                                fontSize: 14.0,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts: GoogleFonts
-                                                        .asMap()
-                                                    .containsKey(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyLargeFamily),
-                                              ),
+                                          color: theme.primary,
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyLarge
+                                                  .override(
+                                                    fontFamily:
+                                                        theme.bodyLargeFamily,
+                                                    fontSize: 14.0,
+                                                    letterSpacing: 0.0,
+                                                    useGoogleFonts: GoogleFonts
+                                                            .asMap()
+                                                        .containsKey(
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyLargeFamily),
+                                                  ),
                                           elevation: 0.0,
                                           borderSide: const BorderSide(
                                             color: Colors.transparent,
@@ -313,20 +282,14 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                       ),
                                       Text(
                                         'URL: http://wlanpi-bc2.local:2005',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                        style: theme.bodyMedium.override(
+                                          fontFamily: theme.bodyMediumFamily,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts: GoogleFonts
-                                                      .asMap()
-                                                  .containsKey(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily),
-                                            ),
+                                                      .bodyMediumFamily),
+                                        ),
                                       ),
                                     ],
                                   ),
