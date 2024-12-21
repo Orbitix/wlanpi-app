@@ -144,6 +144,42 @@ class _HomePageWidgetState extends State<HomePageWidget>
     });
   }
 
+  Widget buildSection(String heading, String text) {
+    final theme = FlutterFlowTheme.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            heading,
+            style: theme.headlineSmall.override(
+              fontFamily: theme.headlineSmallFamily,
+              fontWeight: FontWeight.w600,
+              fontSize: 22.0,
+              useGoogleFonts:
+                  GoogleFonts.asMap().containsKey(theme.headlineSmallFamily),
+            ),
+          ),
+          SizedBox(height: 4.0),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+            child: Text(
+              text,
+              style: theme.bodyMedium.override(
+                fontFamily: theme.bodyMediumFamily,
+                fontSize: 16.0,
+                color: Color.fromARGB(255, 226, 226, 226),
+                useGoogleFonts:
+                    GoogleFonts.asMap().containsKey(theme.bodyMediumFamily),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
@@ -191,154 +227,224 @@ class _HomePageWidgetState extends State<HomePageWidget>
         ),
         body: SafeArea(
           top: true,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: theme.primaryBackground,
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: theme.alternate,
-                              borderRadius: BorderRadius.circular(10.0),
-                              shape: BoxShape.rectangle,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Text(
-                                    'Connect To a PI',
-                                    style: theme.headlineMedium.override(
-                                      fontFamily: theme.headlineMediumFamily,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w600,
-                                      useGoogleFonts: GoogleFonts.asMap()
-                                          .containsKey(
-                                              theme.headlineMediumFamily),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: theme.primaryBackground,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: theme.alternate,
+                                borderRadius: BorderRadius.circular(10.0),
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      'Connect To a PI',
+                                      style: theme.headlineMedium.override(
+                                        fontFamily: theme.headlineMediumFamily,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts: GoogleFonts.asMap()
+                                            .containsKey(
+                                                theme.headlineMediumFamily),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: CachedNetworkImage(
-                              fadeInDuration: const Duration(milliseconds: 500),
-                              fadeOutDuration:
-                                  const Duration(milliseconds: 500),
-                              imageUrl:
-                                  'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
-                              width: 300.0,
-                              height: 200.0,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              SwitchListTile(
-                                title: Text('Connection Method Override'),
-                                value: useCustomTransport,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    useCustomTransport = value;
-                                  });
-                                  _setUseCustomTransport(value);
-                                },
-                                activeColor: theme.primary,
-                                activeTrackColor: theme.accent1,
-                                inactiveTrackColor: theme.primaryBackground,
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: CachedNetworkImage(
+                                fadeInDuration:
+                                    const Duration(milliseconds: 500),
+                                fadeOutDuration:
+                                    const Duration(milliseconds: 500),
+                                imageUrl:
+                                    'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
+                                width: 300.0,
+                                height: 200.0,
+                                fit: BoxFit.cover,
                               ),
-                              if (useCustomTransport) ...[
-                                Container(
-                                  width: double.infinity,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: theme.secondaryBackground,
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        value: transport_type,
-                                        hint: const Text(
-                                            'Select the connection method'),
-                                        items:
-                                            transport_types.map((String type) {
-                                          return DropdownMenuItem<String>(
-                                            value: type,
-                                            child: Text(type),
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            transport_type = newValue;
-                                          });
-                                        },
+                            ),
+                            Column(
+                              children: [
+                                SwitchListTile(
+                                  title: Text('Connection Method Override'),
+                                  value: useCustomTransport,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      useCustomTransport = value;
+                                    });
+                                    _setUseCustomTransport(value);
+                                  },
+                                  activeColor: theme.primary,
+                                  activeTrackColor: theme.accent1,
+                                  inactiveTrackColor: theme.primaryBackground,
+                                ),
+                                if (useCustomTransport) ...[
+                                  Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: theme.secondaryBackground,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
+                                          value: transport_type,
+                                          hint: const Text(
+                                              'Select the connection method'),
+                                          items: transport_types
+                                              .map((String type) {
+                                            return DropdownMenuItem<String>(
+                                              value: type,
+                                              child: Text(type),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              transport_type = newValue;
+                                            });
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ],
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: FFButtonWidget(
-                              onPressed: () async {
-                                await _handleButton();
-                              },
-                              text: 'Connect',
-                              options: FFButtonOptions(
-                                width: double.infinity,
-                                height: 50.0,
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    24.0, 0.0, 24.0, 0.0),
-                                iconPadding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                color: theme.primary,
-                                textStyle: theme.titleSmall.override(
-                                  fontFamily: theme.titleSmallFamily,
-                                  color: Colors.white,
-                                  letterSpacing: 0.0,
-                                  useGoogleFonts: GoogleFonts.asMap()
-                                      .containsKey(theme.titleSmallFamily),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: FFButtonWidget(
+                                onPressed: () async {
+                                  await _handleButton();
+                                },
+                                text: 'Connect',
+                                options: FFButtonOptions(
+                                  width: double.infinity,
+                                  height: 50.0,
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      24.0, 0.0, 24.0, 0.0),
+                                  iconPadding:
+                                      const EdgeInsetsDirectional.fromSTEB(
+                                          0.0, 0.0, 0.0, 0.0),
+                                  color: theme.primary,
+                                  textStyle: theme.titleSmall.override(
+                                    fontFamily: theme.titleSmallFamily,
+                                    color: Colors.white,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(theme.titleSmallFamily),
+                                  ),
+                                  elevation: 0.0,
+                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
-                                elevation: 0.0,
-                                borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                          ),
-                        ].divide(const SizedBox(height: 10.0)),
-                      )),
-                ),
-                Text(
-                  'V 0.2',
-                  style: theme.labelSmall.override(
-                    fontFamily: theme.labelSmallFamily,
-                    letterSpacing: 0.0,
-                    useGoogleFonts:
-                        GoogleFonts.asMap().containsKey(theme.labelSmallFamily),
+                          ].divide(const SizedBox(height: 10.0)),
+                        )),
                   ),
-                ),
-              ].divide(const SizedBox(height: 10.0)),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: theme.primaryBackground,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: theme.alternate,
+                                borderRadius: BorderRadius.circular(10.0),
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      'App Overview',
+                                      style: theme.headlineMedium.override(
+                                        fontFamily: theme.headlineMediumFamily,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts: GoogleFonts.asMap()
+                                            .containsKey(
+                                                theme.headlineMediumFamily),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    buildSection(
+                                      '1. Connect To a PI',
+                                      'Click the "Connect" button to let the app handle the connection method and establish a connection with your WLANPi device.',
+                                    ),
+                                    SizedBox(height: 12.0),
+                                    buildSection(
+                                      '2. Connection Method Override',
+                                      'Enable this switch to select a custom connection method from the dropdown menu, if the automatic method does not work.',
+                                    ),
+                                    SizedBox(height: 12.0),
+                                    buildSection(
+                                      '3. Settings',
+                                      'Click the settings icon to configure network settings such as USB OTG IP Address and Bluetooth IP Address.',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ].divide(const SizedBox(height: 10.0)),
+                        )),
+                  ),
+                  Text(
+                    'V 0.3',
+                    style: theme.labelSmall.override(
+                      fontFamily: theme.labelSmallFamily,
+                      letterSpacing: 0.0,
+                      useGoogleFonts: GoogleFonts.asMap()
+                          .containsKey(theme.labelSmallFamily),
+                    ),
+                  ),
+                ].divide(const SizedBox(height: 20.0)),
+              ),
             ),
           ),
         ),
