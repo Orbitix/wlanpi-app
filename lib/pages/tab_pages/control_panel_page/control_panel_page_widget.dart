@@ -148,9 +148,6 @@ final List<MenuItem> menuData = [
               // Add other RF Domain settings here
             ],
           ),
-          MenuItem(
-              title: "Rotate Display",
-              action: () => actionFunc("/api/v1/utils/ufw", "GET")),
         ],
       ),
       MenuItem(
