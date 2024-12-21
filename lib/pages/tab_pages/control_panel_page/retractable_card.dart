@@ -27,38 +27,33 @@ class _RetractableCardState extends State<RetractableCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: FlutterFlowTheme.of(context).secondaryBackground,
-      // margin: const EdgeInsets.all(8),
-      shadowColor: Colors.transparent,
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(widget.title),
-            trailing: Icon(
-              _isExpanded ? Icons.expand_less : Icons.expand_more,
-            ),
-            onTap: () {
-              setState(() {
-                _isExpanded = !_isExpanded;
-              });
-              if (_isExpanded && _isLoading) {
-                _loadContent(context); // Load content when expanded
-              }
-            },
+    return Column(
+      children: [
+        ListTile(
+          title: Text(widget.title),
+          trailing: Icon(
+            _isExpanded ? Icons.expand_less : Icons.expand_more,
           ),
-          if (_isExpanded)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                      color: FlutterFlowTheme.of(context).primary,
-                    ))
-                  : Text(_content),
-            ),
-        ],
-      ),
+          onTap: () {
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
+            if (_isExpanded && _isLoading) {
+              _loadContent(context); // Load content when expanded
+            }
+          },
+        ),
+        if (_isExpanded)
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                    color: FlutterFlowTheme.of(context).primary,
+                  ))
+                : Text(_content),
+          ),
+      ],
     );
   }
 }
