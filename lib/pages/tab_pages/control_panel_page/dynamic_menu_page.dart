@@ -52,7 +52,7 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
     return Container(
       color: theme.primaryBackground,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
             if (menuHistory.isNotEmpty)
@@ -72,10 +72,10 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
                 itemBuilder: (context, index) {
                   final item = currentMenu[index];
                   return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4.0),
+                      margin: const EdgeInsets.only(bottom: 8.0),
                       decoration: BoxDecoration(
                         color: theme.secondaryBackground,
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         border: Border.all(color: theme.alternate, width: 2),
                       ),
                       child: item.action == null

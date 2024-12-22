@@ -132,131 +132,133 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    width: double.infinity,
-                    height: 92.0,
-                    decoration: BoxDecoration(
+                Container(
+                  width: double.infinity,
+                  height: 92.0,
+                  decoration: BoxDecoration(
                       color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(color: theme.alternate, width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20.0),
+                        bottomRight: Radius.circular(20.0),
+                      ),
+                      // border: Border.all(color: theme.alternate, width: 2),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: theme.alternate,
+                          width: 2,
+                        ),
+                      )),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Align(
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
+                              child: Text(
+                                sharedMethods.deviceInfo['name'].toString(),
+                                style: theme.labelLarge.override(
+                                  fontFamily: theme.labelLargeFamily,
+                                  letterSpacing: 0.0,
+                                  useGoogleFonts: GoogleFonts.asMap()
+                                      .containsKey(theme.labelLargeFamily),
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.circle,
+                              color: theme.secondary,
+                              size: 16.0,
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Align(
-                                alignment:
-                                    const AlignmentDirectional(-1.0, 0.0),
-                                child: Text(
-                                  sharedMethods.deviceInfo['name'].toString(),
-                                  style: theme.labelLarge.override(
-                                    fontFamily: theme.labelLargeFamily,
-                                    letterSpacing: 0.0,
-                                    useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(theme.labelLargeFamily),
-                                  ),
+                              Text(
+                                "Model:\n${sharedMethods.deviceInfo['model']?.toString()}",
+                                style: theme.labelMedium.override(
+                                  fontFamily: theme.labelMediumFamily,
+                                  letterSpacing: 0.0,
+                                  useGoogleFonts: GoogleFonts.asMap()
+                                      .containsKey(theme.labelMediumFamily),
                                 ),
                               ),
-                              Icon(
-                                Icons.circle,
-                                color: theme.secondary,
-                                size: 16.0,
+                              Text(
+                                "Version:\n${sharedMethods.deviceInfo['software_version']?.toString()}",
+                                style: theme.labelMedium.override(
+                                  fontFamily: theme.labelMediumFamily,
+                                  letterSpacing: 0.0,
+                                  useGoogleFonts: GoogleFonts.asMap()
+                                      .containsKey(theme.labelMediumFamily),
+                                ),
+                              ),
+                              Text(
+                                "Mode:\n${sharedMethods.deviceInfo['mode']?.toString()}",
+                                style: theme.labelMedium.override(
+                                  fontFamily: theme.labelMediumFamily,
+                                  letterSpacing: 0.0,
+                                  useGoogleFonts: GoogleFonts.asMap()
+                                      .containsKey(theme.labelMediumFamily),
+                                ),
+                              ),
+                              Align(
+                                alignment: const AlignmentDirectional(0.0, 1.0),
+                                child: FFButtonWidget(
+                                  onPressed: () async {
+                                    context.pushReplacementNamed(
+                                      'HomePage',
+                                      extra: <String, dynamic>{
+                                        kTransitionInfoKey:
+                                            const TransitionInfo(
+                                          hasTransition: true,
+                                          transitionType:
+                                              PageTransitionType.leftToRight,
+                                          duration: Duration(milliseconds: 200),
+                                        ),
+                                      },
+                                    );
+                                  },
+                                  text: 'Disconnect',
+                                  options: FFButtonOptions(
+                                    height: 40.0,
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
+                                    iconPadding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 0.0),
+                                    color: theme.primary,
+                                    textStyle: theme.titleSmall.override(
+                                      fontFamily: theme.titleSmallFamily,
+                                      color: theme.primaryText,
+                                      fontSize: 14.0,
+                                      letterSpacing: 0.0,
+                                      useGoogleFonts: GoogleFonts.asMap()
+                                          .containsKey(
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmallFamily),
+                                    ),
+                                    elevation: 0.0,
+                                    borderSide: const BorderSide(
+                                      color: Colors.transparent,
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                          Expanded(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Model:\n${sharedMethods.deviceInfo['model']?.toString()}",
-                                  style: theme.labelMedium.override(
-                                    fontFamily: theme.labelMediumFamily,
-                                    letterSpacing: 0.0,
-                                    useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(theme.labelMediumFamily),
-                                  ),
-                                ),
-                                Text(
-                                  "Version:\n${sharedMethods.deviceInfo['software_version']?.toString()}",
-                                  style: theme.labelMedium.override(
-                                    fontFamily: theme.labelMediumFamily,
-                                    letterSpacing: 0.0,
-                                    useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(theme.labelMediumFamily),
-                                  ),
-                                ),
-                                Text(
-                                  "Mode:\n${sharedMethods.deviceInfo['mode']?.toString()}",
-                                  style: theme.labelMedium.override(
-                                    fontFamily: theme.labelMediumFamily,
-                                    letterSpacing: 0.0,
-                                    useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(theme.labelMediumFamily),
-                                  ),
-                                ),
-                                Align(
-                                  alignment:
-                                      const AlignmentDirectional(0.0, 1.0),
-                                  child: FFButtonWidget(
-                                    onPressed: () async {
-                                      context.pushReplacementNamed(
-                                        'HomePage',
-                                        extra: <String, dynamic>{
-                                          kTransitionInfoKey:
-                                              const TransitionInfo(
-                                            hasTransition: true,
-                                            transitionType:
-                                                PageTransitionType.leftToRight,
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                          ),
-                                        },
-                                      );
-                                    },
-                                    text: 'Disconnect',
-                                    options: FFButtonOptions(
-                                      height: 40.0,
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              24.0, 0.0, 24.0, 0.0),
-                                      iconPadding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0.0, 0.0, 0.0, 0.0),
-                                      color: theme.primary,
-                                      textStyle: theme.titleSmall.override(
-                                        fontFamily: theme.titleSmallFamily,
-                                        color: theme.primaryText,
-                                        fontSize: 14.0,
-                                        letterSpacing: 0.0,
-                                        useGoogleFonts: GoogleFonts.asMap()
-                                            .containsKey(
-                                                FlutterFlowTheme.of(context)
-                                                    .titleSmallFamily),
-                                      ),
-                                      elevation: 0.0,
-                                      borderSide: const BorderSide(
-                                        color: Colors.transparent,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ].divide(const SizedBox(height: 2.0)),
-                      ),
+                        ),
+                      ].divide(const SizedBox(height: 2.0)),
                     ),
                   ),
                 ),
@@ -265,38 +267,41 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                     length: 3, // Number of tabs
                     child: Column(
                       children: <Widget>[
-                        TabBar(
-                          labelColor: theme.primaryText,
-                          unselectedLabelColor: theme.secondaryText,
-                          labelStyle: theme.titleMedium.override(
-                            fontFamily: theme.titleMediumFamily,
-                            letterSpacing: 0.0,
-                            useGoogleFonts: GoogleFonts.asMap()
-                                .containsKey(theme.titleMediumFamily),
-                          ),
-                          unselectedLabelStyle: theme.titleMedium.override(
-                            fontFamily: theme.titleMediumFamily,
-                            letterSpacing: 0.0,
-                            useGoogleFonts: GoogleFonts.asMap()
-                                .containsKey(theme.titleMediumFamily),
-                          ),
-                          indicator: BoxDecoration(
-                            color: theme.secondaryBackground,
-                            borderRadius: BorderRadius.circular(15.0),
-                            border: Border.all(
-                              color: theme.alternate,
-                              width: 2,
+                        Container(
+                          margin: EdgeInsets.only(top: 15.0),
+                          child: TabBar(
+                            labelColor: theme.primaryText,
+                            unselectedLabelColor: theme.secondaryText,
+                            labelStyle: theme.titleMedium.override(
+                              fontFamily: theme.titleMediumFamily,
+                              letterSpacing: 0.0,
+                              useGoogleFonts: GoogleFonts.asMap()
+                                  .containsKey(theme.titleMediumFamily),
                             ),
+                            unselectedLabelStyle: theme.titleMedium.override(
+                              fontFamily: theme.titleMediumFamily,
+                              letterSpacing: 0.0,
+                              useGoogleFonts: GoogleFonts.asMap()
+                                  .containsKey(theme.titleMediumFamily),
+                            ),
+                            indicator: BoxDecoration(
+                              color: theme.secondaryBackground,
+                              borderRadius: BorderRadius.circular(15.0),
+                              border: Border.all(
+                                color: theme.alternate,
+                                width: 2,
+                              ),
+                            ),
+                            indicatorPadding:
+                                const EdgeInsets.fromLTRB(-12, 0, -12, 0),
+                            dividerColor: Colors.transparent,
+                            dividerHeight: 0.0,
+                            tabs: const [
+                              Tab(text: 'Stats'),
+                              Tab(text: 'Apps'),
+                              Tab(text: 'Control Panel'),
+                            ],
                           ),
-                          indicatorPadding:
-                              const EdgeInsets.fromLTRB(-12, 0, -12, 0),
-                          dividerColor: Colors.transparent,
-                          dividerHeight: 0.0,
-                          tabs: const [
-                            Tab(text: 'Stats'),
-                            Tab(text: 'Apps'),
-                            Tab(text: 'Control Panel'),
-                          ],
                         ),
                         const Expanded(
                           child: TabBarView(

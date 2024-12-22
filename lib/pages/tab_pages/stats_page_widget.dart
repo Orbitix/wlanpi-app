@@ -45,46 +45,37 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
             children: [
               Expanded(
                 child: Padding(
-                  padding:
-                      const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Container(
-                    width: double.infinity,
                     decoration: BoxDecoration(
-                      color: theme.primaryBackground,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(0.0),
-                        bottomRight: Radius.circular(0.0),
-                        topLeft: Radius.circular(24.0),
-                        topRight: Radius.circular(24.0),
-                      ),
+                      color: theme.secondaryBackground,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(color: theme.alternate, width: 2),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: theme.secondaryBackground,
-                                borderRadius: BorderRadius.circular(10.0),
-                                border: Border.all(
-                                    color: theme.alternate, width: 2),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: StatsGraph(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                  child: Text(
+                                    'Stats',
+                                  ),
+                                ),
+                                StatsGraph(
                                   cpuHistory: sharedMethods.cpuHistory,
                                   cpuTempHistory: sharedMethods.cpuTempHistory,
                                   ramHistory: sharedMethods.ramHistory,
                                   diskHistory: sharedMethods.diskHistory,
                                 ),
-                              ),
+                              ],
                             ),
                           ),
-                        ].divide(const SizedBox(height: 10.0)),
-                      ),
+                        ),
+                      ].divide(const SizedBox(height: 10.0)),
                     ),
                   ),
                 ),

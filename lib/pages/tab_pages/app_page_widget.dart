@@ -35,276 +35,231 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
       backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: theme.primaryBackground,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.primaryBackground,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(0.0),
-                        bottomRight: Radius.circular(0.0),
-                        topLeft: Radius.circular(24.0),
-                        topRight: Radius.circular(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        color: theme.secondaryBackground,
+                        borderRadius: BorderRadius.circular(15.0),
+                        border: Border.all(color: theme.alternate, width: 2),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            width: double.infinity,
-                            height: 100.0,
-                            decoration: BoxDecoration(
-                              color: theme.secondaryBackground,
-                              borderRadius: BorderRadius.circular(10.0),
-                              border:
-                                  Border.all(color: theme.alternate, width: 2),
-                            ),
-                            child: Column(
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
                               mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Kismet',
-                                        style: theme.headlineSmall.override(
-                                          fontFamily: theme.headlineSmallFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineSmallFamily),
-                                        ),
-                                      ),
-                                      Text(
-                                        sharedMethods.kismetStatus["active"]
-                                            ? "Status: ON"
-                                            : "Status: OFF",
-                                        style: theme.bodyMedium.override(
-                                          fontFamily: theme.bodyMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily),
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  'Kismet',
+                                  style: theme.headlineSmall.override(
+                                    fontFamily: theme.headlineSmallFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(
+                                            FlutterFlowTheme.of(context)
+                                                .headlineSmallFamily),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      10.0, 0.0, 10.0, 10.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      FFButtonWidget(
-                                        onPressed: () {
-                                          sharedMethods.kismetStatus =
-                                              sharedMethods
-                                                      .startStopService(
-                                                          sharedMethods
-                                                                  .kismetStatus[
-                                                              "active"],
-                                                          "kismet")
-                                                  as Map<String, dynamic>;
-                                          setState(() {});
-                                        },
-                                        text:
-                                            sharedMethods.kismetStatus["active"]
-                                                ? "Stop"
-                                                : "Start",
-                                        options: FFButtonOptions(
-                                          height: 30.0,
-                                          padding: const EdgeInsets.all(0.0),
-                                          iconPadding:
-                                              const EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                          color: theme.primary,
-                                          textStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyLarge
-                                                  .override(
-                                                    fontFamily:
-                                                        theme.bodyLargeFamily,
-                                                    fontSize: 14.0,
-                                                    letterSpacing: 0.0,
-                                                    useGoogleFonts: GoogleFonts
-                                                            .asMap()
-                                                        .containsKey(
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLargeFamily),
-                                                  ),
-                                          elevation: 0.0,
-                                          borderSide: const BorderSide(
-                                            color: Colors.transparent,
-                                            width: 1.0,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      Text(
-                                        'URL: http://wlanpi-bc2.local:2005',
-                                        style: theme.bodyMedium.override(
-                                          fontFamily: theme.bodyMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily),
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  sharedMethods.kismetStatus["active"]
+                                      ? "Status: ON"
+                                      : "Status: OFF",
+                                  style: theme.bodyMedium.override(
+                                    fontFamily: theme.bodyMediumFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(
+                                            FlutterFlowTheme.of(context)
+                                                .bodyMediumFamily),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            width: double.infinity,
-                            height: 100.0,
-                            decoration: BoxDecoration(
-                              color: theme.secondaryBackground,
-                              borderRadius: BorderRadius.circular(10.0),
-                              border:
-                                  Border.all(color: theme.alternate, width: 2),
-                            ),
-                            child: Column(
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                10.0, 0.0, 10.0, 10.0),
+                            child: Row(
                               mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Grafana',
-                                        style: theme.headlineSmall.override(
-                                          fontFamily: theme.headlineSmallFamily,
+                                FFButtonWidget(
+                                  onPressed: () {
+                                    sharedMethods.kismetStatus =
+                                        sharedMethods.startStopService(
+                                            sharedMethods
+                                                .kismetStatus["active"],
+                                            "kismet") as Map<String, dynamic>;
+                                    setState(() {});
+                                  },
+                                  text: sharedMethods.kismetStatus["active"]
+                                      ? "Stop"
+                                      : "Start",
+                                  options: FFButtonOptions(
+                                    height: 30.0,
+                                    padding: const EdgeInsets.all(0.0),
+                                    iconPadding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 0.0),
+                                    color: theme.primary,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .bodyLarge
+                                        .override(
+                                          fontFamily: theme.bodyLargeFamily,
+                                          fontSize: 14.0,
                                           letterSpacing: 0.0,
                                           useGoogleFonts: GoogleFonts.asMap()
                                               .containsKey(
                                                   FlutterFlowTheme.of(context)
-                                                      .headlineSmallFamily),
+                                                      .bodyLargeFamily),
                                         ),
-                                      ),
-                                      Text(
-                                        sharedMethods.grafanaStatus["active"]
-                                            ? "Status: ON"
-                                            : "Status: OFF",
-                                        style: theme.bodyMedium.override(
-                                          fontFamily: theme.bodyMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily),
-                                        ),
-                                      ),
-                                    ],
+                                    elevation: 0.0,
+                                    borderSide: const BorderSide(
+                                      color: Colors.transparent,
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5.0),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      10.0, 0.0, 10.0, 10.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      FFButtonWidget(
-                                        onPressed: () {
-                                          sharedMethods.startStopService(
-                                              sharedMethods
-                                                  .grafanaStatus["active"],
-                                              "grafana-server");
-                                        },
-                                        text: sharedMethods
-                                                .grafanaStatus["active"]
-                                            ? "Stop"
-                                            : "Start",
-                                        options: FFButtonOptions(
-                                          height: 30.0,
-                                          padding: const EdgeInsets.all(0.0),
-                                          iconPadding:
-                                              const EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                          color: theme.primary,
-                                          textStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyLarge
-                                                  .override(
-                                                    fontFamily:
-                                                        theme.bodyLargeFamily,
-                                                    fontSize: 14.0,
-                                                    letterSpacing: 0.0,
-                                                    useGoogleFonts: GoogleFonts
-                                                            .asMap()
-                                                        .containsKey(
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLargeFamily),
-                                                  ),
-                                          elevation: 0.0,
-                                          borderSide: const BorderSide(
-                                            color: Colors.transparent,
-                                            width: 1.0,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                      Text(
-                                        'URL: http://wlanpi-bc2.local:2005',
-                                        style: theme.bodyMedium.override(
-                                          fontFamily: theme.bodyMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts: GoogleFonts.asMap()
-                                              .containsKey(
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily),
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  'URL: http://wlanpi-bc2.local:2005',
+                                  style: theme.bodyMedium.override(
+                                    fontFamily: theme.bodyMediumFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(
+                                            FlutterFlowTheme.of(context)
+                                                .bodyMediumFamily),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ].divide(const SizedBox(height: 10.0)),
+                        ],
                       ),
                     ),
-                  ),
+                    Container(
+                      width: double.infinity,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        color: theme.secondaryBackground,
+                        borderRadius: BorderRadius.circular(15.0),
+                        border: Border.all(color: theme.alternate, width: 2),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Grafana',
+                                  style: theme.headlineSmall.override(
+                                    fontFamily: theme.headlineSmallFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(
+                                            FlutterFlowTheme.of(context)
+                                                .headlineSmallFamily),
+                                  ),
+                                ),
+                                Text(
+                                  sharedMethods.grafanaStatus["active"]
+                                      ? "Status: ON"
+                                      : "Status: OFF",
+                                  style: theme.bodyMedium.override(
+                                    fontFamily: theme.bodyMediumFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(
+                                            FlutterFlowTheme.of(context)
+                                                .bodyMediumFamily),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                10.0, 0.0, 10.0, 10.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                FFButtonWidget(
+                                  onPressed: () {
+                                    sharedMethods.startStopService(
+                                        sharedMethods.grafanaStatus["active"],
+                                        "grafana-server");
+                                  },
+                                  text: sharedMethods.grafanaStatus["active"]
+                                      ? "Stop"
+                                      : "Start",
+                                  options: FFButtonOptions(
+                                    height: 30.0,
+                                    padding: const EdgeInsets.all(0.0),
+                                    iconPadding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 0.0),
+                                    color: theme.primary,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .bodyLarge
+                                        .override(
+                                          fontFamily: theme.bodyLargeFamily,
+                                          fontSize: 14.0,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: GoogleFonts.asMap()
+                                              .containsKey(
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyLargeFamily),
+                                        ),
+                                    elevation: 0.0,
+                                    borderSide: const BorderSide(
+                                      color: Colors.transparent,
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
+                                Text(
+                                  'URL: http://wlanpi-bc2.local:2005',
+                                  style: theme.bodyMedium.override(
+                                    fontFamily: theme.bodyMediumFamily,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: GoogleFonts.asMap()
+                                        .containsKey(
+                                            FlutterFlowTheme.of(context)
+                                                .bodyMediumFamily),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ].divide(const SizedBox(height: 10.0)),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );
