@@ -435,7 +435,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                         )),
                   ),
                   Text(
-                    'V 0.3',
+                    'V 0.4',
                     style: theme.labelSmall.override(
                       fontFamily: theme.labelSmallFamily,
                       letterSpacing: 0.0,
