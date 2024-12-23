@@ -272,18 +272,8 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                           child: TabBar(
                             labelColor: theme.primaryText,
                             unselectedLabelColor: theme.secondaryText,
-                            labelStyle: theme.titleMedium.override(
-                              fontFamily: theme.titleMediumFamily,
-                              letterSpacing: 0.0,
-                              useGoogleFonts: GoogleFonts.asMap()
-                                  .containsKey(theme.titleMediumFamily),
-                            ),
-                            unselectedLabelStyle: theme.titleMedium.override(
-                              fontFamily: theme.titleMediumFamily,
-                              letterSpacing: 0.0,
-                              useGoogleFonts: GoogleFonts.asMap()
-                                  .containsKey(theme.titleMediumFamily),
-                            ),
+                            labelStyle: theme.bodyMedium,
+                            unselectedLabelStyle: theme.bodyMedium,
                             indicator: BoxDecoration(
                               color: theme.secondaryBackground,
                               borderRadius: BorderRadius.circular(15.0),

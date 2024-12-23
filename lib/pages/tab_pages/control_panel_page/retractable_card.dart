@@ -4,10 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class RetractableCard extends StatefulWidget {
   final String title;
-  final Future<String> Function() fetchContent;
+  final Widget jsonWidget;
 
-  const RetractableCard(
-      {super.key, required this.title, required this.fetchContent});
+  const RetractableCard({
+    super.key,
+    required this.title,
+    required this.jsonWidget,
+  });
 
   @override
   _RetractableCardState createState() => _RetractableCardState();
@@ -15,15 +18,12 @@ class RetractableCard extends StatefulWidget {
 
 class _RetractableCardState extends State<RetractableCard> {
   bool _isExpanded = false;
-  String _content = "";
-  bool _isLoading = true;
+  late Widget _json_widget;
 
-  void _loadContent(context) async {
-    final content = await widget.fetchContent();
-    setState(() {
-      _content = content;
-      _isLoading = false;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _json_widget = widget.jsonWidget;
   }
 
   @override
@@ -49,20 +49,12 @@ class _RetractableCardState extends State<RetractableCard> {
             setState(() {
               _isExpanded = !_isExpanded;
             });
-            if (_isExpanded && _isLoading) {
-              _loadContent(context); // Load content when expanded
-            }
           },
         ),
         if (_isExpanded)
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                    color: FlutterFlowTheme.of(context).primary,
-                  ))
-                : Text(_content),
+            child: _json_widget,
           ),
       ],
     );

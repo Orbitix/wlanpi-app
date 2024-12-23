@@ -32,7 +32,7 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
         menuTitleHistory.add(item.title);
         currentMenu = item.subItems!;
       });
-    } else if (item.action != null) {
+    } else if (item.widget != null) {
       item.onPressed!(context);
     }
   }
@@ -78,7 +78,7 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
                         borderRadius: BorderRadius.circular(15.0),
                         border: Border.all(color: theme.alternate, width: 2),
                       ),
-                      child: item.action == null
+                      child: item.widget == null
                           ? ListTile(
                               title: Text(
                                 item.title,
@@ -98,7 +98,7 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
                                   : null,
                             )
                           : RetractableCard(
-                              title: item.title, fetchContent: item.action!));
+                              title: item.title, jsonWidget: item.widget!));
                 },
               ),
             ),

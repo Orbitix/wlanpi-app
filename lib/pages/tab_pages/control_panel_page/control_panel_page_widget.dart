@@ -1,6 +1,12 @@
+import 'package:wlanpi_mobile/schemas/network_info/network_info.dart';
+import 'package:wlanpi_mobile/schemas/system/summary.dart';
+import 'package:wlanpi_mobile/schemas/utils/reachability.dart';
+import 'package:wlanpi_mobile/schemas/utils/ufw_ports.dart';
+import 'package:wlanpi_mobile/schemas/utils/usb_devices.dart';
 import 'package:wlanpi_mobile/shared_methods.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/control_panel_page/dynamic_menu_page.dart';
 import 'package:wlanpi_mobile/network_handler.dart';
+import 'package:wlanpi_mobile/schemas/bluetooth/bluetooth_status.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -34,14 +40,24 @@ void showPopup(BuildContext context, String title, String message) {
   );
 }
 
-Future<String> actionFunc(String endpoint, String method) async {
+// Future<String> actionFunc(String endpoint, String method) async {
+//   try {
+//     final response =
+//         await NetworkHandler().requestEndpoint("31415", endpoint, method);
+//     String message = parseJsonToReadableText(response);
+//     return message;
+//   } catch (e) {
+//     return "Error: $e";
+//   }
+// }
+
+Future<Map<String, dynamic>> actionFunc(String endpoint, String method) async {
   try {
     final response =
         await NetworkHandler().requestEndpoint("31415", endpoint, method);
-    String message = parseJsonToReadableText(response);
-    return message;
+    return response;
   } catch (e) {
-    return "Error: $e";
+    return {"error": e};
   }
 }
 
@@ -84,17 +100,13 @@ final List<MenuItem> menuData = [
   MenuItem(
     title: "Network",
     subItems: [
-      MenuItem(
-          title: "Network Info",
-          action: () => actionFunc("/api/v1/network/info", "GET")),
+      MenuItem(title: "Network Info", widget: NetworkInfoWidget()),
     ],
   ),
   MenuItem(
     title: "Bluetooth",
     subItems: [
-      MenuItem(
-          title: "Status",
-          action: () => actionFunc("/api/v1/bluetooth/status", "GET")),
+      MenuItem(title: "Status", widget: BluetoothStatusWidget()),
       MenuItem(title: "Turn On", onPressed: bluetoothOn),
       MenuItem(title: "Turn Off", onPressed: bluetoothOff),
     ],
@@ -102,23 +114,15 @@ final List<MenuItem> menuData = [
   MenuItem(
     title: "Utils",
     subItems: [
-      MenuItem(
-          title: "Reachability",
-          action: () => actionFunc("/api/v1/utils/reachability", "GET")),
-      MenuItem(
-          title: "USB Devices",
-          action: () => actionFunc("/api/v1/utils/usb", "GET")),
-      MenuItem(
-          title: "UFW Ports",
-          action: () => actionFunc("/api/v1/utils/ufw", "GET")),
+      MenuItem(title: "Reachability", widget: ReachabilityWidget()),
+      MenuItem(title: "USB Devices", widget: UsbDevicesWidget()),
+      MenuItem(title: "UFW Ports", widget: UfwPortsWidget()),
     ],
   ),
   MenuItem(
     title: "System",
     subItems: [
-      MenuItem(
-          title: "Summary",
-          action: () => actionFunc("/api/v1/system/device/stats", "GET")),
+      MenuItem(title: "Summary", widget: SystemSummaryWidget()),
       MenuItem(
         title: "Settings",
         subItems: [
@@ -126,14 +130,11 @@ final List<MenuItem> menuData = [
             title: "Date & Time",
             subItems: [
               MenuItem(
-                  title: "Show Time & Zone",
-                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
+                  title: "Show Time & Zone", widget: BluetoothStatusWidget()),
               MenuItem(
                 title: "Set Timezone",
                 subItems: [
-                  MenuItem(
-                      title: "Auto",
-                      action: () => actionFunc("/api/v1/utils/ufw", "GET")),
+                  MenuItem(title: "Auto", widget: BluetoothStatusWidget()),
                   // Add other time zone actions here
                 ],
               ),
@@ -142,9 +143,7 @@ final List<MenuItem> menuData = [
           MenuItem(
             title: "RF Domain",
             subItems: [
-              MenuItem(
-                  title: "Show Domain",
-                  action: () => actionFunc("/api/v1/utils/ufw", "GET")),
+              MenuItem(title: "Show Domain", widget: BluetoothStatusWidget()),
               // Add other RF Domain settings here
             ],
           ),
@@ -152,19 +151,11 @@ final List<MenuItem> menuData = [
       ),
       MenuItem(
         title: "Reboot",
-        subItems: [
-          MenuItem(
-              title: "Confirm",
-              action: () => actionFunc("/api/v1/utils/ufw", "GET"))
-        ],
+        subItems: [MenuItem(title: "Confirm", widget: BluetoothStatusWidget())],
       ),
       MenuItem(
         title: "Shutdown",
-        subItems: [
-          MenuItem(
-              title: "Confirm",
-              action: () => actionFunc("/api/v1/utils/ufw", "GET"))
-        ],
+        subItems: [MenuItem(title: "Confirm", widget: BluetoothStatusWidget())],
       ),
     ],
   ),
@@ -172,14 +163,13 @@ final List<MenuItem> menuData = [
 
 class MenuItem {
   final String title;
-  final Future<String> Function()? action; // For static data fetching actions
-  final Future<void> Function(BuildContext)?
-      onPressed; // For button actions (POST requests)
+  final Widget? widget;
+  final Future<void> Function(BuildContext)? onPressed;
   final List<MenuItem>? subItems;
 
   MenuItem({
     required this.title,
-    this.action,
+    this.widget,
     this.onPressed,
     this.subItems = const [],
   });
