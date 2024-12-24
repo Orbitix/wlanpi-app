@@ -565,7 +565,7 @@ class DarkModeTheme extends FlutterFlowTheme {
   late Color error = const Color(0xFFFF5963);
   late Color info = const Color(0xFFFFFFFF);
 
-  late Color infoText = const Color(0xFF4E5153);
+  late Color infoText = const Color.fromARGB(255, 112, 117, 121);
 }
 
 extension TextStyleHelper on TextStyle {
