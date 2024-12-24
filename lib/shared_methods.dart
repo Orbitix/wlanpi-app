@@ -80,11 +80,15 @@ class SharedMethodsProvider extends ChangeNotifier {
   List<double> _cpuTempHistory = [0];
   List<double> _ramHistory = [0];
   List<double> _diskHistory = [0];
+  String _uptime = "0m";
+  String _ip = "-";
 
   List<double> cpuHistory = [];
   List<double> cpuTempHistory = [];
   List<double> ramHistory = [];
   List<double> diskHistory = [];
+  String uptime = "";
+  String ip = "";
 
   // Add methods to update the data and notify listeners
   void updateHistory() {
@@ -92,6 +96,8 @@ class SharedMethodsProvider extends ChangeNotifier {
     cpuTempHistory = _cpuTempHistory;
     diskHistory = _diskHistory;
     ramHistory = _ramHistory;
+    uptime = _uptime;
+    ip = _ip;
     notifyListeners();
   }
 
@@ -105,6 +111,8 @@ class SharedMethodsProvider extends ChangeNotifier {
     cpuTempHistory = _cpuTempHistory;
     diskHistory = _diskHistory;
     ramHistory = _ramHistory;
+    uptime = _uptime;
+    ip = _ip;
     notifyListeners(); // Notify listeners to refresh the UI
   }
 
@@ -186,6 +194,9 @@ class SharedMethodsProvider extends ChangeNotifier {
             double.parse(deviceStats["disk"].split(' ')[1].replaceAll('%', ''));
         _diskHistory.add(diskUsage);
         if (_diskHistory.length > 20) _diskHistory.removeAt(0);
+
+        _uptime = deviceStats["uptime"];
+        _ip = deviceStats["ip"];
 
         updateHistory();
 

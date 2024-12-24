@@ -64,6 +64,7 @@ dependencies:
     webview_flutter: ^4.8.0
     settings_ui: ^2.0.2
     fl_chart: ^0.69.2
+    percent_indicator: ^4.2.4
 
 flutter_web_plugins: any
 dependency_overrides:
