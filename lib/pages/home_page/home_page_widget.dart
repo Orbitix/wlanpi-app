@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wlanpi_mobile/network_handler.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
@@ -24,20 +25,17 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget>
     with TickerProviderStateMixin {
   late HomePageModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
   final animationsMap = <String, AnimationInfo>{};
+  final PageController _pageController = PageController();
 
   String? transport_type = "Bluetooth";
   final List<String> transport_types = ['Bluetooth', 'USB OTG'];
-
   bool useCustomTransport = false;
 
   Future<void> _setTransportType() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('transportType', transport_type!);
-
     await _testDevice();
   }
 
@@ -282,7 +280,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                 imageUrl:
                                     'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
                                 width: 300.0,
-                                height: 200.0,
+                                // height: 100.0,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -367,75 +365,57 @@ class _HomePageWidgetState extends State<HomePageWidget>
                           ].divide(const SizedBox(height: 10.0)),
                         )),
                   ),
+                  SizedBox(height: 20.0),
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: theme.secondaryBackground,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: theme.alternate,
-                                borderRadius: BorderRadius.circular(10.0),
-                                shape: BoxShape.rectangle,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 200.0, // Set a fixed height for the PageView
+                          child: PageView(
+                            controller: _pageController,
+                            children: [
+                              buildCarouselPage(
+                                theme,
+                                'Connect To a PI',
+                                'Click the "Connect" button to let the app handle the connection method and establish a connection with your WLANPi device.',
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                      'App Overview',
-                                      style: theme.headlineMedium.override(
-                                        fontFamily: theme.headlineMediumFamily,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w600,
-                                        useGoogleFonts: GoogleFonts.asMap()
-                                            .containsKey(
-                                                theme.headlineMediumFamily),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              buildCarouselPage(
+                                theme,
+                                'Connection Method Override',
+                                'Enable this switch to select a custom connection method from the dropdown menu, if the automatic method does not work.',
                               ),
+                              buildCarouselPage(
+                                theme,
+                                'Settings',
+                                'Click the settings icon to configure network settings such as USB OTG IP Address and Bluetooth IP Address.',
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: SmoothPageIndicator(
+                            controller: _pageController,
+                            count: 3,
+                            effect: ExpandingDotsEffect(
+                              dotHeight: 8.0,
+                              dotWidth: 8.0,
+                              activeDotColor: theme.primary,
+                              dotColor: theme.accent1,
                             ),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    buildSection(
-                                      '1. Connect To a PI',
-                                      'Click the "Connect" button to let the app handle the connection method and establish a connection with your WLANPi device.',
-                                    ),
-                                    SizedBox(height: 12.0),
-                                    buildSection(
-                                      '2. Connection Method Override',
-                                      'Enable this switch to select a custom connection method from the dropdown menu, if the automatic method does not work.',
-                                    ),
-                                    SizedBox(height: 12.0),
-                                    buildSection(
-                                      '3. Settings',
-                                      'Click the settings icon to configure network settings such as USB OTG IP Address and Bluetooth IP Address.',
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ].divide(const SizedBox(height: 10.0)),
-                        )),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  SizedBox(height: 20.0),
                   Text(
-                    'V 0.4',
+                    'V 0.5',
                     style: theme.labelSmall.override(
                       fontFamily: theme.labelSmallFamily,
                       letterSpacing: 0.0,
@@ -443,11 +423,48 @@ class _HomePageWidgetState extends State<HomePageWidget>
                           .containsKey(theme.labelSmallFamily),
                     ),
                   ),
-                ].divide(const SizedBox(height: 20.0)),
+                ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildCarouselPage(
+      FlutterFlowTheme theme, String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: theme.alternate,
+              borderRadius: BorderRadius.circular(10.0),
+              shape: BoxShape.rectangle,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    title,
+                    style: theme.titleMedium,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 10.0),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(content, style: theme.bodyMedium),
+          ),
+        ],
       ),
     );
   }
