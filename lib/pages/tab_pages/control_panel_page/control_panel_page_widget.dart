@@ -107,8 +107,8 @@ final List<MenuItem> menuData = [
     title: "Bluetooth",
     subItems: [
       MenuItem(title: "Status", widget: BluetoothStatusWidget()),
-      MenuItem(title: "Turn On", onPressed: bluetoothOn),
-      MenuItem(title: "Turn Off", onPressed: bluetoothOff),
+      // MenuItem(title: "Turn On", onPressed: bluetoothOn),
+      // MenuItem(title: "Turn Off", onPressed: bluetoothOff),
     ],
   ),
   MenuItem(
@@ -123,40 +123,40 @@ final List<MenuItem> menuData = [
     title: "System",
     subItems: [
       MenuItem(title: "Summary", widget: SystemSummaryWidget()),
-      MenuItem(
-        title: "Settings",
-        subItems: [
-          MenuItem(
-            title: "Date & Time",
-            subItems: [
-              MenuItem(
-                  title: "Show Time & Zone", widget: BluetoothStatusWidget()),
-              MenuItem(
-                title: "Set Timezone",
-                subItems: [
-                  MenuItem(title: "Auto", widget: BluetoothStatusWidget()),
-                  // Add other time zone actions here
-                ],
-              ),
-            ],
-          ),
-          MenuItem(
-            title: "RF Domain",
-            subItems: [
-              MenuItem(title: "Show Domain", widget: BluetoothStatusWidget()),
-              // Add other RF Domain settings here
-            ],
-          ),
-        ],
-      ),
-      MenuItem(
-        title: "Reboot",
-        subItems: [MenuItem(title: "Confirm", widget: BluetoothStatusWidget())],
-      ),
-      MenuItem(
-        title: "Shutdown",
-        subItems: [MenuItem(title: "Confirm", widget: BluetoothStatusWidget())],
-      ),
+      // MenuItem(
+      //   title: "Settings",
+      //   subItems: [
+      //     MenuItem(
+      //       title: "Date & Time",
+      //       subItems: [
+      //         MenuItem(
+      //             title: "Show Time & Zone", widget: BluetoothStatusWidget()),
+      //         MenuItem(
+      //           title: "Set Timezone",
+      //           subItems: [
+      //             MenuItem(title: "Auto", widget: BluetoothStatusWidget()),
+      //             // Add other time zone actions here
+      //           ],
+      //         ),
+      //       ],
+      //     ),
+      //     MenuItem(
+      //       title: "RF Domain",
+      //       subItems: [
+      //         MenuItem(title: "Show Domain", widget: BluetoothStatusWidget()),
+      //         // Add other RF Domain settings here
+      //       ],
+      //     ),
+      //   ],
+      // ),
+      // MenuItem(
+      //   title: "Reboot",
+      //   subItems: [MenuItem(title: "Confirm", widget: BluetoothStatusWidget())],
+      // ),
+      // MenuItem(
+      //   title: "Shutdown",
+      //   subItems: [MenuItem(title: "Confirm", widget: BluetoothStatusWidget())],
+      // ),
     ],
   ),
 ];
