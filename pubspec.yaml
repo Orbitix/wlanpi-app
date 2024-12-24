@@ -59,7 +59,7 @@ dependencies:
     cupertino_icons: ^1.0.0
     logger: ^2.3.0
     permission_handler: ^11.3.1
-    flutter_launcher_icons: ^0.14.1
+    flutter_launcher_icons: ^0.14.2
     http: ^1.2.1
     webview_flutter: ^4.8.0
     settings_ui: ^2.0.2
@@ -79,14 +79,6 @@ dev_dependencies:
         sdk: flutter
 
 # wlanpi_mobile: any
-flutter_launcher_icons:
-    android: "launcher_icon"
-    ios: true
-    web:
-        generate: true
-    image_path: "assets/images/app_launcher_icon.png"
-    adaptive_icon_background: "#f45625"
-    adaptive_icon_foreground: "assets/images/adaptive_foreground_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
