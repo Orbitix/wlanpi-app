@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +18,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SharedMethodsProvider()),
+        ChangeNotifierProvider(create: (_) => AppStateNotifier.instance),
       ],
       child: MyApp(),
     ),
@@ -42,8 +42,6 @@ class _MyAppState extends State<MyApp> {
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
 
-  bool displaySplashImage = true;
-
   @override
   void initState() {
     super.initState();
@@ -51,8 +49,9 @@ class _MyAppState extends State<MyApp> {
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
 
-    Future.delayed(const Duration(milliseconds: 1000),
-        () => setState(() => _appStateNotifier.stopShowingSplashImage()));
+    // Future.delayed(const Duration(milliseconds: 3000), () {
+    //   _appStateNotifier.stopShowingSplashImage();
+    // });
   }
 
   void setThemeMode(ThemeMode mode) => setState(() {

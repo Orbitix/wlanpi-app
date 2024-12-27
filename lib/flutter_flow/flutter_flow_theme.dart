@@ -261,14 +261,14 @@ class MobileTypography extends Typography {
   String get titleMediumFamily => 'Poppins';
   TextStyle get titleMedium => GoogleFonts.getFont(
         'Poppins',
-        color: theme.info,
+        color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 18.0,
       );
   String get titleSmallFamily => 'Poppins';
   TextStyle get titleSmall => GoogleFonts.getFont(
         'Poppins',
-        color: theme.info,
+        color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 16.0,
       );
