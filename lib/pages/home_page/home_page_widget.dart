@@ -255,17 +255,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Text(
-                                      'Connect To a PI',
-                                      style: theme.headlineMedium.override(
-                                        fontFamily: theme.headlineMediumFamily,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w600,
-                                        useGoogleFonts: GoogleFonts.asMap()
-                                            .containsKey(
-                                                theme.headlineMediumFamily),
-                                      ),
-                                    ),
+                                    Text('Connect To a PI',
+                                        style: theme.headlineMedium.copyWith(
+                                            fontWeight: FontWeight.w600)),
                                   ],
                                 ),
                               ),
@@ -381,7 +373,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                             children: [
                               buildCarouselPage(
                                 theme,
-                                'Connect To a PI',
+                                'Establishing a Connection',
                                 'Click the "Connect" button to let the app handle the connection method and establish a connection with your WLANPi device.',
                               ),
                               buildCarouselPage(
@@ -415,7 +407,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                   ),
                   SizedBox(height: 20.0),
                   Text(
-                    'V 0.5',
+                    'V 0.5.1',
                     style: theme.labelSmall.override(
                       fontFamily: theme.labelSmallFamily,
                       letterSpacing: 0.0,
@@ -451,10 +443,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text(
-                    title,
-                    style: theme.titleMedium,
-                  ),
+                  Text(title,
+                      style: theme.titleMedium
+                          .copyWith(fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
