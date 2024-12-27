@@ -18,8 +18,7 @@ class AppStateNotifier extends ChangeNotifier {
   static AppStateNotifier? _instance;
   static AppStateNotifier get instance => _instance ??= AppStateNotifier._();
 
-  bool showSplashImage =
-      false; //  temporarlily disabled because splash screen is hanging
+  bool showSplashImage = false; // disable due to hang
 
   void stopShowingSplashImage() {
     showSplashImage = false;
@@ -54,18 +53,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             debugPrint(
                 'Building _initialize route. showSplashImage: ${appStateNotifier.showSplashImage}');
             return appStateNotifier.showSplashImage
-                ? Builder(
-                    builder: (context) => Container(
-                      color: FlutterFlowTheme.of(context).primary,
-                      child: Center(
-                        child: Image.asset(
-                          'assets/images/WLANPI_Mobile_Logo_(1).png',
-                          width: MediaQuery.sizeOf(context).width * 0.5,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  )
+                ? SplashScreen(appStateNotifier: appStateNotifier)
                 : const HomePageWidget();
           },
         ),
@@ -86,6 +74,40 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
+
+class SplashScreen extends StatefulWidget {
+  final AppStateNotifier appStateNotifier;
+
+  const SplashScreen({required this.appStateNotifier, super.key});
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Automatically transition from the splash screen to the home page after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      widget.appStateNotifier.stopShowingSplashImage();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: FlutterFlowTheme.of(context).primary,
+      child: Center(
+        child: Image.asset(
+          'assets/images/WLANPI_Mobile_Logo_(1).png',
+          width: MediaQuery.sizeOf(context).width * 0.5,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+}
 
 extension NavParamExtensions on Map<String, String?> {
   Map<String, String> get withoutNulls => Map.fromEntries(
