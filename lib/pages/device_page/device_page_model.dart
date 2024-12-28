@@ -1,4 +1,4 @@
-import '/flutter_flow/flutter_flow_util.dart';
+import '../../utils/flutter_flow_util.dart';
 import 'device_page_widget.dart' show DevicePageWidget;
 import 'package:flutter/material.dart';
 
