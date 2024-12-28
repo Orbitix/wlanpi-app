@@ -187,9 +187,13 @@ class _PiPageWidgetState extends State<PiPageWidget>
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color:
-                        sharedMethods.connected ? theme.success : theme.error,
+                    color: theme.secondaryBackground,
                     borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(
+                        color: sharedMethods.connected
+                            ? theme.success
+                            : theme.alternate,
+                        width: 2),
                   ),
                   child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -225,8 +229,8 @@ class _PiPageWidgetState extends State<PiPageWidget>
                                   });
                                   _setUseCustomTransport(value);
                                 },
-                                activeColor: theme.primaryText,
-                                activeTrackColor: theme.secondaryText,
+                                activeColor: theme.primary,
+                                activeTrackColor: theme.accent1,
                                 inactiveTrackColor: Colors.transparent,
                               ),
                               if (useCustomTransport) ...[
@@ -279,7 +283,7 @@ class _PiPageWidgetState extends State<PiPageWidget>
                                 iconPadding:
                                     const EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 0.0),
-                                color: theme.alternate,
+                                color: theme.primary,
                                 textStyle: theme.titleSmall.override(
                                   fontFamily: theme.titleSmallFamily,
                                   color: Colors.white,
@@ -297,37 +301,26 @@ class _PiPageWidgetState extends State<PiPageWidget>
                 ),
                 SizedBox(height: 20.0),
                 Container(
-                  width: double.infinity,
                   decoration: BoxDecoration(
                     color: theme.secondaryBackground,
                     borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(color: theme.alternate, width: 2),
                   ),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: theme.secondaryBackground,
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(color: theme.alternate, width: 2),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.settings),
+                            SizedBox(width: 10.0),
+                            Text("Settings", style: theme.bodyLarge),
+                          ],
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.settings),
-                                  SizedBox(width: 10.0),
-                                  Text("Settings", style: theme.bodyLarge),
-                                ],
-                              ),
-                              Icon(Icons.arrow_forward_ios_rounded),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
+                        Icon(Icons.arrow_forward_ios_rounded),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 20.0),
