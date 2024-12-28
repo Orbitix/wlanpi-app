@@ -15,18 +15,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomePageWidget extends StatefulWidget {
-  const HomePageWidget({super.key});
+class PiPageWidget extends StatefulWidget {
+  const PiPageWidget({super.key});
 
   @override
-  State<HomePageWidget> createState() => _HomePageWidgetState();
+  State<PiPageWidget> createState() => _PiPageWidgetState();
 }
 
-class _HomePageWidgetState extends State<HomePageWidget>
+class _PiPageWidgetState extends State<PiPageWidget>
     with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final animationsMap = <String, AnimationInfo>{};
-  final PageController _pageController = PageController();
 
   String? transport_type = "Bluetooth";
   final List<String> transport_types = ['Bluetooth', 'USB OTG'];
@@ -215,6 +214,84 @@ class _HomePageWidgetState extends State<HomePageWidget>
                           ),
                           Text("Connect to a WLANPi device to get started.",
                               style: theme.bodyMedium),
+                          Column(
+                            children: [
+                              SwitchListTile(
+                                title: Text('Connection Method Override'),
+                                value: useCustomTransport,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    useCustomTransport = value;
+                                  });
+                                  _setUseCustomTransport(value);
+                                },
+                                activeColor: theme.primaryText,
+                                activeTrackColor: theme.secondaryText,
+                                inactiveTrackColor: Colors.transparent,
+                              ),
+                              if (useCustomTransport) ...[
+                                Container(
+                                  width: double.infinity,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: theme.alternate,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        dropdownColor: theme.alternate,
+                                        value: transport_type,
+                                        hint: const Text(
+                                            'Select the connection method'),
+                                        items:
+                                            transport_types.map((String type) {
+                                          return DropdownMenuItem<String>(
+                                            value: type,
+                                            child: Text(type),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            transport_type = newValue;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: FFButtonWidget(
+                              onPressed: () async {
+                                await _handleButton();
+                              },
+                              text: 'Connect',
+                              options: FFButtonOptions(
+                                width: double.infinity,
+                                height: 50.0,
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    24.0, 0.0, 24.0, 0.0),
+                                iconPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
+                                color: theme.alternate,
+                                textStyle: theme.titleSmall.override(
+                                  fontFamily: theme.titleSmallFamily,
+                                  color: Colors.white,
+                                  letterSpacing: 0.0,
+                                  useGoogleFonts: GoogleFonts.asMap()
+                                      .containsKey(theme.titleSmallFamily),
+                                ),
+                                elevation: 0.0,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
                         ].divide(const SizedBox(height: 10.0)),
                       )),
                 ),

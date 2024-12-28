@@ -9,7 +9,7 @@ import 'package:wlanpi_mobile/services/shared_methods.dart';
 import 'theme/theme.dart';
 import 'utils/flutter_flow_util.dart';
 import 'widgets/navigation_bar_widget.dart';
-import 'pages/home_page/home_page_widget.dart';
+import 'pages/pi_page/pi_page_widget.dart';
 import 'pages/device_page/device_page_widget.dart';
 import 'pages/settings.dart';
 
@@ -84,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = <Widget>[
-    HomePageWidget(),
+    PiPageWidget(),
     StatsPageWidget(),
     AppsPageWidget(),
     ControlPanelPageWidget(),

@@ -44,7 +44,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 ),
               ),
             )
-          : const HomePageWidget(),
+          : const PiPageWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
@@ -54,13 +54,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 'Building _initialize route. showSplashImage: ${appStateNotifier.showSplashImage}');
             return appStateNotifier.showSplashImage
                 ? SplashScreen(appStateNotifier: appStateNotifier)
-                : const HomePageWidget();
+                : const PiPageWidget();
           },
         ),
         FFRoute(
           name: 'HomePage',
           path: '/homePage',
-          builder: (context, params) => const HomePageWidget(),
+          builder: (context, params) => const PiPageWidget(),
         ),
         FFRoute(
           name: 'DevicePage',
