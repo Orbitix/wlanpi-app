@@ -1,14 +1,12 @@
 import '../../utils/flutter_flow_util.dart';
 // import '/actions/index.dart' as actions;
-import 'home_page_widget.dart' show HomePageWidget;
+import 'stats_page_widget.dart' show StatsPageWidget;
 import 'package:flutter/material.dart';
 
-class HomePageModel extends FlutterFlowModel<HomePageWidget> {
+class StatsPageModel extends FlutterFlowModel<StatsPageWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();
-  // Stores action output result for [Custom Action - openBluetooth] action in Button widget.
-  dynamic bluetoothDevice;
 
   @override
   void initState(BuildContext context) {}

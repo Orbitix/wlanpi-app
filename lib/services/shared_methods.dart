@@ -70,6 +70,9 @@ class SharedMethodsProvider extends ChangeNotifier {
     "active": false,
   };
 
+  bool connected = false;
+  bool _connected = false;
+
   // Shared state
   Map<String, dynamic> deviceInfo = {};
   Map<String, dynamic> deviceStats = {};
@@ -113,7 +116,13 @@ class SharedMethodsProvider extends ChangeNotifier {
     ramHistory = _ramHistory;
     uptime = _uptime;
     ip = _ip;
+    connected = _connected;
     notifyListeners(); // Notify listeners to refresh the UI
+  }
+
+  void setConnected(bool status) {
+    connected = status;
+    notifyListeners();
   }
 
   // Start and stop service

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '../../theme/theme.dart';
@@ -12,8 +14,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'home_page_model.dart';
-export 'home_page_model.dart';
 
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({super.key});
@@ -24,7 +24,6 @@ class HomePageWidget extends StatefulWidget {
 
 class _HomePageWidgetState extends State<HomePageWidget>
     with TickerProviderStateMixin {
-  late HomePageModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final animationsMap = <String, AnimationInfo>{};
   final PageController _pageController = PageController();
@@ -71,7 +70,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
         print("Failed to contact PI");
         failedConnection();
       } else {
-        context.pushNamed('DevicePage');
+        // context.pushNamed('DevicePage');
       }
     } catch (error) {
       print("Error occurred while testing device: $error");
@@ -120,26 +119,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => HomePageModel());
 
     _loadIPs();
     _loadPreferences();
-
-    animationsMap.addAll({
-      'imageOnPageLoadAnimation': AnimationInfo(
-        trigger: AnimationTrigger.onPageLoad,
-        effectsBuilder: () => [
-          VisibilityEffect(duration: 1.ms),
-          MoveEffect(
-            curve: Curves.easeInOut,
-            delay: 0.0.ms,
-            duration: 600.0.ms,
-            begin: const Offset(0.0, 100.0),
-            end: const Offset(0.0, 0.0),
-          ),
-        ],
-      ),
-    });
   }
 
   Widget buildSection(String heading, String text) {
@@ -180,243 +162,108 @@ class _HomePageWidgetState extends State<HomePageWidget>
   @override
   Widget build(BuildContext context) {
     final theme = CustomTheme.of(context);
-    return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: theme.primaryBackground,
-        appBar: AppBar(
-          backgroundColor: theme.primary,
-          automaticallyImplyLeading: false,
-          title: Align(
-            alignment: const AlignmentDirectional(-1.0, 0.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset(
-                'assets/images/thumbnail_image002.png',
-                height: 50.0,
-                fit: BoxFit.contain,
-                alignment: const Alignment(0.0, 0.0),
-              ),
-            ).animateOnPageLoad(animationsMap['imageOnPageLoadAnimation']!),
-          ),
-          actions: [
-            Align(
-              alignment: const AlignmentDirectional(0.0, 1.0),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.settings,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                  onPressed: () {
-                    context.pushNamed('SettingsPage');
-                  },
-                ),
-              ),
-            ),
-          ],
-          centerTitle: false,
-          elevation: 2.0,
+    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: theme.primaryBackground,
+      appBar: AppBar(
+        backgroundColor: theme.primary,
+        automaticallyImplyLeading: false,
+        title: Align(
+          alignment: const AlignmentDirectional(-1.0, 0.0),
+          child: Text("My WLANPi", style: theme.titleLarge),
         ),
-        body: SafeArea(
-          top: true,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: theme.alternate,
-                                borderRadius: BorderRadius.circular(10.0),
-                                shape: BoxShape.rectangle,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text('Connect To a PI',
-                                        style: theme.headlineMedium.copyWith(
-                                            fontWeight: FontWeight.w600)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: CachedNetworkImage(
-                                fadeInDuration:
-                                    const Duration(milliseconds: 500),
-                                fadeOutDuration:
-                                    const Duration(milliseconds: 500),
-                                imageUrl:
-                                    'https://images.squarespace-cdn.com/content/v1/5f80b3793732d0058da4a694/1668978349491-XJIVZ3CIASIBXGXRGRJ8/WLAN+Pi+M4+v86-A1.png?format=2500w',
-                                width: 300.0,
-                                // height: 100.0,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Column(
-                              children: [
-                                SwitchListTile(
-                                  title: Text('Connection Method Override'),
-                                  value: useCustomTransport,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      useCustomTransport = value;
-                                    });
-                                    _setUseCustomTransport(value);
-                                  },
-                                  activeColor: theme.primary,
-                                  activeTrackColor: theme.accent1,
-                                  inactiveTrackColor: theme.secondaryBackground,
-                                ),
-                                if (useCustomTransport) ...[
-                                  Container(
-                                    width: double.infinity,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: theme.alternate,
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          dropdownColor: theme.alternate,
-                                          value: transport_type,
-                                          hint: const Text(
-                                              'Select the connection method'),
-                                          items: transport_types
-                                              .map((String type) {
-                                            return DropdownMenuItem<String>(
-                                              value: type,
-                                              child: Text(type),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              transport_type = newValue;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: FFButtonWidget(
-                                onPressed: () async {
-                                  await _handleButton();
-                                },
-                                text: 'Connect',
-                                options: FFButtonOptions(
-                                  width: double.infinity,
-                                  height: 50.0,
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      24.0, 0.0, 24.0, 0.0),
-                                  iconPadding:
-                                      const EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 0.0, 0.0, 0.0),
-                                  color: theme.primary,
-                                  textStyle: theme.titleSmall.override(
-                                    fontFamily: theme.titleSmallFamily,
-                                    color: Colors.white,
-                                    letterSpacing: 0.0,
-                                    useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(theme.titleSmallFamily),
-                                  ),
-                                  elevation: 0.0,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                            ),
-                          ].divide(const SizedBox(height: 10.0)),
-                        )),
+        centerTitle: false,
+        elevation: 2.0,
+      ),
+      body: SafeArea(
+        top: true,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color:
+                        sharedMethods.connected ? theme.success : theme.error,
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                  SizedBox(height: 20.0),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 200.0, // Set a fixed height for the PageView
-                          child: PageView(
-                            controller: _pageController,
+                  child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
                             children: [
-                              buildCarouselPage(
-                                theme,
-                                'Establishing a Connection',
-                                'Click the "Connect" button to let the app handle the connection method and establish a connection with your WLANPi device.',
+                              Icon(
+                                Icons.error_outline,
+                                size: 30.0,
                               ),
-                              buildCarouselPage(
-                                theme,
-                                'Connection Method Override',
-                                'Enable this switch to select a custom connection method from the dropdown menu, if the automatic method does not work.',
+                              SizedBox(width: 10.0),
+                              Text(
+                                  sharedMethods.connected
+                                      ? 'Connected'
+                                      : 'Not Connected',
+                                  style: theme.headlineSmall
+                                      .copyWith(fontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                          Text("Connect to a WLANPi device to get started.",
+                              style: theme.bodyMedium),
+                        ].divide(const SizedBox(height: 10.0)),
+                      )),
+                ),
+                SizedBox(height: 20.0),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: theme.secondaryBackground,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: theme.secondaryBackground,
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(color: theme.alternate, width: 2),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.settings),
+                                  SizedBox(width: 10.0),
+                                  Text("Settings", style: theme.bodyLarge),
+                                ],
                               ),
-                              buildCarouselPage(
-                                theme,
-                                'Settings',
-                                'Click the settings icon to configure network settings such as USB OTG IP Address and Bluetooth IP Address.',
-                              ),
+                              Icon(Icons.arrow_forward_ios_rounded),
                             ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: SmoothPageIndicator(
-                            controller: _pageController,
-                            count: 3,
-                            effect: ExpandingDotsEffect(
-                              dotHeight: 8.0,
-                              dotWidth: 8.0,
-                              activeDotColor: theme.primary,
-                              dotColor: theme.accent1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                  SizedBox(height: 20.0),
-                  Text(
-                    'V 0.5.2',
-                    style: theme.labelSmall.override(
-                      fontFamily: theme.labelSmallFamily,
-                      letterSpacing: 0.0,
-                      useGoogleFonts: GoogleFonts.asMap()
-                          .containsKey(theme.labelSmallFamily),
-                    ),
+                ),
+                SizedBox(height: 20.0),
+                Text(
+                  'V 0.5.2',
+                  style: theme.labelSmall.override(
+                    fontFamily: theme.labelSmallFamily,
+                    letterSpacing: 0.0,
+                    useGoogleFonts:
+                        GoogleFonts.asMap().containsKey(theme.labelSmallFamily),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

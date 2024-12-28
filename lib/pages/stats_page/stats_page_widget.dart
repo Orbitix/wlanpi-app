@@ -1,7 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
 
-import '/flutter_flow/flutter_flow_animations.dart';
 import '../../theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +31,7 @@ class LineChartWidget extends StatelessWidget {
           "$title: ${data.last.toStringAsFixed(2)}$unit",
           style: theme.bodyMedium,
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         Container(
           width: double.infinity,
           height: 150.0,
@@ -92,7 +91,7 @@ class CircularPercentWidget extends StatelessWidget {
           title,
           style: theme.bodyMedium,
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         CircularPercentIndicator(
           radius: 60.0,
           lineWidth: 10.0,
@@ -121,8 +120,6 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
     with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final animationsMap = <String, AnimationInfo>{};
-
   @override
   void initState() {
     super.initState();
@@ -134,6 +131,13 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
     final theme = CustomTheme.of(context);
     return Scaffold(
       key: scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: theme.primary,
+        automaticallyImplyLeading: true,
+        title: Text("Stats", style: theme.titleLarge),
+        centerTitle: false,
+        elevation: 2.0,
+      ),
       backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
@@ -164,7 +168,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                 "Uptime",
                                 style: theme.bodyMedium,
                               ),
-                              SizedBox(height: 10.0),
+                              const SizedBox(height: 10.0),
                               Container(
                                 decoration: BoxDecoration(
                                   color: theme.alternate,
@@ -186,7 +190,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                                 "IP Address",
                                 style: theme.bodyMedium,
                               ),
-                              SizedBox(height: 10.0),
+                              const SizedBox(height: 10.0),
                               Container(
                                 decoration: BoxDecoration(
                                   color: theme.alternate,
@@ -206,7 +210,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                       ),
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   // Stats Wheels Container
                   Container(
                     width: double.infinity,
@@ -240,7 +244,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                               ),
                             ],
                           ),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -266,7 +270,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                       ),
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   // Graphs Container
                   Container(
                     width: double.infinity,
@@ -285,21 +289,21 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
                             unit: "%",
                             title: 'CPU Usage History',
                           ),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           LineChartWidget(
                             data: sharedMethods.ramHistory,
                             color: Colors.green,
                             unit: "%",
                             title: 'RAM Usage History',
                           ),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           LineChartWidget(
                             data: sharedMethods.cpuTempHistory,
                             color: Colors.orange,
                             unit: "C",
                             title: 'CPU Temp History',
                           ),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           LineChartWidget(
                             data: sharedMethods.diskHistory,
                             color: Colors.red,

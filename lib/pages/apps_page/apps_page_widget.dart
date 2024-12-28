@@ -33,6 +33,13 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: theme.primaryBackground,
+      appBar: AppBar(
+        backgroundColor: theme.primary,
+        automaticallyImplyLeading: true,
+        title: Text("Apps", style: theme.titleLarge),
+        centerTitle: false,
+        elevation: 2.0,
+      ),
       body: SafeArea(
         top: true,
         child: Column(

@@ -4,12 +4,12 @@ import 'package:wlanpi_mobile/schemas/utils/reachability.dart';
 import 'package:wlanpi_mobile/schemas/utils/ufw_ports.dart';
 import 'package:wlanpi_mobile/schemas/utils/usb_devices.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
-import 'package:wlanpi_mobile/pages/tab_pages/control_panel_page/dynamic_menu_page.dart';
+import 'package:wlanpi_mobile/pages/control_panel_page/dynamic_menu_page.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/schemas/bluetooth/bluetooth_status.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
-import '../../../theme/theme.dart';
+import '../../theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class ControlPanelPageWidget extends StatefulWidget {
@@ -191,6 +191,13 @@ class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
     final theme = CustomTheme.of(context);
     return Scaffold(
       key: scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: theme.primary,
+        automaticallyImplyLeading: true,
+        title: Text("Control Panel", style: theme.titleLarge),
+        centerTitle: false,
+        elevation: 2.0,
+      ),
       backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
