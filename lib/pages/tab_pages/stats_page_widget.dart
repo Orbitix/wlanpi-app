@@ -1,8 +1,8 @@
 import 'package:provider/provider.dart';
-import 'package:wlanpi_mobile/shared_methods.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
+import '../../theme/theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
@@ -24,7 +24,7 @@ class LineChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -84,7 +84,7 @@ class CircularPercentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -131,7 +131,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
   @override
   Widget build(BuildContext context) {
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: theme.primaryBackground,

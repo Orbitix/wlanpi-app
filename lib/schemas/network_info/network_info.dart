@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:wlanpi_mobile/flutter_flow/flutter_flow_theme.dart';
-import 'package:wlanpi_mobile/json_widget_builder.dart';
+import 'package:wlanpi_mobile/theme/theme.dart';
+import 'package:wlanpi_mobile/utils/json_widget_builder.dart';
 
 class NetworkInfoWidget extends StatelessWidget {
   const NetworkInfoWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
 
     return EndpointDataFetcher(
       endpoint: "/api/v1/network/info",
@@ -153,7 +153,7 @@ class NetworkInfoWidget extends StatelessWidget {
   }
 
   Widget _buildSection(
-      String title, Map<String, dynamic> data, FlutterFlowTheme theme) {
+      String title, Map<String, dynamic> data, CustomTheme theme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
@@ -194,7 +194,7 @@ class NetworkInfoWidget extends StatelessWidget {
   }
 
   List<Widget> _buildNestedSection(
-      Map<String, dynamic> data, FlutterFlowTheme theme) {
+      Map<String, dynamic> data, CustomTheme theme) {
     return data.entries.map((entry) {
       return Padding(
         padding: const EdgeInsets.only(left: 16.0, top: 4.0),
@@ -217,7 +217,7 @@ class NetworkInfoWidget extends StatelessWidget {
     }).toList();
   }
 
-  List<Widget> _buildListSection(List data, FlutterFlowTheme theme) {
+  List<Widget> _buildListSection(List data, CustomTheme theme) {
     return data.map((item) {
       return Padding(
         padding: const EdgeInsets.only(left: 16.0, top: 4.0),

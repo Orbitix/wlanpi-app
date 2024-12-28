@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
-import 'package:wlanpi_mobile/shared_methods.dart';
-import 'flutter_flow/flutter_flow_theme.dart';
-import 'flutter_flow/flutter_flow_util.dart';
-import 'flutter_flow/nav/nav.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
+import 'theme/theme.dart';
+import 'utils/flutter_flow_util.dart';
+import 'nav/nav.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
 
-  await FlutterFlowTheme.initialize();
+  await CustomTheme.initialize();
 
   runApp(
     MultiProvider(
@@ -37,7 +37,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = FlutterFlowTheme.themeMode;
+  ThemeMode _themeMode = CustomTheme.themeMode;
 
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
 
   void setThemeMode(ThemeMode mode) => setState(() {
         _themeMode = mode;
-        FlutterFlowTheme.saveThemeMode(mode);
+        CustomTheme.saveThemeMode(mode);
       });
 
   @override
@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: const [Locale('en', '')],
       theme: ThemeData(
-        primaryColor: FlutterFlowTheme.of(context).primary,
+        primaryColor: CustomTheme.of(context).primary,
         brightness: Brightness.light,
         scrollbarTheme: ScrollbarThemeData(
           thumbVisibility: WidgetStateProperty.all(false),

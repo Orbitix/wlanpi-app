@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:wlanpi_mobile/network_handler.dart';
+import 'package:wlanpi_mobile/services/network_handler.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+import '../../theme/theme.dart';
+import '../../utils/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +143,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
   }
 
   Widget buildSection(String heading, String text) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -179,7 +179,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -424,8 +424,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
     );
   }
 
-  Widget buildCarouselPage(
-      FlutterFlowTheme theme, String title, String content) {
+  Widget buildCarouselPage(CustomTheme theme, String title, String content) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
