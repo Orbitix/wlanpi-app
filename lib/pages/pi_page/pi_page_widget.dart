@@ -86,6 +86,7 @@ class _PiPageWidgetState extends State<PiPageWidget>
             Icon(
               Icons.error_outline,
               size: 30.0,
+              color: theme.error,
             ),
             SizedBox(width: 10.0),
             Text('Not Connected',

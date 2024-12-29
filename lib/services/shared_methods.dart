@@ -177,6 +177,11 @@ class SharedMethodsProvider extends ChangeNotifier {
 
   // Start timer
   void startStatsTimer() async {
+    if (timer != null && timer!.isActive) {
+      debugPrint("Timer is already running");
+      return;
+    }
+
     debugPrint("Starting timer");
     // Execute the contents instantly
     await _fetchAndUpdateStats();
@@ -238,6 +243,7 @@ class SharedMethodsProvider extends ChangeNotifier {
     debugPrint("Stopping timer");
 
     timer?.cancel();
+    timer = null;
     notifyListeners(); // Optionally notify listeners when the timer stops
   }
 }
