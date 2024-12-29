@@ -137,52 +137,90 @@ class _PiPageWidgetState extends State<PiPageWidget>
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          'Connected to WLANPi ${sharedMethods.deviceInfo["model"]}',
-          style: theme.headlineSmall.copyWith(fontWeight: FontWeight.w500),
+        Row(
+          children: [
+            Icon(
+              Icons.check_circle_outline_rounded,
+              size: 30.0,
+              color: theme.secondary,
+            ),
+            SizedBox(width: 10.0),
+            Text(
+              'Connected to ${sharedMethods.deviceInfo["name"]}',
+              style: theme.headlineSmall.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
-            border: Border.all(color: Colors.white24, width: 2),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: 4,
-              separatorBuilder: (BuildContext context, int index) => Divider(),
-              itemBuilder: (BuildContext context, int index) {
-                switch (index) {
-                  case 0:
-                    return Align(
-                      alignment: const AlignmentDirectional(-1.0, 0.0),
-                      child: Text(
-                        "Hostname: ${sharedMethods.deviceInfo['name'].toString()}",
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: 4,
+            separatorBuilder: (BuildContext context, int index) => Divider(),
+            itemBuilder: (BuildContext context, int index) {
+              switch (index) {
+                case 0:
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Hostname:",
                         style: theme.labelLarge,
                       ),
-                    );
-                  case 1:
-                    return Text(
-                      "Model: ${sharedMethods.deviceInfo['model']?.toString()}",
-                      style: theme.labelLarge,
-                    );
-                  case 2:
-                    return Text(
-                      "Version: ${sharedMethods.deviceInfo['software_version']?.toString()}",
-                      style: theme.labelLarge,
-                    );
-                  case 3:
-                    return Text(
-                      "Mode: ${sharedMethods.deviceInfo['mode']?.toString()}",
-                      style: theme.labelLarge,
-                    );
-                  default:
-                    return SizedBox.shrink();
-                }
-              },
-            ),
+                      Text(
+                        sharedMethods.deviceInfo['hostname'].toString(),
+                        style: theme.labelLarge,
+                      ),
+                    ],
+                  );
+                case 1:
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Model:",
+                        style: theme.labelLarge,
+                      ),
+                      Text(
+                        "WLANPi ${sharedMethods.deviceInfo['model']?.toString()}",
+                        style: theme.labelLarge,
+                      ),
+                    ],
+                  );
+                case 2:
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Software Version:",
+                        style: theme.labelLarge,
+                      ),
+                      Text(
+                        "${sharedMethods.deviceInfo['software_version']?.toString()}",
+                        style:
+                            theme.labelLarge.copyWith(color: theme.secondary),
+                      ),
+                    ],
+                  );
+                case 3:
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Device Mode:",
+                        style: theme.labelLarge,
+                      ),
+                      Text(
+                        "${sharedMethods.deviceInfo['mode']?.toString()}",
+                        style: theme.labelLarge,
+                      ),
+                    ],
+                  );
+                default:
+                  return SizedBox.shrink();
+              }
+            },
           ),
         ),
         Padding(
@@ -280,11 +318,7 @@ class _PiPageWidgetState extends State<PiPageWidget>
                     decoration: BoxDecoration(
                       color: theme.secondaryBackground,
                       borderRadius: BorderRadius.circular(20.0),
-                      border: Border.all(
-                          color: sharedMethods.connected
-                              ? theme.success
-                              : theme.alternate,
-                          width: 2),
+                      border: Border.all(color: theme.alternate, width: 2),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -319,22 +353,15 @@ class _PiPageWidgetState extends State<PiPageWidget>
                               Text("Settings", style: theme.bodyLarge),
                             ],
                           ),
-                          Icon(Icons.arrow_forward_ios_rounded),
+                          Icon(Icons.keyboard_arrow_up_rounded),
                         ],
                       ),
                     ),
                   ),
                 ),
                 SizedBox(height: 20.0),
-                Text(
-                  'V ${AppVersion.version}',
-                  style: theme.labelSmall.override(
-                    fontFamily: theme.labelSmallFamily,
-                    letterSpacing: 0.0,
-                    useGoogleFonts:
-                        GoogleFonts.asMap().containsKey(theme.labelSmallFamily),
-                  ),
-                ),
+                Text('WLANPi App - V ${AppVersion.version}',
+                    style: theme.labelSmall),
               ],
             ),
           ),
