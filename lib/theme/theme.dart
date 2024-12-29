@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 const kThemeModeKey = '__theme_mode__';
 SharedPreferences? _prefs;
 
+const font = 'Roboto';
+
 enum DeviceSize {
   mobile,
   tablet,
@@ -209,107 +211,107 @@ class MobileTypography extends Typography {
 
   final CustomTheme theme;
 
-  String get displayLargeFamily => 'Poppins';
+  String get displayLargeFamily => font;
   TextStyle get displayLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 64.0,
       );
-  String get displayMediumFamily => 'Poppins';
+  String get displayMediumFamily => font;
   TextStyle get displayMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 44.0,
       );
-  String get displaySmallFamily => 'Poppins';
+  String get displaySmallFamily => font;
   TextStyle get displaySmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 36.0,
       );
-  String get headlineLargeFamily => 'Poppins';
+  String get headlineLargeFamily => font;
   TextStyle get headlineLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 32.0,
       );
-  String get headlineMediumFamily => 'Poppins';
+  String get headlineMediumFamily => font;
   TextStyle get headlineMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 24.0,
       );
-  String get headlineSmallFamily => 'Poppins';
+  String get headlineSmallFamily => font;
   TextStyle get headlineSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 24.0,
       );
-  String get titleLargeFamily => 'Poppins';
+  String get titleLargeFamily => font;
   TextStyle get titleLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 22.0,
       );
-  String get titleMediumFamily => 'Poppins';
+  String get titleMediumFamily => font;
   TextStyle get titleMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 18.0,
       );
-  String get titleSmallFamily => 'Poppins';
+  String get titleSmallFamily => font;
   TextStyle get titleSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 16.0,
       );
-  String get labelLargeFamily => 'Poppins';
+  String get labelLargeFamily => font;
   TextStyle get labelLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.secondaryText,
         fontWeight: FontWeight.w500,
         fontSize: 16.0,
       );
-  String get labelMediumFamily => 'Poppins';
+  String get labelMediumFamily => font;
   TextStyle get labelMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.infoText,
         fontWeight: FontWeight.w500,
         fontSize: 14.0,
       );
-  String get labelSmallFamily => 'Poppins';
+  String get labelSmallFamily => font;
   TextStyle get labelSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.infoText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
       );
-  String get bodyLargeFamily => 'Poppins';
+  String get bodyLargeFamily => font;
   TextStyle get bodyLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 16.0,
       );
-  String get bodyMediumFamily => 'Poppins';
+  String get bodyMediumFamily => font;
   TextStyle get bodyMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 14.0,
       );
-  String get bodySmallFamily => 'Poppins';
+  String get bodySmallFamily => font;
   TextStyle get bodySmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
@@ -321,107 +323,107 @@ class TabletTypography extends Typography {
 
   final CustomTheme theme;
 
-  String get displayLargeFamily => 'Poppins';
+  String get displayLargeFamily => font;
   TextStyle get displayLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 64.0,
       );
-  String get displayMediumFamily => 'Poppins';
+  String get displayMediumFamily => font;
   TextStyle get displayMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 44.0,
       );
-  String get displaySmallFamily => 'Poppins';
+  String get displaySmallFamily => font;
   TextStyle get displaySmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 36.0,
       );
-  String get headlineLargeFamily => 'Poppins';
+  String get headlineLargeFamily => font;
   TextStyle get headlineLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 32.0,
       );
-  String get headlineMediumFamily => 'Poppins';
+  String get headlineMediumFamily => font;
   TextStyle get headlineMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 24.0,
       );
-  String get headlineSmallFamily => 'Poppins';
+  String get headlineSmallFamily => font;
   TextStyle get headlineSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 24.0,
       );
-  String get titleLargeFamily => 'Poppins';
+  String get titleLargeFamily => font;
   TextStyle get titleLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 22.0,
       );
-  String get titleMediumFamily => 'Poppins';
+  String get titleMediumFamily => font;
   TextStyle get titleMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.info,
         fontWeight: FontWeight.normal,
         fontSize: 18.0,
       );
-  String get titleSmallFamily => 'Poppins';
+  String get titleSmallFamily => font;
   TextStyle get titleSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.info,
         fontWeight: FontWeight.w500,
         fontSize: 16.0,
       );
-  String get labelLargeFamily => 'Poppins';
+  String get labelLargeFamily => font;
   TextStyle get labelLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 16.0,
       );
-  String get labelMediumFamily => 'Poppins';
+  String get labelMediumFamily => font;
   TextStyle get labelMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 14.0,
       );
-  String get labelSmallFamily => 'Poppins';
+  String get labelSmallFamily => font;
   TextStyle get labelSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
       );
-  String get bodyLargeFamily => 'Poppins';
+  String get bodyLargeFamily => font;
   TextStyle get bodyLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 16.0,
       );
-  String get bodyMediumFamily => 'Poppins';
+  String get bodyMediumFamily => font;
   TextStyle get bodyMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 14.0,
       );
-  String get bodySmallFamily => 'Poppins';
+  String get bodySmallFamily => font;
   TextStyle get bodySmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
@@ -433,107 +435,107 @@ class DesktopTypography extends Typography {
 
   final CustomTheme theme;
 
-  String get displayLargeFamily => 'Poppins';
+  String get displayLargeFamily => font;
   TextStyle get displayLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 64.0,
       );
-  String get displayMediumFamily => 'Poppins';
+  String get displayMediumFamily => font;
   TextStyle get displayMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 44.0,
       );
-  String get displaySmallFamily => 'Poppins';
+  String get displaySmallFamily => font;
   TextStyle get displaySmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 36.0,
       );
-  String get headlineLargeFamily => 'Poppins';
+  String get headlineLargeFamily => font;
   TextStyle get headlineLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w600,
         fontSize: 32.0,
       );
-  String get headlineMediumFamily => 'Poppins';
+  String get headlineMediumFamily => font;
   TextStyle get headlineMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 24.0,
       );
-  String get headlineSmallFamily => 'Poppins';
+  String get headlineSmallFamily => font;
   TextStyle get headlineSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 24.0,
       );
-  String get titleLargeFamily => 'Poppins';
+  String get titleLargeFamily => font;
   TextStyle get titleLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.w500,
         fontSize: 22.0,
       );
-  String get titleMediumFamily => 'Poppins';
+  String get titleMediumFamily => font;
   TextStyle get titleMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.info,
         fontWeight: FontWeight.normal,
         fontSize: 18.0,
       );
-  String get titleSmallFamily => 'Poppins';
+  String get titleSmallFamily => font;
   TextStyle get titleSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.info,
         fontWeight: FontWeight.w500,
         fontSize: 16.0,
       );
-  String get labelLargeFamily => 'Poppins';
+  String get labelLargeFamily => font;
   TextStyle get labelLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 16.0,
       );
-  String get labelMediumFamily => 'Poppins';
+  String get labelMediumFamily => font;
   TextStyle get labelMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 14.0,
       );
-  String get labelSmallFamily => 'Poppins';
+  String get labelSmallFamily => font;
   TextStyle get labelSmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.secondaryText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
       );
-  String get bodyLargeFamily => 'Poppins';
+  String get bodyLargeFamily => font;
   TextStyle get bodyLarge => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 16.0,
       );
-  String get bodyMediumFamily => 'Poppins';
+  String get bodyMediumFamily => font;
   TextStyle get bodyMedium => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 14.0,
       );
-  String get bodySmallFamily => 'Poppins';
+  String get bodySmallFamily => font;
   TextStyle get bodySmall => GoogleFonts.getFont(
-        'Poppins',
+        font,
         color: theme.primaryText,
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
