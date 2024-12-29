@@ -8,7 +8,6 @@ import 'package:wlanpi_mobile/pages/stats_page/stats_page_widget.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
 import 'theme/theme.dart';
 import 'utils/flutter_flow_util.dart';
-import 'widgets/navigation_bar_widget.dart';
 import 'pages/pi_page/pi_page_widget.dart';
 
 void main() async {
