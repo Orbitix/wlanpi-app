@@ -16,6 +16,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wlanpi_mobile/version.dart';
 
 class PiPageWidget extends StatefulWidget {
   const PiPageWidget({super.key});
@@ -326,7 +327,7 @@ class _PiPageWidgetState extends State<PiPageWidget>
                 ),
                 SizedBox(height: 20.0),
                 Text(
-                  'V 0.5.2',
+                  'V ${AppVersion.version}',
                   style: theme.labelSmall.override(
                     fontFamily: theme.labelSmallFamily,
                     letterSpacing: 0.0,

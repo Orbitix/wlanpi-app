@@ -10,8 +10,6 @@ import 'theme/theme.dart';
 import 'utils/flutter_flow_util.dart';
 import 'widgets/navigation_bar_widget.dart';
 import 'pages/pi_page/pi_page_widget.dart';
-import 'pages/device_page/device_page_widget.dart';
-import 'pages/settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
