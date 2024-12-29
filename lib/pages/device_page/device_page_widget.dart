@@ -4,8 +4,8 @@ import 'package:wlanpi_mobile/pages/tab_pages/control_panel_page/control_panel_p
 import 'package:wlanpi_mobile/pages/tab_pages/stats_page_widget.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+import '../../theme/theme.dart';
+import '../../utils/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -13,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'device_page_model.dart';
 export 'device_page_model.dart';
 
-import 'package:wlanpi_mobile/shared_methods.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
 
 class DevicePageWidget extends StatefulWidget {
   const DevicePageWidget({super.key});
@@ -78,7 +78,7 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
   @override
   Widget build(BuildContext context) {
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -242,9 +242,8 @@ class _DevicePageWidgetState extends State<DevicePageWidget>
                                       fontSize: 14.0,
                                       letterSpacing: 0.0,
                                       useGoogleFonts: GoogleFonts.asMap()
-                                          .containsKey(
-                                              FlutterFlowTheme.of(context)
-                                                  .titleSmallFamily),
+                                          .containsKey(CustomTheme.of(context)
+                                              .titleSmallFamily),
                                     ),
                                     elevation: 0.0,
                                     borderSide: const BorderSide(

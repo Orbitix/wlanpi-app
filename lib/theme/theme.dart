@@ -14,7 +14,7 @@ enum DeviceSize {
   desktop,
 }
 
-abstract class FlutterFlowTheme {
+abstract class CustomTheme {
   static DeviceSize deviceSize = DeviceSize.mobile;
 
   static Future initialize() async =>
@@ -32,7 +32,7 @@ abstract class FlutterFlowTheme {
       ? _prefs?.remove(kThemeModeKey)
       : _prefs?.setBool(kThemeModeKey, mode == ThemeMode.dark);
 
-  static FlutterFlowTheme of(BuildContext context) {
+  static CustomTheme of(BuildContext context) {
     deviceSize = getDeviceSize(context);
     return Theme.of(context).brightness == Brightness.dark
         ? DarkModeTheme()
@@ -143,7 +143,7 @@ DeviceSize getDeviceSize(BuildContext context) {
   }
 }
 
-class LightModeTheme extends FlutterFlowTheme {
+class LightModeTheme extends CustomTheme {
   @Deprecated('Use primary instead')
   Color get primaryColor => primary;
   @Deprecated('Use secondary instead')
@@ -207,7 +207,7 @@ abstract class Typography {
 class MobileTypography extends Typography {
   MobileTypography(this.theme);
 
-  final FlutterFlowTheme theme;
+  final CustomTheme theme;
 
   String get displayLargeFamily => 'Poppins';
   TextStyle get displayLarge => GoogleFonts.getFont(
@@ -319,7 +319,7 @@ class MobileTypography extends Typography {
 class TabletTypography extends Typography {
   TabletTypography(this.theme);
 
-  final FlutterFlowTheme theme;
+  final CustomTheme theme;
 
   String get displayLargeFamily => 'Poppins';
   TextStyle get displayLarge => GoogleFonts.getFont(
@@ -431,7 +431,7 @@ class TabletTypography extends Typography {
 class DesktopTypography extends Typography {
   DesktopTypography(this.theme);
 
-  final FlutterFlowTheme theme;
+  final CustomTheme theme;
 
   String get displayLargeFamily => 'Poppins';
   TextStyle get displayLarge => GoogleFonts.getFont(
@@ -540,7 +540,7 @@ class DesktopTypography extends Typography {
       );
 }
 
-class DarkModeTheme extends FlutterFlowTheme {
+class DarkModeTheme extends CustomTheme {
   @Deprecated('Use primary instead')
   Color get primaryColor => primary;
   @Deprecated('Use secondary instead')
@@ -551,11 +551,17 @@ class DarkModeTheme extends FlutterFlowTheme {
   late Color primary = const Color(0xFFF45625);
   late Color secondary = const Color(0xFFA3CE36);
   late Color tertiary = const Color(0xFFEA884B);
-  late Color alternate = const Color.fromARGB(255, 37, 39, 47);
   late Color primaryText = const Color(0xFFFFFFFF);
   late Color secondaryText = const Color(0xFF95A1AC);
-  late Color primaryBackground = const Color.fromARGB(255, 20, 22, 30);
-  late Color secondaryBackground = const Color.fromARGB(255, 30, 32, 40);
+
+  // late Color primaryBackground = const Color.fromARGB(255, 20, 22, 30);
+  // late Color secondaryBackground = const Color.fromARGB(255, 30, 32, 40);
+  // late Color alternate = const Color.fromARGB(255, 37, 39, 47);
+
+  late Color primaryBackground = const Color.fromARGB(255, 05, 05, 06);
+  late Color secondaryBackground = const Color.fromARGB(255, 20, 20, 21);
+  late Color alternate = const Color.fromARGB(255, 30, 30, 31);
+
   late Color accent1 = const Color(0x5CF45625);
   late Color accent2 = const Color(0x49A3CE36);
   late Color accent3 = const Color(0x5AEA884B);

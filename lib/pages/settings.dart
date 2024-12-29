@@ -1,5 +1,5 @@
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+import '../theme/theme.dart';
+import '../utils/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -56,7 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context); // Access FlutterFlow theme
+    final theme = CustomTheme.of(context); // Access FlutterFlow theme
     final typography = theme.typography; // Access typography styles
 
     return Scaffold(

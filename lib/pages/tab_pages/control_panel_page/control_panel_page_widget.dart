@@ -3,13 +3,13 @@ import 'package:wlanpi_mobile/schemas/system/summary.dart';
 import 'package:wlanpi_mobile/schemas/utils/reachability.dart';
 import 'package:wlanpi_mobile/schemas/utils/ufw_ports.dart';
 import 'package:wlanpi_mobile/schemas/utils/usb_devices.dart';
-import 'package:wlanpi_mobile/shared_methods.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
 import 'package:wlanpi_mobile/pages/tab_pages/control_panel_page/dynamic_menu_page.dart';
-import 'package:wlanpi_mobile/network_handler.dart';
+import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/schemas/bluetooth/bluetooth_status.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
+import '../../../theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class ControlPanelPageWidget extends StatefulWidget {
@@ -188,7 +188,7 @@ class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: theme.primaryBackground,

@@ -1,9 +1,9 @@
 import 'package:provider/provider.dart';
-import 'package:wlanpi_mobile/shared_methods.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+import '../../theme/theme.dart';
+import '../../utils/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,7 +28,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
     final sharedMethods = Provider.of<SharedMethodsProvider>(context);
     return Scaffold(
       key: scaffoldKey,
@@ -68,9 +68,8 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     fontFamily: theme.headlineSmallFamily,
                                     letterSpacing: 0.0,
                                     useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(
-                                            FlutterFlowTheme.of(context)
-                                                .headlineSmallFamily),
+                                        .containsKey(CustomTheme.of(context)
+                                            .headlineSmallFamily),
                                   ),
                                 ),
                                 Text(
@@ -81,9 +80,8 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     fontFamily: theme.bodyMediumFamily,
                                     letterSpacing: 0.0,
                                     useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(
-                                            FlutterFlowTheme.of(context)
-                                                .bodyMediumFamily),
+                                        .containsKey(CustomTheme.of(context)
+                                            .bodyMediumFamily),
                                   ),
                                 ),
                               ],
@@ -115,7 +113,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                         const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 0.0, 0.0, 0.0),
                                     color: theme.primary,
-                                    textStyle: FlutterFlowTheme.of(context)
+                                    textStyle: CustomTheme.of(context)
                                         .bodyLarge
                                         .override(
                                           fontFamily: theme.bodyLargeFamily,
@@ -123,7 +121,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                           letterSpacing: 0.0,
                                           useGoogleFonts: GoogleFonts.asMap()
                                               .containsKey(
-                                                  FlutterFlowTheme.of(context)
+                                                  CustomTheme.of(context)
                                                       .bodyLargeFamily),
                                         ),
                                     elevation: 0.0,
@@ -140,9 +138,8 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     fontFamily: theme.bodyMediumFamily,
                                     letterSpacing: 0.0,
                                     useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(
-                                            FlutterFlowTheme.of(context)
-                                                .bodyMediumFamily),
+                                        .containsKey(CustomTheme.of(context)
+                                            .bodyMediumFamily),
                                   ),
                                 ),
                               ],
@@ -175,9 +172,8 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     fontFamily: theme.headlineSmallFamily,
                                     letterSpacing: 0.0,
                                     useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(
-                                            FlutterFlowTheme.of(context)
-                                                .headlineSmallFamily),
+                                        .containsKey(CustomTheme.of(context)
+                                            .headlineSmallFamily),
                                   ),
                                 ),
                                 Text(
@@ -188,9 +184,8 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     fontFamily: theme.bodyMediumFamily,
                                     letterSpacing: 0.0,
                                     useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(
-                                            FlutterFlowTheme.of(context)
-                                                .bodyMediumFamily),
+                                        .containsKey(CustomTheme.of(context)
+                                            .bodyMediumFamily),
                                   ),
                                 ),
                               ],
@@ -219,7 +214,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                         const EdgeInsetsDirectional.fromSTEB(
                                             0.0, 0.0, 0.0, 0.0),
                                     color: theme.primary,
-                                    textStyle: FlutterFlowTheme.of(context)
+                                    textStyle: CustomTheme.of(context)
                                         .bodyLarge
                                         .override(
                                           fontFamily: theme.bodyLargeFamily,
@@ -227,7 +222,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                           letterSpacing: 0.0,
                                           useGoogleFonts: GoogleFonts.asMap()
                                               .containsKey(
-                                                  FlutterFlowTheme.of(context)
+                                                  CustomTheme.of(context)
                                                       .bodyLargeFamily),
                                         ),
                                     elevation: 0.0,
@@ -244,9 +239,8 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
                                     fontFamily: theme.bodyMediumFamily,
                                     letterSpacing: 0.0,
                                     useGoogleFonts: GoogleFonts.asMap()
-                                        .containsKey(
-                                            FlutterFlowTheme.of(context)
-                                                .bodyMediumFamily),
+                                        .containsKey(CustomTheme.of(context)
+                                            .bodyMediumFamily),
                                   ),
                                 ),
                               ],

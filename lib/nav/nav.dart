@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '/index.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+import '../theme/theme.dart';
+import '../utils/flutter_flow_util.dart';
 
 export 'package:go_router/go_router.dart';
 export 'serialization_util.dart';
@@ -34,7 +34,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       errorBuilder: (context, state) => appStateNotifier.showSplashImage
           ? Builder(
               builder: (context) => Container(
-                color: FlutterFlowTheme.of(context).primary,
+                color: CustomTheme.of(context).primary,
                 child: Center(
                   child: Image.asset(
                     'assets/images/WLANPI_Mobile_Logo_(1).png',
@@ -97,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: FlutterFlowTheme.of(context).primary,
+      color: CustomTheme.of(context).primary,
       child: Center(
         child: Image.asset(
           'assets/images/WLANPI_Mobile_Logo_(1).png',

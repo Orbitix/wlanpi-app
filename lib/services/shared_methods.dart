@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:wlanpi_mobile/network_handler.dart';
+import 'package:wlanpi_mobile/services/network_handler.dart';
 
 String parseJsonToReadableText(dynamic json, {int indentLevel = 0}) {
   String result = "";

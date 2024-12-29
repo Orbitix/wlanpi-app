@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wlanpi_mobile/flutter_flow/flutter_flow_theme.dart';
+import 'package:wlanpi_mobile/theme/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RetractableCard extends StatefulWidget {
@@ -28,7 +28,7 @@ class _RetractableCardState extends State<RetractableCard> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = FlutterFlowTheme.of(context);
+    final theme = CustomTheme.of(context);
 
     return Column(
       children: [

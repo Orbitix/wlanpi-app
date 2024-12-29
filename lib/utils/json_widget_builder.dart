@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wlanpi_mobile/flutter_flow/flutter_flow_theme.dart';
-import 'package:wlanpi_mobile/network_handler.dart';
+import 'package:wlanpi_mobile/theme/theme.dart';
+import 'package:wlanpi_mobile/services/network_handler.dart';
 
 typedef JSONWidgetBuilder = Widget Function(
     BuildContext context, Map<String, dynamic> data);
@@ -35,7 +35,7 @@ class EndpointDataFetcher extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
               child: CircularProgressIndicator(
-            color: FlutterFlowTheme.of(context).primary,
+            color: CustomTheme.of(context).primary,
           ));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
