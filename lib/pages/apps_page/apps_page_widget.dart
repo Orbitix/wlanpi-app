@@ -39,7 +39,9 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
   @override
   void dispose() {
     Future.microtask(() {
-      _sharedMethodsProvider?.stopStatsTimer();
+      if (_sharedMethodsProvider!.connected) {
+        _sharedMethodsProvider?.stopStatsTimer();
+      }
     });
     super.dispose();
   }
