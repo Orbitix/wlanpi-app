@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
+import 'package:wlanpi_mobile/widgets/connection_options_bottom_sheet.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '../../theme/theme.dart';
@@ -218,61 +219,16 @@ class _PiPageWidgetState extends State<PiPageWidget>
                           ),
                           Text("Connect to a WLANPi device to get started.",
                               style: theme.bodyMedium),
-                          Column(
-                            children: [
-                              SwitchListTile(
-                                title: Text('Connection Method Override'),
-                                value: useCustomTransport,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    useCustomTransport = value;
-                                  });
-                                  _setUseCustomTransport(value);
-                                },
-                                activeColor: theme.primary,
-                                activeTrackColor: theme.accent1,
-                                inactiveTrackColor: Colors.transparent,
-                              ),
-                              if (useCustomTransport) ...[
-                                Container(
-                                  width: double.infinity,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: theme.alternate,
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        dropdownColor: theme.alternate,
-                                        value: transport_type,
-                                        hint: const Text(
-                                            'Select the connection method'),
-                                        items:
-                                            transport_types.map((String type) {
-                                          return DropdownMenuItem<String>(
-                                            value: type,
-                                            child: Text(type),
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            transport_type = newValue;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
                           Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: FFButtonWidget(
                               onPressed: () async {
-                                await _handleButton();
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) =>
+                                      const ConnectionOptionsBottomSheet(),
+                                );
                               },
                               text: 'Connect',
                               options: FFButtonOptions(
@@ -296,7 +252,7 @@ class _PiPageWidgetState extends State<PiPageWidget>
                               ),
                             ),
                           ),
-                        ].divide(const SizedBox(height: 10.0)),
+                        ].divide(const SizedBox(height: 20.0)),
                       )),
                 ),
                 SizedBox(height: 20.0),
