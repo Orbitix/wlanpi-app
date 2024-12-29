@@ -181,7 +181,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
               widget.options.hoverElevation != null) {
             return widget.options.hoverElevation!;
           }
-          return widget.options.elevation ?? 2.0;
+          return widget.options.elevation ?? 0.0;
         },
       ),
     );
