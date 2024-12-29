@@ -87,8 +87,7 @@ class _PiPageWidgetState extends State<PiPageWidget>
             ),
             SizedBox(width: 10.0),
             Text('Not Connected',
-                style:
-                    theme.headlineSmall.copyWith(fontWeight: FontWeight.w500)),
+                style: theme.titleLarge.copyWith(fontWeight: FontWeight.w600)),
           ],
         ),
         Text("Connect to a WLANPi device to get started.",
@@ -134,7 +133,7 @@ class _PiPageWidgetState extends State<PiPageWidget>
             SizedBox(width: 10.0),
             Text(
               'Connected to ${sharedMethods.deviceInfo["name"]}',
-              style: theme.headlineSmall.copyWith(fontWeight: FontWeight.w500),
+              style: theme.titleLarge.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
