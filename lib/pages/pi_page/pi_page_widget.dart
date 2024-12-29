@@ -7,10 +7,10 @@ import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
 import 'package:wlanpi_mobile/widgets/connection_options_bottom_sheet.dart';
 
-import '/flutter_flow/flutter_flow_animations.dart';
-import '../../theme/theme.dart';
-import '../../utils/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
+import 'package:wlanpi_mobile/flutter_flow/flutter_flow_animations.dart';
+import 'package:wlanpi_mobile/theme/theme.dart';
+import 'package:wlanpi_mobile/utils/flutter_flow_util.dart';
+import 'package:wlanpi_mobile/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wlanpi_mobile/version.dart';
