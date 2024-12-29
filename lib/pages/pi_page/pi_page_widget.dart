@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:wlanpi_mobile/pages/settings.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
 import 'package:wlanpi_mobile/widgets/connection_options_bottom_sheet.dart';
@@ -28,82 +29,12 @@ class _PiPageWidgetState extends State<PiPageWidget>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final animationsMap = <String, AnimationInfo>{};
 
-  String? transport_type = "Bluetooth";
-  final List<String> transport_types = ['Bluetooth', 'USB OTG'];
-  bool useCustomTransport = false;
+  late SharedMethodsProvider sharedMethods;
 
-  Future<void> _setTransportType() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('transportType', transport_type!);
-    await _testDevice();
-  }
-
-  Future<void> _setUseCustomTransport(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('useCustomTransport', value);
-  }
-
-  Future<void> _handleButton() async {
-    try {
-      await _setTransportType().timeout(Duration(seconds: 10), onTimeout: () {
-        throw TimeoutException("Operation Timed Out");
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      useCustomTransport = prefs.getBool('useCustomTransport') ?? false;
-      transport_type = prefs.getString('transportType') ?? 'Bluetooth';
-    });
-  }
-
-  Future<void> _testDevice() async {
-    try {
-      Map<String, dynamic> response = await NetworkHandler()
-          .requestEndpoint("31415", "/api/v1/system/device/model", "GET");
-
-      if (response.containsKey("Error")) {
-        print("Failed to contact PI");
-        failedConnection();
-      } else {
-        // context.pushNamed('DevicePage');
-      }
-    } catch (error) {
-      print("Error occurred while testing device: $error");
-      failedConnection(); // Call the failedConnection method on error
-    }
-  }
-
-  Future<void> failedConnection() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Device Connection Failed'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                    "We couldn't contact this PI. Check that it has a PAN address on the home screen."),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    sharedMethods = Provider.of<SharedMethodsProvider>(context);
   }
 
   Future<void> _loadIPs() async {
@@ -116,12 +47,170 @@ class _PiPageWidgetState extends State<PiPageWidget>
     }
   }
 
+  Future<void> _disconnectDevice() async {
+    var response = await NetworkHandler().disconnectFromDevice();
+
+    if (response["success"]) {
+      debugPrint("Successfully disconnected PI");
+      sharedMethods.setConnected(false);
+    } else {
+      print("Failed to disconnect PI");
+      print("Error: ${response["message"]}");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
     _loadIPs();
-    _loadPreferences();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _sharedMethodsProvider =
+    //       Provider.of<SharedMethodsProvider>(context, listen: false);
+    //   if (_sharedMethodsProvider!.connected) {
+    //     _sharedMethodsProvider?.getInfo();
+    //   }
+    // });
+  }
+
+  Widget notConnectedWidget() {
+    final theme = CustomTheme.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 30.0,
+            ),
+            SizedBox(width: 10.0),
+            Text('Not Connected',
+                style:
+                    theme.headlineSmall.copyWith(fontWeight: FontWeight.w500)),
+          ],
+        ),
+        Text("Connect to a WLANPi device to get started.",
+            style: theme.bodyMedium),
+        Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: FFButtonWidget(
+            onPressed: () async {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => const ConnectionOptionsBottomSheet(),
+              );
+            },
+            text: 'Connect',
+            options: FFButtonOptions(
+              width: double.infinity,
+              height: 50.0,
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+              iconPadding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+              color: theme.primary,
+              textStyle: theme.titleSmall.override(
+                fontFamily: theme.titleSmallFamily,
+                color: Colors.white,
+                letterSpacing: 0.0,
+                useGoogleFonts:
+                    GoogleFonts.asMap().containsKey(theme.titleSmallFamily),
+              ),
+              elevation: 0.0,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+      ].divide(const SizedBox(height: 20.0)),
+    );
+  }
+
+  Widget connectedWidget(SharedMethodsProvider sharedMethods) {
+    final theme = CustomTheme.of(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          'Connected to WLANPi ${sharedMethods.deviceInfo["model"]}',
+          style: theme.headlineSmall.copyWith(fontWeight: FontWeight.w500),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: Colors.white24, width: 2),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: 4,
+              separatorBuilder: (BuildContext context, int index) => Divider(),
+              itemBuilder: (BuildContext context, int index) {
+                switch (index) {
+                  case 0:
+                    return Align(
+                      alignment: const AlignmentDirectional(-1.0, 0.0),
+                      child: Text(
+                        "Hostname: ${sharedMethods.deviceInfo['name'].toString()}",
+                        style: theme.labelLarge,
+                      ),
+                    );
+                  case 1:
+                    return Text(
+                      "Model: ${sharedMethods.deviceInfo['model']?.toString()}",
+                      style: theme.labelLarge,
+                    );
+                  case 2:
+                    return Text(
+                      "Version: ${sharedMethods.deviceInfo['software_version']?.toString()}",
+                      style: theme.labelLarge,
+                    );
+                  case 3:
+                    return Text(
+                      "Mode: ${sharedMethods.deviceInfo['mode']?.toString()}",
+                      style: theme.labelLarge,
+                    );
+                  default:
+                    return SizedBox.shrink();
+                }
+              },
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: FFButtonWidget(
+            onPressed: _disconnectDevice,
+            text: 'Disconnect',
+            options: FFButtonOptions(
+              width: double.infinity,
+              height: 50.0,
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+              iconPadding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+              color: theme.primary,
+              textStyle: theme.titleSmall.override(
+                fontFamily: theme.titleSmallFamily,
+                color: Colors.white,
+                letterSpacing: 0.0,
+                useGoogleFonts:
+                    GoogleFonts.asMap().containsKey(theme.titleSmallFamily),
+              ),
+              elevation: 0.0,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+      ].divide(const SizedBox(height: 20.0)),
+    );
   }
 
   Widget buildSection(String heading, String text) {
@@ -186,96 +275,52 @@ class _PiPageWidgetState extends State<PiPageWidget>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: theme.secondaryBackground,
-                    borderRadius: BorderRadius.circular(20.0),
-                    border: Border.all(
-                        color: sharedMethods.connected
-                            ? theme.success
-                            : theme.alternate,
-                        width: 2),
-                  ),
-                  child: Padding(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: theme.secondaryBackground,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(
+                          color: sharedMethods.connected
+                              ? theme.success
+                              : theme.alternate,
+                          width: 2),
+                    ),
+                    child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
+                      child: sharedMethods.connected
+                          ? connectedWidget(sharedMethods)
+                          : notConnectedWidget(),
+                    )),
+                SizedBox(height: 20.0),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => SettingsPage(),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: theme.secondaryBackground,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(color: theme.alternate, width: 2),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.error_outline,
-                                size: 30.0,
-                              ),
+                              Icon(Icons.settings),
                               SizedBox(width: 10.0),
-                              Text(
-                                  sharedMethods.connected
-                                      ? 'Connected'
-                                      : 'Not Connected',
-                                  style: theme.headlineSmall
-                                      .copyWith(fontWeight: FontWeight.w500)),
+                              Text("Settings", style: theme.bodyLarge),
                             ],
                           ),
-                          Text("Connect to a WLANPi device to get started.",
-                              style: theme.bodyMedium),
-                          Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: FFButtonWidget(
-                              onPressed: () async {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) =>
-                                      const ConnectionOptionsBottomSheet(),
-                                );
-                              },
-                              text: 'Connect',
-                              options: FFButtonOptions(
-                                width: double.infinity,
-                                height: 50.0,
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    24.0, 0.0, 24.0, 0.0),
-                                iconPadding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                color: theme.primary,
-                                textStyle: theme.titleSmall.override(
-                                  fontFamily: theme.titleSmallFamily,
-                                  color: Colors.white,
-                                  letterSpacing: 0.0,
-                                  useGoogleFonts: GoogleFonts.asMap()
-                                      .containsKey(theme.titleSmallFamily),
-                                ),
-                                elevation: 0.0,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                          ),
-                        ].divide(const SizedBox(height: 20.0)),
-                      )),
-                ),
-                SizedBox(height: 20.0),
-                Container(
-                  decoration: BoxDecoration(
-                    color: theme.secondaryBackground,
-                    borderRadius: BorderRadius.circular(20.0),
-                    border: Border.all(color: theme.alternate, width: 2),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.settings),
-                            SizedBox(width: 10.0),
-                            Text("Settings", style: theme.bodyLarge),
-                          ],
-                        ),
-                        Icon(Icons.arrow_forward_ios_rounded),
-                      ],
+                          Icon(Icons.arrow_forward_ios_rounded),
+                        ],
+                      ),
                     ),
                   ),
                 ),

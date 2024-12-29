@@ -568,7 +568,7 @@ class DarkModeTheme extends CustomTheme {
   late Color accent2 = const Color(0x49A3CE36);
   late Color accent3 = const Color(0x5AEA884B);
   late Color accent4 = const Color(0xB2262D34);
-  late Color success = const Color(0xFF249689);
+  late Color success = const Color(0xFF28A745);
   late Color warning = const Color(0xFFF9CF58);
   late Color error = const Color(0xFFFF5963);
   late Color info = const Color(0xFFFFFFFF);

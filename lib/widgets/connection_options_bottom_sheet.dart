@@ -25,10 +25,18 @@ class _ConnectionOptionsBottomSheetState
   final List<String> transport_types = ['Bluetooth', 'USB OTG'];
   bool useCustomTransport = false;
 
+  late SharedMethodsProvider sharedMethods;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    sharedMethods = Provider.of<SharedMethodsProvider>(context);
+  }
+
   Future<void> _setTransportType() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('transportType', transport_type!);
-    await _testDevice();
+    await _connectDevice();
   }
 
   Future<void> _setUseCustomTransport(bool value) async {
@@ -38,7 +46,7 @@ class _ConnectionOptionsBottomSheetState
 
   Future<void> _handleButton() async {
     try {
-      await _setTransportType().timeout(Duration(seconds: 10), onTimeout: () {
+      await _setTransportType().timeout(Duration(seconds: 15), onTimeout: () {
         throw TimeoutException("Operation Timed Out");
       });
     } catch (e) {
@@ -54,30 +62,30 @@ class _ConnectionOptionsBottomSheetState
     });
   }
 
-  Future<void> _testDevice() async {
-    try {
-      Map<String, dynamic> response = await NetworkHandler()
-          .requestEndpoint("31415", "/api/v1/system/device/model", "GET");
+  Future<void> _connectDevice() async {
+    var response = await NetworkHandler().connectToDevice();
 
-      if (response.containsKey("Error")) {
-        print("Failed to contact PI");
-        failedConnection();
-      } else {
-        // context.pushNamed('DevicePage');
-      }
-    } catch (error) {
-      print("Error occurred while testing device: $error");
-      failedConnection(); // Call the failedConnection method on error
+    if (response["success"]) {
+      debugPrint("Successfully connected to PI");
+      sharedMethods.setConnected(true);
+      sharedMethods.getInfo();
+      Navigator.of(context).pop();
+    } else {
+      print("Failed to contact PI");
+      print("Error: ${response["message"]}");
+      failedConnection();
     }
   }
 
   Future<void> failedConnection() async {
+    final theme = CustomTheme.of(context);
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Device Connection Failed'),
+          backgroundColor: theme.secondaryBackground,
+          title: Text('Device Connection Failed', style: theme.headlineSmall),
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -88,7 +96,8 @@ class _ConnectionOptionsBottomSheetState
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Ok'),
+              child: Text('Ok',
+                  style: theme.titleSmall.copyWith(color: theme.primary)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -99,33 +108,21 @@ class _ConnectionOptionsBottomSheetState
     );
   }
 
-  Future<void> _loadIPs() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getString("bluetoothIpAddress") == null) {
-      await prefs.setString('bluetoothIpAddress', "169.254.43.1");
-    }
-    if (prefs.getString("otgIpAddress") == null) {
-      await prefs.setString('otgIpAddress', "169.254.42.1");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
 
-    _loadIPs();
     _loadPreferences();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = CustomTheme.of(context);
-    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
     return Container(
       height: MediaQuery.of(context).size.height / 3,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: theme.primaryBackground,
+        color: theme.secondaryBackground,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
         border: Border(top: BorderSide(color: theme.alternate, width: 2.0)),
       ),

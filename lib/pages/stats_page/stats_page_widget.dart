@@ -120,9 +120,27 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
     with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  SharedMethodsProvider? _sharedMethodsProvider;
+
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _sharedMethodsProvider =
+          Provider.of<SharedMethodsProvider>(context, listen: false);
+      if (_sharedMethodsProvider!.connected) {
+        _sharedMethodsProvider?.startStatsTimer();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    Future.microtask(() {
+      _sharedMethodsProvider?.stopStatsTimer();
+    });
+    super.dispose();
   }
 
   @override

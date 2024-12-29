@@ -177,55 +177,66 @@ class SharedMethodsProvider extends ChangeNotifier {
 
   // Start timer
   void startStatsTimer() async {
+    debugPrint("Starting timer");
+    // Execute the contents instantly
+    await _fetchAndUpdateStats();
+
+    // Then start the periodic timer
     timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      try {
-        deviceStats = await networkHandler.requestEndpoint(
-            "31415", "/api/v1/system/device/stats", "GET");
-
-        // Parse and update CPU history
-        double cpuUsage = double.parse(deviceStats["cpu"].replaceAll('%', ''));
-        _cpuHistory.add(cpuUsage);
-        if (_cpuHistory.length > 20) _cpuHistory.removeAt(0);
-
-        double cpuTemp =
-            double.parse(deviceStats["cpu_temp"].replaceAll('C', ''));
-        _cpuTempHistory.add(cpuTemp);
-        if (_cpuTempHistory.length > 20) _cpuTempHistory.removeAt(0);
-
-        // Parse and update RAM history
-        double ramUsage =
-            double.parse(deviceStats["ram"].split(' ')[1].replaceAll('%', ''));
-        _ramHistory.add(ramUsage);
-        if (_ramHistory.length > 20) _ramHistory.removeAt(0);
-
-        // Parse and update Disk history
-        double diskUsage =
-            double.parse(deviceStats["disk"].split(' ')[1].replaceAll('%', ''));
-        _diskHistory.add(diskUsage);
-        if (_diskHistory.length > 20) _diskHistory.removeAt(0);
-
-        _uptime = deviceStats["uptime"];
-        _ip = deviceStats["ip"];
-
-        updateHistory();
-
-        kismetStatus = await networkHandler.requestEndpoint(
-            "31415", "/api/v1/system/service/status?name=kismet", "GET");
-
-        grafanaStatus = await networkHandler.requestEndpoint("31415",
-            "/api/v1/system/service/status?name=grafana-server", "GET");
-      } catch (error) {
-        print("Error fetching data: $error");
-        deviceStats = _defaultDeviceStats;
-        kismetStatus = _defaultKismetStatus;
-        grafanaStatus = _defaultGrafanaStatus;
-      }
-      notifyListeners(); // Notify listeners every time data is updated
+      await _fetchAndUpdateStats();
     });
+  }
+
+  Future<void> _fetchAndUpdateStats() async {
+    try {
+      deviceStats = await networkHandler.requestEndpoint(
+          "31415", "/api/v1/system/device/stats", "GET");
+
+      // Parse and update CPU history
+      double cpuUsage = double.parse(deviceStats["cpu"].replaceAll('%', ''));
+      _cpuHistory.add(cpuUsage);
+      if (_cpuHistory.length > 20) _cpuHistory.removeAt(0);
+
+      double cpuTemp =
+          double.parse(deviceStats["cpu_temp"].replaceAll('C', ''));
+      _cpuTempHistory.add(cpuTemp);
+      if (_cpuTempHistory.length > 20) _cpuTempHistory.removeAt(0);
+
+      // Parse and update RAM history
+      double ramUsage =
+          double.parse(deviceStats["ram"].split(' ')[1].replaceAll('%', ''));
+      _ramHistory.add(ramUsage);
+      if (_ramHistory.length > 20) _ramHistory.removeAt(0);
+
+      // Parse and update Disk history
+      double diskUsage =
+          double.parse(deviceStats["disk"].split(' ')[1].replaceAll('%', ''));
+      _diskHistory.add(diskUsage);
+      if (_diskHistory.length > 20) _diskHistory.removeAt(0);
+
+      _uptime = deviceStats["uptime"];
+      _ip = deviceStats["ip"];
+
+      updateHistory();
+
+      kismetStatus = await networkHandler.requestEndpoint(
+          "31415", "/api/v1/system/service/status?name=kismet", "GET");
+
+      grafanaStatus = await networkHandler.requestEndpoint(
+          "31415", "/api/v1/system/service/status?name=grafana-server", "GET");
+    } catch (error) {
+      print("Error fetching data: $error");
+      deviceStats = _defaultDeviceStats;
+      kismetStatus = _defaultKismetStatus;
+      grafanaStatus = _defaultGrafanaStatus;
+    }
+    notifyListeners(); // Notify listeners every time data is updated
   }
 
   // Stop timer
   void stopStatsTimer() {
+    debugPrint("Stopping timer");
+
     timer?.cancel();
     notifyListeners(); // Optionally notify listeners when the timer stops
   }

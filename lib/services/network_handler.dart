@@ -22,6 +22,39 @@ class NetworkHandler {
   static const MethodChannel _channel =
       MethodChannel('network_interface_binding');
 
+  // connect and disconnect methods
+  Future<Map<String, dynamic>> connectToDevice() async {
+    final response = <String, dynamic>{};
+    try {
+      await _channel.invokeMethod('connectToDevice');
+      response['success'] = true;
+      response['message'] = 'Connected successfully';
+    } on PlatformException catch (e) {
+      response['success'] = false;
+      response['message'] = 'Platform exception occurred: ${e.message}';
+    } catch (e) {
+      response['success'] = false;
+      response['message'] = 'An unexpected error occurred: ${e.toString()}';
+    }
+    return response;
+  }
+
+  Future<Map<String, dynamic>> disconnectFromDevice() async {
+    final response = <String, dynamic>{};
+    try {
+      await _channel.invokeMethod('disconnectFromDevice');
+      response['success'] = true;
+      response['message'] = 'Disconnected successfully';
+    } on PlatformException catch (e) {
+      response['success'] = false;
+      response['message'] = 'Platform exception occurred: ${e.message}';
+    } catch (e) {
+      response['success'] = false;
+      response['message'] = 'An unexpected error occurred: ${e.toString()}';
+    }
+    return response;
+  }
+
   // Request method - it will be handled by Kotlin task queue
   Future<Map<String, dynamic>> requestEndpoint(
       String port, String endpoint, String method) async {
