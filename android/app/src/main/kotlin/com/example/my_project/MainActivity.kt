@@ -89,7 +89,7 @@ class MainActivity : FlutterActivity() {
             connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 
             if (activeNetwork != null) {
-                Log.d("Network", "Reusing active network")
+                Log.d("Network", "Already Connected")
                 result.success("Connected to $ip")
             } else {
                 val networkRequest =
