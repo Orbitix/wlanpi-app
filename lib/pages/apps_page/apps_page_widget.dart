@@ -65,7 +65,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [

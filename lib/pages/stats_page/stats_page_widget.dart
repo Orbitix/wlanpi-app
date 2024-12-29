@@ -160,7 +160,7 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
       body: SafeArea(
         top: true,
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(20.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20.0),
             child: SingleChildScrollView(

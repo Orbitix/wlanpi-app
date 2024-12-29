@@ -52,7 +52,7 @@ class _DynamicMenuPageState extends State<DynamicMenuPage> {
     return Container(
       color: theme.primaryBackground,
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
             if (menuHistory.isNotEmpty)
