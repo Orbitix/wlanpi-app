@@ -13,47 +13,70 @@ class NetworkHandler: NSObject {
     static let shared = NetworkHandler()
     private var activeServices: [NetService] = []
 
-    private var session: URLSession = URLSession.shared
+    private var session: URLSession? = URLSession.shared
     private let monitor = NWPathMonitor()
     private var httpBrowser: NetServiceBrowser?
     private var sshBrowser: NetServiceBrowser?
     private var bestTransportType: String?
     private var bonjourTimeoutWorkItem: DispatchWorkItem?
+    private var connectionDetails: (transportType: String?, ipAddress: String?)?
     private var completionHandler: ((String?, String?) -> Void)?
+    
+    private var isCCoonected: Bool = false
+    
+    // Lazy initialization for URLSession
+    private func getSession() -> URLSession {
+        if session == nil {
+            let configuration = URLSessionConfiguration.default
+            session = URLSession(configuration: configuration)
+        }
+        return session!
+    }
 
     func connectToEndpoint(port: String, endpoint: String, method: String, result: @escaping FlutterResult) {
-        findBestConnection { transportType, ipAddress in
-            guard let ip = ipAddress, let url = URL(string: "http://\(ip):\(port)\(endpoint)") else {
-                result(FlutterError(code: "INVALID_URL", message: "Invalid IP address or URL", details: nil))
+        if let connectionDetails = self.connectionDetails {
+            // Use existing session and connection details
+            performRequest(port: port, endpoint: endpoint, method: method, transportType: connectionDetails.transportType, ipAddress: connectionDetails.ipAddress, result: result)
+        } else {
+            // No session or connection details, find the best connection first
+            findBestConnection { transportType, ipAddress in
+                self.connectionDetails = (transportType, ipAddress)
+                self.performRequest(port: port, endpoint: endpoint, method: method, transportType: transportType, ipAddress: ipAddress, result: result)
+            }
+        }
+    }
+
+    private func performRequest(port: String, endpoint: String, method: String, transportType: String?, ipAddress: String?, result: @escaping FlutterResult) {
+        guard let ip = ipAddress, let url = URL(string: "http://\(ip):\(port)\(endpoint)") else {
+            result(FlutterError(code: "INVALID_URL", message: "Invalid IP address or URL", details: nil))
+            return
+        }
+
+        print("Performing request using transport type: \(transportType ?? "Unknown"), IP: \(ip)")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+
+        let task = getSession().dataTask(with: request) { data, response, error in
+            if let error = error {
+                result(FlutterError(code: "NETWORK_ERROR", message: error.localizedDescription, details: nil))
                 return
             }
-            
-            print("Got best connection \(transportType) \(ipAddress)")
 
-            var request = URLRequest(url: url)
-            request.httpMethod = method
-
-            let task = self.session.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    result(FlutterError(code: "NETWORK_ERROR", message: error.localizedDescription, details: nil))
-                    return
-                }
-
-                guard let data = data, let httpResponse = response as? HTTPURLResponse else {
-                    result(FlutterError(code: "NO_RESPONSE", message: "No data received", details: nil))
-                    return
-                }
-
-                if httpResponse.statusCode == 200 {
-                    let json = String(data: data, encoding: .utf8) ?? "{}"
-                    result(json)
-                } else {
-                    result(FlutterError(code: "HTTP_ERROR", message: "HTTP \(httpResponse.statusCode)", details: nil))
-                }
+            guard let data = data, let httpResponse = response as? HTTPURLResponse else {
+                result(FlutterError(code: "NO_RESPONSE", message: "No data received", details: nil))
+                return
             }
 
-            task.resume()
+            if httpResponse.statusCode == 200 {
+                let json = String(data: data, encoding: .utf8) ?? "{}"
+                result(json)
+            } else {
+                result(FlutterError(code: "HTTP_ERROR", message: "HTTP \(httpResponse.statusCode)", details: nil))
+            }
         }
+
+        task.resume()
     }
 
     private func findBestConnection(completion: @escaping (String?, String?) -> Void) {

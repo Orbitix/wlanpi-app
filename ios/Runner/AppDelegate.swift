@@ -11,6 +11,7 @@ class AppDelegate: FlutterAppDelegate {
     ) -> Bool {
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         let channel = FlutterMethodChannel(name: "network_interface_binding", binaryMessenger: controller.binaryMessenger)
+        let networkHandler = NetworkHandler()
 
         channel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
             if call.method == "connectToEndpoint" {
@@ -22,7 +23,7 @@ class AppDelegate: FlutterAppDelegate {
                     return
                 }
 
-                let networkHandler = NetworkHandler()
+                
                 networkHandler.connectToEndpoint(port: port, endpoint: endpoint, method: method, result: result)
             } else {
                 result(FlutterMethodNotImplemented)
