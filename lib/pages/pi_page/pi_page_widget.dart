@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wlanpi_mobile/pages/settings.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
@@ -12,9 +11,7 @@ import '/flutter_flow/flutter_flow_animations.dart';
 import '../../theme/theme.dart';
 import '../../utils/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wlanpi_mobile/version.dart';
 
@@ -110,19 +107,8 @@ class _PiPageWidgetState extends State<PiPageWidget>
             options: FFButtonOptions(
               width: double.infinity,
               height: 50.0,
-              padding:
-                  const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-              iconPadding:
-                  const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
               color: theme.primary,
-              textStyle: theme.titleSmall.override(
-                fontFamily: theme.titleSmallFamily,
-                color: Colors.white,
-                letterSpacing: 0.0,
-                useGoogleFonts:
-                    GoogleFonts.asMap().containsKey(theme.titleSmallFamily),
-              ),
-              elevation: 0.0,
+              textStyle: theme.titleSmall,
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),

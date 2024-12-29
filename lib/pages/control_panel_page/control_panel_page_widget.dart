@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/schemas/network_info/network_info.dart';
 import 'package:wlanpi_mobile/schemas/system/summary.dart';
 import 'package:wlanpi_mobile/schemas/utils/reachability.dart';
@@ -7,6 +8,7 @@ import 'package:wlanpi_mobile/services/shared_methods.dart';
 import 'package:wlanpi_mobile/pages/control_panel_page/dynamic_menu_page.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/schemas/bluetooth/bluetooth_status.dart';
+import 'package:wlanpi_mobile/widgets/not_connected_banner.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '../../theme/theme.dart';
@@ -189,6 +191,8 @@ class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
   @override
   Widget build(BuildContext context) {
     final theme = CustomTheme.of(context);
+    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
+
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -200,16 +204,22 @@ class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
       ),
       backgroundColor: theme.primaryBackground,
       body: SafeArea(
-        top: true,
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: theme.primaryBackground,
-          ),
-          child: DynamicMenuPage(menuItems: menuData),
-        ),
-      ),
+          top: true,
+          child: Column(
+            children: [
+              if (!sharedMethods.connected) NotConnectedBanner(),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    color: theme.primaryBackground,
+                  ),
+                  child: DynamicMenuPage(menuItems: menuData),
+                ),
+              ),
+            ],
+          )),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
+import 'package:wlanpi_mobile/widgets/not_connected_banner.dart';
 
 import '../../theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -161,183 +162,201 @@ class _StatsPageWidgetState extends State<StatsPageWidget>
       backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  // Uptime and IP Address Container
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                      border: Border.all(color: theme.alternate, width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                "Uptime",
-                                style: theme.bodyMedium,
-                              ),
-                              const SizedBox(height: 10.0),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: theme.alternate,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text(
-                                    sharedMethods.uptime,
-                                    style: theme.bodyMedium,
-                                  ),
-                                ),
-                              ),
-                            ],
+        child: Column(
+          children: [
+            if (!sharedMethods.connected) NotConnectedBanner(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        // Uptime and IP Address Container
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: theme.secondaryBackground,
+                            borderRadius: BorderRadius.circular(20.0),
+                            border:
+                                Border.all(color: theme.alternate, width: 2),
                           ),
-                          Column(
-                            children: [
-                              Text(
-                                "IP Address",
-                                style: theme.bodyMedium,
-                              ),
-                              const SizedBox(height: 10.0),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: theme.alternate,
-                                  borderRadius: BorderRadius.circular(20.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Uptime",
+                                      style: theme.bodyMedium,
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: theme.alternate,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Text(
+                                          sharedMethods.uptime,
+                                          style: theme.bodyMedium,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text(
-                                    sharedMethods.ip,
-                                    style: theme.bodyMedium,
-                                  ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "IP Address",
+                                      style: theme.bodyMedium,
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: theme.alternate,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Text(
+                                          sharedMethods.ip,
+                                          style: theme.bodyMedium,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  // Stats Wheels Container
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                      border: Border.all(color: theme.alternate, width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: CircularPercentWidget(
-                                  percentage: sharedMethods.cpuHistory.last,
+                        ),
+                        const SizedBox(height: 20.0),
+                        // Stats Wheels Container
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: theme.secondaryBackground,
+                            borderRadius: BorderRadius.circular(20.0),
+                            border:
+                                Border.all(color: theme.alternate, width: 2),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: CircularPercentWidget(
+                                        percentage:
+                                            sharedMethods.cpuHistory.last,
+                                        color: Colors.blue,
+                                        unit: "%",
+                                        title: 'CPU Usage',
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: CircularPercentWidget(
+                                        percentage:
+                                            sharedMethods.ramHistory.last,
+                                        color: Colors.green,
+                                        unit: "%",
+                                        title: 'RAM Usage',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20.0),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: CircularPercentWidget(
+                                        percentage:
+                                            sharedMethods.cpuTempHistory.last,
+                                        color: Colors.orange,
+                                        unit: "C",
+                                        title: 'CPU Temp',
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: CircularPercentWidget(
+                                        percentage:
+                                            sharedMethods.diskHistory.last,
+                                        color: Colors.red,
+                                        unit: "%",
+                                        title: 'Disk Usage',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        // Graphs Container
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: theme.secondaryBackground,
+                            borderRadius: BorderRadius.circular(20.0),
+                            border:
+                                Border.all(color: theme.alternate, width: 2),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                LineChartWidget(
+                                  data: sharedMethods.cpuHistory,
                                   color: Colors.blue,
                                   unit: "%",
-                                  title: 'CPU Usage',
+                                  title: 'CPU Usage History',
                                 ),
-                              ),
-                              Flexible(
-                                child: CircularPercentWidget(
-                                  percentage: sharedMethods.ramHistory.last,
+                                const SizedBox(height: 20.0),
+                                LineChartWidget(
+                                  data: sharedMethods.ramHistory,
                                   color: Colors.green,
                                   unit: "%",
-                                  title: 'RAM Usage',
+                                  title: 'RAM Usage History',
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: CircularPercentWidget(
-                                  percentage: sharedMethods.cpuTempHistory.last,
+                                const SizedBox(height: 20.0),
+                                LineChartWidget(
+                                  data: sharedMethods.cpuTempHistory,
                                   color: Colors.orange,
                                   unit: "C",
-                                  title: 'CPU Temp',
+                                  title: 'CPU Temp History',
                                 ),
-                              ),
-                              Flexible(
-                                child: CircularPercentWidget(
-                                  percentage: sharedMethods.diskHistory.last,
+                                const SizedBox(height: 20.0),
+                                LineChartWidget(
+                                  data: sharedMethods.diskHistory,
                                   color: Colors.red,
                                   unit: "%",
-                                  title: 'Disk Usage',
+                                  title: 'Disk Usage History',
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 20.0),
-                  // Graphs Container
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                      border: Border.all(color: theme.alternate, width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          LineChartWidget(
-                            data: sharedMethods.cpuHistory,
-                            color: Colors.blue,
-                            unit: "%",
-                            title: 'CPU Usage History',
-                          ),
-                          const SizedBox(height: 20.0),
-                          LineChartWidget(
-                            data: sharedMethods.ramHistory,
-                            color: Colors.green,
-                            unit: "%",
-                            title: 'RAM Usage History',
-                          ),
-                          const SizedBox(height: 20.0),
-                          LineChartWidget(
-                            data: sharedMethods.cpuTempHistory,
-                            color: Colors.orange,
-                            unit: "C",
-                            title: 'CPU Temp History',
-                          ),
-                          const SizedBox(height: 20.0),
-                          LineChartWidget(
-                            data: sharedMethods.diskHistory,
-                            color: Colors.red,
-                            unit: "%",
-                            title: 'Disk Usage History',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
+import 'package:wlanpi_mobile/widgets/not_connected_banner.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '../../theme/theme.dart';
@@ -65,6 +66,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget>
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
+            if (!sharedMethods.connected) NotConnectedBanner(),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
