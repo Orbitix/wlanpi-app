@@ -105,15 +105,17 @@ class _MainScreenState extends State<MainScreen> {
         onDestinationSelected: _onItemTapped,
         destinations: [
           NavigationDestination(
-            icon: Icon(Icons.computer, color: theme.primaryText),
+            icon: Icon(Icons.computer_rounded, color: theme.primaryText),
             label: 'My Pi',
           ),
           NavigationDestination(
-            icon: Icon(Icons.query_stats, color: theme.primaryText),
+            icon: Icon(Icons.query_stats_rounded, color: theme.primaryText),
             label: 'Stats',
           ),
           NavigationDestination(
-            icon: Icon(Icons.download_rounded, color: theme.primaryText),
+            icon: Icon(Icons.download_outlined, color: theme.primaryText),
+            selectedIcon:
+                Icon(Icons.download_rounded, color: theme.primaryText),
             label: 'Apps',
           ),
           NavigationDestination(
