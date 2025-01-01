@@ -8,7 +8,7 @@ import 'package:wlanpi_mobile/services/shared_methods.dart';
 import 'package:wlanpi_mobile/pages/control_panel_page/dynamic_menu_page.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/schemas/bluetooth/bluetooth_status.dart';
-import 'package:wlanpi_mobile/widgets/not_connected_banner.dart';
+import 'package:wlanpi_mobile/widgets/not_connected_overlay.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
 import '../../theme/theme.dart';
@@ -204,22 +204,21 @@ class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
       ),
       backgroundColor: theme.primaryBackground,
       body: SafeArea(
-          top: true,
-          child: Column(
-            children: [
-              if (!sharedMethods.connected) NotConnectedBanner(),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: theme.primaryBackground,
-                  ),
-                  child: DynamicMenuPage(menuItems: menuData),
-                ),
+        top: true,
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.primaryBackground,
               ),
-            ],
-          )),
+              child: DynamicMenuPage(menuItems: menuData),
+            ),
+            if (!sharedMethods.connected) NotConnectedOverlay()
+          ],
+        ),
+      ),
     );
   }
 }
