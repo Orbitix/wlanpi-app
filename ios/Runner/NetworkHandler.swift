@@ -10,50 +10,107 @@ import Network
 import SystemConfiguration
 
 class NetworkHandler: NSObject {
+    struct ConnectionDetails{
+        var transportType: String = "None"
+        var ipAddress: String = "None"
+    }
+    
     static let shared = NetworkHandler()
     private var activeServices: [NetService] = []
 
-    private var session: URLSession = URLSession.shared
+    private var session: URLSession? = URLSession.shared
     private let monitor = NWPathMonitor()
     private var httpBrowser: NetServiceBrowser?
     private var sshBrowser: NetServiceBrowser?
     private var bestTransportType: String?
     private var bonjourTimeoutWorkItem: DispatchWorkItem?
+    private var connectionDetails = ConnectionDetails()
     private var completionHandler: ((String?, String?) -> Void)?
+    
+    private var isConnected: Bool = false
+    
+    // Lazy initialization for URLSession
+    private func getSession() -> URLSession {
+        if session == nil {
+            let configuration = URLSessionConfiguration.default
+            session = URLSession(configuration: configuration)
+        }
+        return session!
+    }
+    
+    func disconnectFromDevice(result: @escaping FlutterResult) {
+        if self.connectionDetails.transportType != "None" {
+            // Remove the existing connection
+            self.connectionDetails = ConnectionDetails()
+            result("Disconnected")
+        }
+    }
+    
+    func connectToDevice(result: @escaping FlutterResult) {
+        if self.connectionDetails.transportType != "None" {
+            // Use existing session and connection details
+        } else {
+            // No session or connection details, find the best connection first
+            findBestConnection { transportType, ipAddress in
+                if let transportType, let ipAddress {
+                    self.connectionDetails.transportType = transportType
+                    self.connectionDetails.ipAddress = ipAddress
+                    
+                    result("Connected to \(ipAddress)")
+                    self.isConnected = true
+                } else {
+                    result(FlutterError(code: "INVALID_URL", message: "Invalid IP address or URL", details: nil))
+                }
+            }
+        }
+    }
 
     func connectToEndpoint(port: String, endpoint: String, method: String, result: @escaping FlutterResult) {
-        findBestConnection { transportType, ipAddress in
-            guard let ip = ipAddress, let url = URL(string: "http://\(ip):\(port)\(endpoint)") else {
-                result(FlutterError(code: "INVALID_URL", message: "Invalid IP address or URL", details: nil))
+        if self.connectionDetails.transportType != "None" {
+            // Use existing session and connection details
+            performRequest(port: port, endpoint: endpoint, method: method, transportType: connectionDetails.transportType, ipAddress: connectionDetails.ipAddress, result: result)
+        }
+//        else {
+//            // No session or connection details, find the best connection first
+//            connectToDevice(result: result)
+//            if let connectionDetails = self.connectionDetails {
+//                performRequest(port: port, endpoint: endpoint, method: method, transportType: connectionDetails.transportType, ipAddress: connectionDetails.ipAddress, result: result)
+//                result(result)
+//            }
+//        }
+    }
+
+    private func performRequest(port: String, endpoint: String, method: String, transportType: String?, ipAddress: String?, result: @escaping FlutterResult) {
+        guard let ip = ipAddress, let url = URL(string: "http://\(ip):\(port)\(endpoint)") else {
+            result(FlutterError(code: "INVALID_URL", message: "Invalid IP address or URL", details: nil))
+            return
+        }
+
+        print("Performing request using transport type: \(transportType ?? "Unknown"), IP: \(ip) to URL: \(url.absoluteString) with method: \(method)")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+
+        let task = getSession().dataTask(with: request) { data, response, error in
+            if let error = error {
+                result(FlutterError(code: "NETWORK_ERROR", message: error.localizedDescription, details: nil))
                 return
             }
-            
-            print("Got best connection \(transportType) \(ipAddress)")
 
-            var request = URLRequest(url: url)
-            request.httpMethod = method
-
-            let task = self.session.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    result(FlutterError(code: "NETWORK_ERROR", message: error.localizedDescription, details: nil))
-                    return
-                }
-
-                guard let data = data, let httpResponse = response as? HTTPURLResponse else {
-                    result(FlutterError(code: "NO_RESPONSE", message: "No data received", details: nil))
-                    return
-                }
-
-                if httpResponse.statusCode == 200 {
-                    let json = String(data: data, encoding: .utf8) ?? "{}"
-                    result(json)
-                } else {
-                    result(FlutterError(code: "HTTP_ERROR", message: "HTTP \(httpResponse.statusCode)", details: nil))
-                }
+            guard let data = data, let httpResponse = response as? HTTPURLResponse else {
+                result(FlutterError(code: "NO_RESPONSE", message: "No data received", details: nil))
+                return
             }
 
-            task.resume()
+            if httpResponse.statusCode == 200 {
+                let json = String(data: data, encoding: .utf8) ?? "{}"
+                result(json)
+            } else {
+                result(FlutterError(code: "HTTP_ERROR", message: "HTTP \(httpResponse.statusCode)", details: nil))
+            }
         }
+
+        task.resume()
     }
 
     private func findBestConnection(completion: @escaping (String?, String?) -> Void) {
@@ -70,6 +127,7 @@ class NetworkHandler: NSObject {
             self.stopBonjourBrowsing()
             // Fall back to NWPathMonitor if no Bonjour service was found
             self.findTransportConnection(completion: completion)
+            
         }
         queue.asyncAfter(deadline: .now() + 10, execute: bonjourTimeoutWorkItem!)
     }
@@ -170,7 +228,7 @@ extension NetworkHandler: NetServiceBrowserDelegate, NetServiceDelegate {
         print("Discovered Bonjour service: \(service.name) for type: \(service.type)")
         activeServices.append(service) // Retain the service
         service.delegate = self
-        service.resolve(withTimeout: 10)
+        service.resolve(withTimeout: 15)
     }
 
     func netServiceDidResolveAddress(_ sender: NetService) {

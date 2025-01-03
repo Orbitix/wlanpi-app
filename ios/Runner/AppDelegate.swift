@@ -11,7 +11,8 @@ class AppDelegate: FlutterAppDelegate {
     ) -> Bool {
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         let channel = FlutterMethodChannel(name: "network_interface_binding", binaryMessenger: controller.binaryMessenger)
-
+        let networkHandler = NetworkHandler()
+        
         channel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
             if call.method == "connectToEndpoint" {
                 guard let args = call.arguments as? [String: Any],
@@ -21,9 +22,12 @@ class AppDelegate: FlutterAppDelegate {
                     result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments provided", details: nil))
                     return
                 }
-
-                let networkHandler = NetworkHandler()
+                
                 networkHandler.connectToEndpoint(port: port, endpoint: endpoint, method: method, result: result)
+            } else if call.method == "connectToDevice" {
+                networkHandler.connectToDevice(result: result)
+            } else if call.method == "disconnectFromDevice" {
+                networkHandler.disconnectFromDevice(result: result)
             } else {
                 result(FlutterMethodNotImplemented)
             }
