@@ -32,6 +32,7 @@ class MainActivity : FlutterActivity() {
     private var httpServiceInfo: NsdServiceInfo? = null
     private var sshServiceInfo: NsdServiceInfo? = null
     private var resultHandled = false
+    val PRIVATE_MODE = 0
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -39,6 +40,12 @@ class MainActivity : FlutterActivity() {
                 call,
                 result ->
             when (call.method) {
+                "connectToDevice" -> {
+                    connectToDevice(result)
+                }
+                "disconnectFromDevice" -> {
+                    disconnectFromDevice(result)
+                }
                 "connectToEndpoint" -> {
                     val port = call.argument<String>("port")
                     val endpoint = call.argument<String>("endpoint")
@@ -64,10 +71,130 @@ class MainActivity : FlutterActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun connectToDevice(result: MethodChannel.Result) {
+        findBestConnection { transportType, ipAddress ->
+            if (transportType == null || ipAddress == null) {
+                if (!resultHandled) {
+                    result.error("NETWORK_FAILED", "No suitable transport type found.", null)
+                    resultHandled = true
+                }
+                return@findBestConnection
+            }
+
+            ip = ipAddress
+
+            Log.d("Network", "Transport type: $transportType")
+            Log.d("Network", "IP Address: $ip")
+
+            connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+            if (activeNetwork != null) {
+                Log.d("Network", "Already Connected")
+                result.success("Connected to $ip")
+            } else {
+                val networkRequest =
+                        NetworkRequest.Builder()
+                                .addTransportType(
+                                        when (transportType) {
+                                            "USB OTG" -> NetworkCapabilities.TRANSPORT_ETHERNET
+                                            "Bluetooth" -> NetworkCapabilities.TRANSPORT_BLUETOOTH
+                                            else -> NetworkCapabilities.TRANSPORT_WIFI
+                                        }
+                                )
+                                .build()
+
+                val networkCallback =
+                        object : ConnectivityManager.NetworkCallback() {
+                            override fun onAvailable(network: Network) {
+                                super.onAvailable(network)
+                                Log.d("Network", "Network available: $network")
+                                activeNetwork = network
+                                activeNetworkCallback = this
+                                result.success("Connected to $ip")
+                            }
+
+                            override fun onUnavailable() {
+                                super.onUnavailable()
+                                Log.e("Network", "network unavailable")
+                                if (!resultHandled) {
+                                    result.error("NETWORK_UNAVAILABLE", "network unavailable", null)
+                                    resultHandled = true
+                                }
+                            }
+
+                            override fun onLost(network: Network) {
+                                super.onLost(network)
+                                Log.e("Network", "Network connection lost")
+                                if (network == activeNetwork) {
+                                    activeNetwork = null
+                                    activeNetworkCallback = null
+                                }
+                            }
+                        }
+
+                Log.d("Network", "active network callback: $activeNetworkCallback")
+                if (activeNetworkCallback == null) {
+                    Log.d("Network", "No active callback. Requesting network")
+                    try {
+                        connectivityManager?.requestNetwork(networkRequest, networkCallback)
+                    } catch (e: Exception) {
+                        Log.e("Network", "Failed to request network", e)
+                        if (!resultHandled) {
+                            result.error(
+                                    "NETWORK_REQUEST_FAILED",
+                                    "Failed to request network",
+                                    e.localizedMessage
+                            )
+                            resultHandled = true
+                        }
+                    }
+                } else {
+                    Log.d("Network", "Network callback already registered")
+                }
+            }
+        }
+    }
+
+    private fun disconnectFromDevice(result: MethodChannel.Result) {
+        if (activeNetworkCallback != null) {
+            cleanupNetworkRequest(activeNetworkCallback!!)
+            activeNetworkCallback = null
+            activeNetwork = null
+            result.success("Disconnected")
+        } else {
+            result.error("DISCONNECT_FAILED", "No active network to disconnect", null)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun findBestConnection(completion: (String?, String?) -> Unit) {
+        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+        val customTransportType = mPrefs.getBoolean("flutter.useCustomTransport", false)
+        val transportSetting = mPrefs.getString("flutter.transportType", "")
+
+        if (customTransportType) {
+            when (transportSetting) {
+                "USB OTG" -> {
+                    ip = getWiredEthernetInterfaceIP()
+                    completion("USB OTG", ip)
+                    return
+                }
+                "Bluetooth" -> {
+                    ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
+                    completion("Bluetooth", ip)
+                    return
+                }
+                else -> {
+                    Log.d("Network", "Unknown custom transport type")
+                    completion(null, null)
+                    return
+                }
+            }
+        }
+
         nsdManager = getSystemService(NSD_SERVICE) as NsdManager
 
-        val httpServiceListener =
+        val serviceListener =
                 object : NsdManager.DiscoveryListener {
                     override fun onDiscoveryStarted(regType: String) {
                         Log.d("Network", "Service discovery started")
@@ -76,7 +203,6 @@ class MainActivity : FlutterActivity() {
                     override fun onServiceFound(service: NsdServiceInfo) {
                         Log.d("Network", "Service discovery success: $service")
                         if (service.serviceType == "_http._tcp.") {
-                            httpServiceInfo = service
                             nsdManager?.resolveService(
                                     service,
                                     object : NsdManager.ResolveListener {
@@ -90,9 +216,22 @@ class MainActivity : FlutterActivity() {
                                         override fun onServiceResolved(
                                                 serviceInfo: NsdServiceInfo
                                         ) {
-                                            Log.d("Network", "Resolve Succeeded. $serviceInfo")
-                                            ip = serviceInfo.host.hostAddress
-                                            completion("Bonjour Service", ip)
+                                            val txtRecords = serviceInfo.attributes
+                                            val model = txtRecords["model"]?.toString()
+                                            if (model?.startsWith("WLAN Pi") == true) {
+                                                val ipAddress = serviceInfo.host.hostAddress
+                                                val port = serviceInfo.port
+                                                Log.d(
+                                                        "Network",
+                                                        "WLAN Pi found at $ipAddress:$port"
+                                                )
+                                                completion("WLAN Pi Service", ipAddress)
+                                            } else {
+                                                Log.d(
+                                                        "Network",
+                                                        "Non-target service found: ${serviceInfo.serviceName}"
+                                                )
+                                            }
                                         }
                                     }
                             )
@@ -118,60 +257,7 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
-        val sshServiceListener =
-                object : NsdManager.DiscoveryListener {
-                    override fun onDiscoveryStarted(regType: String) {
-                        Log.d("Network", "Service discovery started")
-                    }
-
-                    override fun onServiceFound(service: NsdServiceInfo) {
-                        Log.d("Network", "Service discovery success: $service")
-                        if (service.serviceType == "_ssh._tcp.") {
-                            sshServiceInfo = service
-                            nsdManager?.resolveService(
-                                    service,
-                                    object : NsdManager.ResolveListener {
-                                        override fun onResolveFailed(
-                                                serviceInfo: NsdServiceInfo,
-                                                errorCode: Int
-                                        ) {
-                                            Log.e("Network", "Resolve failed: $errorCode")
-                                        }
-
-                                        override fun onServiceResolved(
-                                                serviceInfo: NsdServiceInfo
-                                        ) {
-                                            Log.d("Network", "Resolve Succeeded. $serviceInfo")
-                                            ip = serviceInfo.host.hostAddress
-                                            completion("Bonjour Service", ip)
-                                        }
-                                    }
-                            )
-                        }
-                    }
-
-                    override fun onServiceLost(service: NsdServiceInfo) {
-                        Log.e("Network", "service lost: $service")
-                    }
-
-                    override fun onDiscoveryStopped(serviceType: String) {
-                        Log.i("Network", "Discovery stopped: $serviceType")
-                    }
-
-                    override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-                        Log.e("Network", "Discovery failed: Error code:$errorCode")
-                        nsdManager?.stopServiceDiscovery(this)
-                    }
-
-                    override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
-                        Log.e("Network", "Discovery failed: Error code:$errorCode")
-                        nsdManager?.stopServiceDiscovery(this)
-                    }
-                }
-
-        // nsdManager?.discoverServices("_http._tcp.", NsdManager.PROTOCOL_DNS_SD,
-        // httpServiceListener)
-        nsdManager?.discoverServices("_ssh._tcp.", NsdManager.PROTOCOL_DNS_SD, sshServiceListener)
+        nsdManager?.discoverServices("_http._tcp.", NsdManager.PROTOCOL_DNS_SD, serviceListener)
 
         // Timeout for Bonjour browsing
         val handler = Handler()
@@ -181,8 +267,7 @@ class MainActivity : FlutterActivity() {
                             "Network",
                             "Bonjour browsing timeout reached. Falling back to NWPathMonitor."
                     )
-                    // nsdManager?.stopServiceDiscovery(httpServiceListener)
-                    nsdManager?.stopServiceDiscovery(sshServiceListener)
+                    nsdManager?.stopServiceDiscovery(serviceListener)
                     findTransportConnection(completion)
                 },
                 10000
@@ -193,6 +278,8 @@ class MainActivity : FlutterActivity() {
     private fun findTransportConnection(completion: (String?, String?) -> Unit) {
         val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val networks = connectivityManager.allNetworks
+
+        val mPrefs = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
 
         for (network in networks) {
             val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
@@ -206,7 +293,7 @@ class MainActivity : FlutterActivity() {
                 }
                 if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH)) {
                     Log.d("NetworkCheck", "Using Bluetooth transport")
-                    ip = "169.254.43.1" // Default Bluetooth IP
+                    ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
                     completion("Bluetooth", ip)
                     return
                 }
@@ -277,86 +364,13 @@ class MainActivity : FlutterActivity() {
             method: String,
             result: MethodChannel.Result
     ) {
-        findBestConnection { transportType, ipAddress ->
-            if (transportType == null || ipAddress == null) {
-                if (!resultHandled) {
-                    result.error("NETWORK_FAILED", "No suitable transport type found.", null)
-                    resultHandled = true
-                }
-                return@findBestConnection
-            }
-
-            ip = ipAddress
-
-            Log.d("Network", "Transport type: $transportType")
-            Log.d("Network", "IP Address: $ip")
-
-            connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-
-            if (activeNetwork != null) {
-                Log.d("Network", "Reusing active network")
-                performRequest(activeNetwork!!, port, endpoint, method, result)
-            } else {
-                val networkRequest =
-                        NetworkRequest.Builder()
-                                .addTransportType(
-                                        when (transportType) {
-                                            "USB OTG" -> NetworkCapabilities.TRANSPORT_ETHERNET
-                                            "Bluetooth" -> NetworkCapabilities.TRANSPORT_BLUETOOTH
-                                            else -> NetworkCapabilities.TRANSPORT_WIFI
-                                        }
-                                )
-                                .build()
-
-                val networkCallback =
-                        object : ConnectivityManager.NetworkCallback() {
-                            override fun onAvailable(network: Network) {
-                                super.onAvailable(network)
-                                Log.d("Network", "Network available: $network")
-                                activeNetwork = network
-                                activeNetworkCallback = this
-                                performRequest(network, port, endpoint, method, result)
-                            }
-
-                            override fun onUnavailable() {
-                                super.onUnavailable()
-                                Log.e("Network", "network unavailable")
-                                if (!resultHandled) {
-                                    result.error("NETWORK_UNAVAILABLE", "network unavailable", null)
-                                    resultHandled = true
-                                }
-                            }
-
-                            override fun onLost(network: Network) {
-                                super.onLost(network)
-                                Log.e("Network", "Network connection lost")
-                                if (network == activeNetwork) {
-                                    activeNetwork = null
-                                    activeNetworkCallback = null
-                                }
-                            }
-                        }
-
-                Log.d("Network", "active network callback: $activeNetworkCallback")
-                if (activeNetworkCallback == null) {
-                    Log.d("Network", "No active callback. Requesting network")
-                    try {
-                        connectivityManager?.requestNetwork(networkRequest, networkCallback)
-                    } catch (e: Exception) {
-                        Log.e("Network", "Failed to request network", e)
-                        if (!resultHandled) {
-                            result.error(
-                                    "NETWORK_REQUEST_FAILED",
-                                    "Failed to request network",
-                                    e.localizedMessage
-                            )
-                            resultHandled = true
-                        }
-                    }
-                } else {
-                    Log.d("Network", "Network callback already registered")
-                }
-            }
+        if (activeNetwork != null) {
+            Log.d("Network", "Reusing active network")
+            performRequest(activeNetwork!!, port, endpoint, method, result)
+        } else {
+            Log.d("Network", "Network uninitialized. Connecting to device.")
+            connectToDevice(result)
+            performRequest(activeNetwork!!, port, endpoint, method, result)
         }
     }
 

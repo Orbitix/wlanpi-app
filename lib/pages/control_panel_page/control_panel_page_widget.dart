@@ -1,15 +1,17 @@
+import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/schemas/network_info/network_info.dart';
 import 'package:wlanpi_mobile/schemas/system/summary.dart';
 import 'package:wlanpi_mobile/schemas/utils/reachability.dart';
 import 'package:wlanpi_mobile/schemas/utils/ufw_ports.dart';
 import 'package:wlanpi_mobile/schemas/utils/usb_devices.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
-import 'package:wlanpi_mobile/pages/tab_pages/control_panel_page/dynamic_menu_page.dart';
+import 'package:wlanpi_mobile/pages/control_panel_page/dynamic_menu_page.dart';
 import 'package:wlanpi_mobile/services/network_handler.dart';
 import 'package:wlanpi_mobile/schemas/bluetooth/bluetooth_status.dart';
+import 'package:wlanpi_mobile/widgets/not_connected_overlay.dart';
 
 import '/flutter_flow/flutter_flow_animations.dart';
-import '../../../theme/theme.dart';
+import '../../theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class ControlPanelPageWidget extends StatefulWidget {
@@ -189,18 +191,32 @@ class _ControlPanelPageWidgetState extends State<ControlPanelPageWidget>
   @override
   Widget build(BuildContext context) {
     final theme = CustomTheme.of(context);
+    final sharedMethods = Provider.of<SharedMethodsProvider>(context);
+
     return Scaffold(
       key: scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: theme.primary,
+        automaticallyImplyLeading: true,
+        title: Text("Control Panel", style: theme.titleLarge),
+        centerTitle: false,
+        elevation: 2.0,
+      ),
       backgroundColor: theme.primaryBackground,
       body: SafeArea(
         top: true,
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: theme.primaryBackground,
-          ),
-          child: DynamicMenuPage(menuItems: menuData),
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.primaryBackground,
+              ),
+              child: DynamicMenuPage(menuItems: menuData),
+            ),
+            if (!sharedMethods.connected) NotConnectedOverlay()
+          ],
         ),
       ),
     );
