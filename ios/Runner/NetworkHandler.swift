@@ -19,7 +19,6 @@ class NetworkHandler: NSObject {
     private var activeServices: [NetService] = []
 
     private var session: URLSession? = URLSession.shared
-    private var session: URLSession? = URLSession.shared
     private let monitor = NWPathMonitor()
     private var httpBrowser: NetServiceBrowser?
     private var sshBrowser: NetServiceBrowser?
@@ -91,14 +90,8 @@ class NetworkHandler: NSObject {
 
         var request = URLRequest(url: url)
         request.httpMethod = method
-        var request = URLRequest(url: url)
-        request.httpMethod = method
 
-        let task = getSession().dataTask(with: request) { data, response, error in
-            if let error = error {
-                result(FlutterError(code: "NETWORK_ERROR", message: error.localizedDescription, details: nil))
-                return
-            }
+
         let task = getSession().dataTask(with: request) { data, response, error in
             if let error = error {
                 result(FlutterError(code: "NETWORK_ERROR", message: error.localizedDescription, details: nil))
@@ -109,10 +102,7 @@ class NetworkHandler: NSObject {
                 result(FlutterError(code: "NO_RESPONSE", message: "No data received", details: nil))
                 return
             }
-            guard let data = data, let httpResponse = response as? HTTPURLResponse else {
-                result(FlutterError(code: "NO_RESPONSE", message: "No data received", details: nil))
-                return
-            }
+
 
             if httpResponse.statusCode == 200 {
                 let json = String(data: data, encoding: .utf8) ?? "{}"
@@ -121,15 +111,7 @@ class NetworkHandler: NSObject {
                 result(FlutterError(code: "HTTP_ERROR", message: "HTTP \(httpResponse.statusCode)", details: nil))
             }
         }
-            if httpResponse.statusCode == 200 {
-                let json = String(data: data, encoding: .utf8) ?? "{}"
-                result(json)
-            } else {
-                result(FlutterError(code: "HTTP_ERROR", message: "HTTP \(httpResponse.statusCode)", details: nil))
-            }
-        }
 
-        task.resume()
         task.resume()
     }
 
