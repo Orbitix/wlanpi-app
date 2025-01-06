@@ -61,7 +61,7 @@ dependencies:
     permission_handler: ^11.3.1
     flutter_launcher_icons: ^0.14.2
     http: ^1.2.1
-    webview_flutter: ^4.8.0
+    webview_flutter: ^4.10.0
     settings_ui: ^2.0.2
     fl_chart: ^0.69.2
     percent_indicator: ^4.2.4

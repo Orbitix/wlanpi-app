@@ -161,11 +161,11 @@ class LightModeTheme extends CustomTheme {
   late Color secondaryText = const Color(0xFF57636C);
   late Color primaryBackground = const Color(0xFFECECEC);
   late Color secondaryBackground = const Color(0xFFFFFFFF);
-  late Color accent1 = const Color(0x5CF45625);
-  late Color accent2 = const Color(0x49A3CE36);
-  late Color accent3 = const Color(0x5AEA884B);
-  late Color accent4 = const Color(0xCCFFFFFF);
-  late Color success = const Color(0xFF249689);
+  late Color accent1 = primary.withOpacity(0.36);
+  late Color accent2 = secondary.withOpacity(0.36);
+  late Color accent3 = tertiary.withOpacity(0.36);
+  late Color accent4 = alternate.withOpacity(0.36);
+  late Color success = const Color.fromARGB(255, 53, 236, 145);
   late Color warning = const Color(0xFFF9CF58);
   late Color error = const Color(0xFFFF5963);
   late Color info = const Color(0xFFFFFFFF);
@@ -562,12 +562,12 @@ class DarkModeTheme extends CustomTheme {
 
   late Color primaryBackground = const Color.fromARGB(255, 05, 05, 06);
   late Color secondaryBackground = const Color.fromARGB(255, 20, 20, 21);
-  late Color alternate = const Color.fromARGB(255, 30, 30, 31);
+  late Color alternate = const Color.fromARGB(255, 33, 33, 34);
 
-  late Color accent1 = const Color(0x5CF45625);
-  late Color accent2 = const Color(0x49A3CE36);
-  late Color accent3 = const Color(0x5AEA884B);
-  late Color accent4 = const Color(0xB2262D34);
+  late Color accent1 = primary.withOpacity(0.36);
+  late Color accent2 = secondary.withOpacity(0.36);
+  late Color accent3 = tertiary.withOpacity(0.36);
+  late Color accent4 = alternate.withOpacity(0.36);
   late Color success = const Color(0xFF28A745);
   late Color warning = const Color(0xFFF9CF58);
   late Color error = const Color(0xFFFF5963);
