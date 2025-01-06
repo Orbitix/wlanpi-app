@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -105,21 +106,28 @@ class _MainScreenState extends State<MainScreen> {
         onDestinationSelected: _onItemTapped,
         destinations: [
           NavigationDestination(
-            icon: Icon(Icons.computer_rounded, color: theme.primaryText),
+            icon: Icon(CupertinoIcons.tv, color: theme.primaryText),
+            selectedIcon:
+                Icon(CupertinoIcons.tv_fill, color: theme.primaryText),
             label: 'My Pi',
           ),
           NavigationDestination(
-            icon: Icon(Icons.query_stats_rounded, color: theme.primaryText),
+            icon: Icon(CupertinoIcons.graph_square, color: theme.primaryText),
+            selectedIcon: Icon(CupertinoIcons.graph_square_fill,
+                color: theme.primaryText),
             label: 'Stats',
           ),
           NavigationDestination(
-            icon: Icon(Icons.download_outlined, color: theme.primaryText),
-            selectedIcon:
-                Icon(Icons.download_rounded, color: theme.primaryText),
+            icon: Icon(CupertinoIcons.plus_square_on_square,
+                color: theme.primaryText),
+            selectedIcon: Icon(CupertinoIcons.plus_square_fill_on_square_fill,
+                color: theme.primaryText),
             label: 'Apps',
           ),
           NavigationDestination(
-            icon: Icon(Icons.construction, color: theme.primaryText),
+            icon: Icon(CupertinoIcons.hammer, color: theme.primaryText),
+            selectedIcon:
+                Icon(CupertinoIcons.hammer_fill, color: theme.primaryText),
             label: 'Control Panel',
           ),
         ],

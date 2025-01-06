@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget> {
           Provider.of<SharedMethodsProvider>(context, listen: false);
       if (_sharedMethodsProvider!.connected) {
         _sharedMethodsProvider?.startStatsTimer();
+        _sharedMethodsProvider?.bindWebView();
       }
     });
   }
@@ -91,7 +93,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget> {
                     context,
                     "Grafana",
                     sharedMethods.grafanaStatus,
-                    "http://169.254.43.1:3000",
+                    "https://169.254.43.1:3000",
                     () {
                       sharedMethods.startStopService(
                           sharedMethods.grafanaStatus["active"],

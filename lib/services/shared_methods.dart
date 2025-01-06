@@ -246,4 +246,8 @@ class SharedMethodsProvider extends ChangeNotifier {
     timer = null;
     notifyListeners(); // Optionally notify listeners when the timer stops
   }
+
+  void bindWebView() async {
+    await networkHandler.bindWebView();
+  }
 }

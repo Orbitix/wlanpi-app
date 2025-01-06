@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:wlanpi_mobile/theme/theme.dart';
@@ -14,21 +16,36 @@ class WebViewPage extends StatefulWidget {
 
 class _WebViewPageState extends State<WebViewPage> {
   late WebViewController controller;
+  bool isLoading = true; // Track the loading state
+
+  int loadingPercentage = 0;
 
   @override
   void initState() {
     super.initState();
+
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
+            setState(() {
+              loadingPercentage = progress;
+            });
             debugPrint("Loading progress: $progress%");
           },
           onPageStarted: (String url) {
+            setState(() {
+              isLoading = true; // Show loading indicator
+              loadingPercentage = 0; // Reset loading progress
+            });
             debugPrint("Page started loading: $url");
           },
           onPageFinished: (String url) {
+            setState(() {
+              isLoading = false; // Hide loading indicator
+              loadingPercentage = 100; // Set progress to 100%
+            });
             debugPrint("Page finished loading: $url");
           },
           onWebResourceError: (WebResourceError error) {
@@ -44,6 +61,14 @@ class _WebViewPageState extends State<WebViewPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final theme = CustomTheme.of(context);
+    controller.setBackgroundColor(theme.primaryBackground);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = CustomTheme.of(context);
 
@@ -53,9 +78,38 @@ class _WebViewPageState extends State<WebViewPage> {
         title: Text(
           widget.title,
           style: theme.titleLarge,
-        ), // Use the title passed to the widget
+        ),
       ),
-      body: WebViewWidget(controller: controller),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: controller), // The WebView
+          if (isLoading)
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: theme.secondaryBackground,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(color: theme.alternate, width: 2.0)),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(
+                        color: theme.primary,
+                      ), // Loading spinner
+                      const SizedBox(height: 16),
+                      Text(
+                        "Loading, please wait... ($loadingPercentage%)",
+                        style: theme.bodyLarge,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

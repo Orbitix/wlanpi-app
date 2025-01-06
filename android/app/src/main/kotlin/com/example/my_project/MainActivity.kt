@@ -40,6 +40,18 @@ class MainActivity : FlutterActivity() {
                 call,
                 result ->
             when (call.method) {
+                "bindNetworkForWebView" -> {
+
+                    try {
+
+                        bindNetworkForWebView()
+
+                        result.success(null)
+                    } catch (e: Exception) {
+
+                        result.error("UNAVAILABLE", e.message, null)
+                    }
+                }
                 "connectToDevice" -> {
                     connectToDevice(result)
                 }
@@ -66,6 +78,21 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 else -> result.notImplemented()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    fun bindNetworkForWebView() {
+
+        Log.d("WebView Binding", "Attempting to bind network for WebView")
+
+        if (activeNetwork != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                connectivityManager?.bindProcessToNetwork(activeNetwork)
+                Log.d("WebView Binding", "Bound network for WebView")
+            } else {
+                // connectivityManager?.setProcessDefaultNetwork(activeNetwork)
             }
         }
     }
