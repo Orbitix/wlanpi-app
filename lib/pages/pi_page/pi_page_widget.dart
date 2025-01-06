@@ -286,19 +286,11 @@ class _PiPageWidgetState extends State<PiPageWidget>
         automaticallyImplyLeading: false,
         title: Align(
           alignment: const AlignmentDirectional(-1.0, 0.0),
-          child: Row(
-            children: [
-              Text("My", style: theme.titleLarge),
-              const SizedBox(
-                width: 10.0,
-              ),
-              Image.asset(
-                'assets/images/thumbnail_image002.png',
-                height: 40.0,
-                fit: BoxFit.contain,
-                alignment: const Alignment(0.0, 0.0),
-              )
-            ],
+          child: Image.asset(
+            'assets/images/thumbnail_image002.png',
+            height: 50.0,
+            fit: BoxFit.contain,
+            alignment: const Alignment(0.0, 0.0),
           ),
         ),
         centerTitle: false,
@@ -306,67 +298,75 @@ class _PiPageWidgetState extends State<PiPageWidget>
       ),
       body: SafeArea(
         top: true,
-        child: SingleChildScrollView(
+        child: SizedBox(
+          height: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                      border: Border.all(color: theme.alternate, width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: sharedMethods.connected
-                          ? connectedWidget(sharedMethods)
-                          : notConnectedWidget(),
-                    )),
-                SizedBox(height: 20.0),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (context) => SettingsPage(),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: theme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(20.0),
-                      border: Border.all(color: theme.alternate, width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.settings),
-                              SizedBox(width: 10.0),
-                              Text("Settings", style: theme.bodyLarge),
-                            ],
-                          ),
-                          Icon(Icons.keyboard_arrow_up_rounded),
-                        ],
-                      ),
-                    ),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: theme.secondaryBackground,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(color: theme.alternate, width: 2),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: sharedMethods.connected
+                        ? connectedWidget(sharedMethods)
+                        : notConnectedWidget(),
                   ),
                 ),
-                SizedBox(height: 20.0),
-                KoFiButton(
-                  kofiName: "wlanpi",
-                  text: "Support WLANPi on Ko-fi!",
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => SettingsPage(),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: theme.secondaryBackground,
+                            borderRadius: BorderRadius.circular(20.0),
+                            border:
+                                Border.all(color: theme.alternate, width: 2),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.settings),
+                                    SizedBox(width: 10.0),
+                                    Text("Settings", style: theme.bodyLarge),
+                                  ],
+                                ),
+                                Icon(Icons.keyboard_arrow_up_rounded),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      KoFiButton(
+                        kofiName: "wlanpi",
+                        text: "Support WLANPi on Ko-fi!",
+                      ),
+                      SizedBox(height: 20.0),
+                      Text('WLANPi App - V ${AppVersion.version}',
+                          style: theme.labelSmall),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 20.0),
-                Text('WLANPi App - V ${AppVersion.version}',
-                    style: theme.labelSmall),
               ],
             ),
           ),
