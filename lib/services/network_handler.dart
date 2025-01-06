@@ -23,14 +23,6 @@ class NetworkHandler {
   static const MethodChannel _channel =
       MethodChannel('network_interface_binding');
 
-  Future<void> bindWebView() async {
-    try {
-      await _channel.invokeMethod('bindNetworkForWebView');
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
   // connect and disconnect methods
   Future<Map<String, dynamic>> connectToDevice() async {
     final response = <String, dynamic>{};

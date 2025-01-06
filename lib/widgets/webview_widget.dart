@@ -85,25 +85,36 @@ class _WebViewPageState extends State<WebViewPage> {
           WebViewWidget(controller: controller), // The WebView
           if (isLoading)
             Center(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: theme.secondaryBackground,
-                    borderRadius: BorderRadius.circular(20.0),
-                    border: Border.all(color: theme.alternate, width: 2.0)),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(
-                        color: theme.primary,
-                      ), // Loading spinner
-                      const SizedBox(height: 16),
-                      Text(
-                        "Loading, please wait... ($loadingPercentage%)",
-                        style: theme.bodyLarge,
-                      ),
-                    ],
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: theme.secondaryBackground,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(color: theme.alternate, width: 2.0)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(
+                          color: theme.primary,
+                        ), // Loading spinner
+                        const SizedBox(height: 16),
+                        Text(
+                          "Loading, please wait... ($loadingPercentage%)",
+                          style: theme.bodyLarge,
+                        ),
+                        const SizedBox(height: 10),
+
+                        Text(
+                          "This may take 10s to a few minutes depending on connection speed and Pi perfomance.",
+                          style: theme.bodyLarge
+                              .copyWith(color: theme.secondaryText),
+                          textAlign: TextAlign.center,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -40,18 +40,6 @@ class MainActivity : FlutterActivity() {
                 call,
                 result ->
             when (call.method) {
-                "bindNetworkForWebView" -> {
-
-                    try {
-
-                        bindNetworkForWebView()
-
-                        result.success(null)
-                    } catch (e: Exception) {
-
-                        result.error("UNAVAILABLE", e.message, null)
-                    }
-                }
                 "connectToDevice" -> {
                     connectToDevice(result)
                 }
@@ -83,21 +71,6 @@ class MainActivity : FlutterActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun bindNetworkForWebView() {
-
-        Log.d("WebView Binding", "Attempting to bind network for WebView")
-
-        if (activeNetwork != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                connectivityManager?.bindProcessToNetwork(activeNetwork)
-                Log.d("WebView Binding", "Bound network for WebView")
-            } else {
-                // connectivityManager?.setProcessDefaultNetwork(activeNetwork)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun connectToDevice(result: MethodChannel.Result) {
         findBestConnection { transportType, ipAddress ->
             if (transportType == null || ipAddress == null) {
@@ -117,6 +90,7 @@ class MainActivity : FlutterActivity() {
 
             if (activeNetwork != null) {
                 Log.d("Network", "Already Connected")
+                connectivityManager?.bindProcessToNetwork(activeNetwork)
                 result.success("Connected to $ip")
             } else {
                 val networkRequest =
@@ -158,7 +132,6 @@ class MainActivity : FlutterActivity() {
                                 }
                             }
                         }
-
                 Log.d("Network", "active network callback: $activeNetworkCallback")
                 if (activeNetworkCallback == null) {
                     Log.d("Network", "No active callback. Requesting network")
@@ -178,12 +151,17 @@ class MainActivity : FlutterActivity() {
                 } else {
                     Log.d("Network", "Network callback already registered")
                 }
+                Log.d("WebView Binding", "Attempting to bind network for WebView")
+                connectivityManager?.bindProcessToNetwork(activeNetwork)
+                Log.d("WebView Binding", "Bound network for WebView")
             }
         }
     }
 
     private fun disconnectFromDevice(result: MethodChannel.Result) {
         if (activeNetworkCallback != null) {
+            connectivityManager?.bindProcessToNetwork(null)
+            Log.d("WebView Binding", "Unbound network for WebView")
             cleanupNetworkRequest(activeNetworkCallback!!)
             activeNetworkCallback = null
             activeNetwork = null

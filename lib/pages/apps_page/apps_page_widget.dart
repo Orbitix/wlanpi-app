@@ -32,7 +32,6 @@ class _AppsPageWidgetState extends State<AppsPageWidget> {
           Provider.of<SharedMethodsProvider>(context, listen: false);
       if (_sharedMethodsProvider!.connected) {
         _sharedMethodsProvider?.startStatsTimer();
-        _sharedMethodsProvider?.bindWebView();
       }
     });
   }
