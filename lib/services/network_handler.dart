@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NetworkException implements Exception {
@@ -53,6 +54,24 @@ class NetworkHandler {
       response['message'] = 'An unexpected error occurred: ${e.toString()}';
     }
     return response;
+  }
+
+  Future<bool> testDevice() async {
+    try {
+      print("Testing device api");
+      Map<String, dynamic> response =
+          await requestEndpoint("31415", "/api/v1/system/device/model", "GET");
+
+      if (response.containsKey("Error")) {
+        print("Failed to contact api");
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      print("Error occurred while testing device: $error");
+      return false;
+    }
   }
 
   // Request method - it will be handled by Kotlin task queue

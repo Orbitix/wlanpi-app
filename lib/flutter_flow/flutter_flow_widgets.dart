@@ -57,6 +57,8 @@ class FFButtonWidget extends StatefulWidget {
     this.iconData,
     required this.options,
     this.showLoadingIndicator = true,
+    this.showLoadingText = false,
+    this.loadingText,
   });
 
   final String text;
@@ -65,6 +67,8 @@ class FFButtonWidget extends StatefulWidget {
   final Function()? onPressed;
   final FFButtonOptions options;
   final bool showLoadingIndicator;
+  final bool showLoadingText;
+  final String? loadingText;
 
   @override
   State<FFButtonWidget> createState() => _FFButtonWidgetState();
@@ -85,14 +89,29 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
                 ? _getTextWidth(text, widget.options.textStyle, maxLines)
                 : null,
             child: Center(
-              child: SizedBox(
-                width: 23,
-                height: 23,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    widget.options.textStyle?.color ?? Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (widget.showLoadingText)
+                    Text(
+                      widget.loadingText ?? '',
+                      style: text == null
+                          ? null
+                          : widget.options.textStyle?.withoutColor(),
+                    ),
+                  SizedBox(
+                    width: 10.0,
                   ),
-                ),
+                  SizedBox(
+                    width: 23,
+                    height: 23,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        widget.options.textStyle?.color ?? Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           )

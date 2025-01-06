@@ -25,6 +25,8 @@ class _ConnectionOptionsBottomSheetState
   final List<String> transport_types = ['Bluetooth', 'USB OTG'];
   bool useCustomTransport = false;
 
+  String statusMessage = "Connecting...";
+
   late SharedMethodsProvider sharedMethods;
 
   @override
@@ -47,6 +49,8 @@ class _ConnectionOptionsBottomSheetState
   Future<void> _handleButton() async {
     try {
       await _setTransportType().timeout(Duration(seconds: 15), onTimeout: () {
+        failedConnection(
+            "Connection Timed Out.\nMake sure you have a device connected over bluetooth or USB.");
         throw TimeoutException("Operation Timed Out");
       });
     } catch (e) {
@@ -62,22 +66,34 @@ class _ConnectionOptionsBottomSheetState
     });
   }
 
+  Future<void> _testDevice() async {
+    statusMessage = "Testing API...";
+    bool response = await NetworkHandler().testDevice();
+
+    if (response) {
+      sharedMethods.getInfo();
+      Navigator.of(context).pop();
+    } else {
+      failedConnection(
+          "Contacting Device Failed.\nThis means that the device was connected, but your Pi either doesn't support the API, or the port (31415) is not open.");
+    }
+  }
+
   Future<void> _connectDevice() async {
     var response = await NetworkHandler().connectToDevice();
 
     if (response["success"]) {
       debugPrint("Successfully connected to PI");
       sharedMethods.setConnected(true);
-      sharedMethods.getInfo();
-      Navigator.of(context).pop();
+      await _testDevice();
     } else {
-      print("Failed to contact PI");
+      print("Failed to connect to PI");
       print("Error: ${response["message"]}");
-      failedConnection();
+      failedConnection("Connecting to device failed.");
     }
   }
 
-  Future<void> failedConnection() async {
+  Future<void> failedConnection(String message) async {
     final theme = CustomTheme.of(context);
     return showDialog<void>(
       context: context,
@@ -86,21 +102,25 @@ class _ConnectionOptionsBottomSheetState
         return AlertDialog(
           backgroundColor: theme.secondaryBackground,
           title: Text('Device Connection Failed', style: theme.headlineSmall),
-          content: const SingleChildScrollView(
+          content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(
-                    "We couldn't contact this PI. Check that it has a PAN address on the home screen."),
+                Text(message),
               ],
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: Text('Ok',
-                  style: theme.titleSmall.copyWith(color: theme.primary)),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Container(
+              decoration: BoxDecoration(
+                color: theme.alternate,
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: TextButton(
+                child: Text('Ok', style: theme.titleSmall),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -191,6 +211,8 @@ class _ConnectionOptionsBottomSheetState
               await _handleButton();
             },
             text: 'Connect',
+            showLoadingText: true,
+            loadingText: statusMessage,
             options: FFButtonOptions(
               width: double.infinity,
               height: 50.0,
