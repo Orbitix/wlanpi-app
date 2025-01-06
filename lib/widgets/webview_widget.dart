@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:wlanpi_mobile/theme/theme.dart';
@@ -17,20 +16,20 @@ class WebViewPage extends StatefulWidget {
 class _WebViewPageState extends State<WebViewPage> {
   late WebViewController controller;
   bool isLoading = true; // Track the loading state
-
-  int loadingPercentage = 0;
+  int loadingPercentage = 0; // Track the loading progress percentage
 
   @override
   void initState() {
     super.initState();
 
+    // Initialize WebViewController and set up navigation delegate
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
             setState(() {
-              loadingPercentage = progress;
+              loadingPercentage = progress; // Update progress
             });
             debugPrint("Loading progress: $progress%");
           },
@@ -57,7 +56,7 @@ class _WebViewPageState extends State<WebViewPage> {
           },
         ),
       )
-      ..loadRequest(Uri.parse(widget.url)); // Use the url passed to the widget
+      ..loadRequest(Uri.parse(widget.url)); // Load the URL passed to the widget
   }
 
   @override
@@ -97,18 +96,21 @@ class _WebViewPageState extends State<WebViewPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircularProgressIndicator(
-                          color: theme.primary,
-                        ), // Loading spinner
-                        const SizedBox(height: 16),
+                        // Replace spinner with LinearProgressIndicator
+                        LinearProgressIndicator(
+                          value: loadingPercentage / 100.0, // Update progress
+                          color: theme.primary, // Progress bar color
+                          backgroundColor: theme.alternate,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        const SizedBox(height: 18),
                         Text(
                           "Loading, please wait... ($loadingPercentage%)",
                           style: theme.bodyLarge,
                         ),
                         const SizedBox(height: 10),
-
                         Text(
-                          "This may take 10s to a few minutes depending on connection speed and Pi perfomance.",
+                          "This may take 10s to a few minutes depending on connection speed and Pi performance.",
                           style: theme.bodyLarge
                               .copyWith(color: theme.secondaryText),
                           textAlign: TextAlign.center,
