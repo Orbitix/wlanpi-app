@@ -14,6 +14,7 @@ import 'package:wlanpi_mobile/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wlanpi_mobile/version.dart';
+import 'package:wlanpi_mobile/widgets/kofi_button.dart';
 
 class PiPageWidget extends StatefulWidget {
   const PiPageWidget({super.key});
@@ -285,7 +286,20 @@ class _PiPageWidgetState extends State<PiPageWidget>
         automaticallyImplyLeading: false,
         title: Align(
           alignment: const AlignmentDirectional(-1.0, 0.0),
-          child: Text("My WLANPi", style: theme.titleLarge),
+          child: Row(
+            children: [
+              Text("My", style: theme.titleLarge),
+              const SizedBox(
+                width: 10.0,
+              ),
+              Image.asset(
+                'assets/images/thumbnail_image002.png',
+                height: 40.0,
+                fit: BoxFit.contain,
+                alignment: const Alignment(0.0, 0.0),
+              )
+            ],
+          ),
         ),
         centerTitle: false,
         elevation: 2.0,
@@ -344,6 +358,11 @@ class _PiPageWidgetState extends State<PiPageWidget>
                       ),
                     ),
                   ),
+                ),
+                SizedBox(height: 20.0),
+                KoFiButton(
+                  kofiName: "wlanpi",
+                  text: "Support WLANPi on Ko-fi!",
                 ),
                 SizedBox(height: 20.0),
                 Text('WLANPi App - V ${AppVersion.version}',

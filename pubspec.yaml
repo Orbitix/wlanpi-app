@@ -96,6 +96,7 @@ flutter:
     assets:
         - assets/fonts/
         - assets/images/
+        - assets/images/kofi/
         - assets/videos/
         - assets/audios/
         - assets/lottie_animations/
