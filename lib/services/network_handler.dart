@@ -37,35 +37,48 @@ class NetworkHandler {
 
   // connect and disconnect methods
   Future<Map<String, dynamic>> connectToDevice() async {
-    final response = <String, dynamic>{};
+    final returnMessage = <String, dynamic>{};
     try {
-      await _channel.invokeMethod('connectToDevice');
-      response['success'] = true;
-      response['message'] = 'Connected successfully';
+      String response = await _channel.invokeMethod('connectToDevice');
+
+      try {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response);
+        SharedMethodsProvider().device_ip = jsonResponse["ip"];
+      } catch (e) {
+        returnMessage['success'] = false;
+        returnMessage['message'] =
+            'Failed to parse JSON response: ${e.toString()}';
+        return returnMessage;
+      }
+
+      returnMessage['success'] = true;
+      returnMessage['message'] = 'Connected successfully';
     } on PlatformException catch (e) {
-      response['success'] = false;
-      response['message'] = 'Platform exception occurred: ${e.message}';
+      returnMessage['success'] = false;
+      returnMessage['message'] = 'Platform exception occurred: ${e.message}';
     } catch (e) {
-      response['success'] = false;
-      response['message'] = 'An unexpected error occurred: ${e.toString()}';
+      returnMessage['success'] = false;
+      returnMessage['message'] =
+          'An unexpected error occurred: ${e.toString()}';
     }
-    return response;
+    return returnMessage;
   }
 
   Future<Map<String, dynamic>> disconnectFromDevice() async {
-    final response = <String, dynamic>{};
+    final returnMessage = <String, dynamic>{};
     try {
       await _channel.invokeMethod('disconnectFromDevice');
-      response['success'] = true;
-      response['message'] = 'Disconnected successfully';
+      returnMessage['success'] = true;
+      returnMessage['message'] = 'Disconnected successfully';
     } on PlatformException catch (e) {
-      response['success'] = false;
-      response['message'] = 'Platform exception occurred: ${e.message}';
+      returnMessage['success'] = false;
+      returnMessage['message'] = 'Platform exception occurred: ${e.message}';
     } catch (e) {
-      response['success'] = false;
-      response['message'] = 'An unexpected error occurred: ${e.toString()}';
+      returnMessage['success'] = false;
+      returnMessage['message'] =
+          'An unexpected error occurred: ${e.toString()}';
     }
-    return response;
+    return returnMessage;
   }
 
   Future<bool> testDevice() async {

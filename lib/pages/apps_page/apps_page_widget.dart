@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:wlanpi_mobile/flutter_flow/flutter_flow_widgets.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
@@ -80,7 +79,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget> {
                     context,
                     "Kismet",
                     sharedMethods.kismetStatus,
-                    "http://169.254.43.1:2501",
+                    "http://${SharedMethodsProvider.device_ip}:2501",
                     () {
                       sharedMethods.startStopService(
                           sharedMethods.kismetStatus["active"], "kismet");
@@ -92,7 +91,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget> {
                     context,
                     "Grafana",
                     sharedMethods.grafanaStatus,
-                    "https://169.254.43.1:3000",
+                    "https://${SharedMethodsProvider.device_ip}:3000",
                     () {
                       sharedMethods.startStopService(
                           sharedMethods.grafanaStatus["active"],

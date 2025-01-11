@@ -92,7 +92,7 @@ class MainActivity : FlutterActivity() {
             if (activeNetwork != null) {
                 Log.d("Network", "Already Connected")
                 connectivityManager?.bindProcessToNetwork(activeNetwork)
-                result.success("Connected to $ip")
+                result.success({"message": "Connected", "ip":ip})
             } else {
                 val networkRequest =
                         NetworkRequest.Builder()
@@ -299,10 +299,7 @@ class MainActivity : FlutterActivity() {
         val handler = Handler()
         handler.postDelayed(
                 {
-                    Log.d(
-                            "Network",
-                            "Bonjour browsing timeout reached. Falling back to NWPathMonitor."
-                    )
+                    Log.d("Network", "NSD timeout reached. Falling back to manual connection.")
                     nsdManager?.stopServiceDiscovery(serviceListener)
                     findTransportConnection(completion)
                 },

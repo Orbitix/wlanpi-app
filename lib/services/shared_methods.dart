@@ -72,6 +72,7 @@ class SharedMethodsProvider extends ChangeNotifier {
 
   bool connected = false;
   bool _connected = false;
+  String device_ip = "";
 
   // Shared state
   Map<String, dynamic> deviceInfo = {};

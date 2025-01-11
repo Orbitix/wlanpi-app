@@ -81,6 +81,7 @@ class _ConnectionOptionsBottomSheetState
     bool response = await NetworkHandler().testDevice();
 
     if (response) {
+      sharedMethods.setConnected(true);
       sharedMethods.getInfo();
       Navigator.of(context).pop();
     } else {
@@ -94,7 +95,6 @@ class _ConnectionOptionsBottomSheetState
 
     if (response["success"]) {
       debugPrint("Successfully connected to PI");
-      sharedMethods.setConnected(true);
       await _testDevice();
     } else {
       print("Failed to connect to PI");
