@@ -306,7 +306,7 @@ class MainActivity : FlutterActivity() {
                     nsdManager?.stopServiceDiscovery(serviceListener)
                     findTransportConnection(completion)
                 },
-                10000
+                5000
         )
     }
 
