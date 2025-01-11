@@ -92,7 +92,7 @@ class MainActivity : FlutterActivity() {
             if (activeNetwork != null) {
                 Log.d("Network", "Already Connected")
                 connectivityManager?.bindProcessToNetwork(activeNetwork)
-                result.success({"message": "Connected", "ip":ip})
+                result.success("{'message': 'Connected', 'ip': $ip}")
             } else {
                 val networkRequest =
                         NetworkRequest.Builder()
