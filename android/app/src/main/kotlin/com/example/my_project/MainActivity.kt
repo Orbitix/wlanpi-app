@@ -112,7 +112,7 @@ class MainActivity : FlutterActivity() {
                                 Log.d("Network", "Network available: $network")
                                 activeNetwork = network
                                 activeNetworkCallback = this
-                                result.success("Connected to $ip")
+                                result.success("{'message': 'Connected', 'ip': $ip}")
                             }
 
                             override fun onUnavailable() {
