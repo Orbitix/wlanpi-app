@@ -19,6 +19,7 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
+import org.json.JSONObject
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "network_interface_binding"
@@ -92,7 +93,11 @@ class MainActivity : FlutterActivity() {
             if (activeNetwork != null) {
                 Log.d("Network", "Already Connected")
                 connectivityManager?.bindProcessToNetwork(activeNetwork)
-                result.success("{'message': 'Connected', 'ip': $ip}")
+                val json = JSONObject()
+                json.put("message", "Connected")
+                json.put("ip", ip)
+
+                result.success(json.toString())
             } else {
                 val networkRequest =
                         NetworkRequest.Builder()
@@ -112,7 +117,11 @@ class MainActivity : FlutterActivity() {
                                 Log.d("Network", "Network available: $network")
                                 activeNetwork = network
                                 activeNetworkCallback = this
-                                result.success("{'message': 'Connected', 'ip': $ip}")
+                                val json = JSONObject()
+                                json.put("message", "Connected")
+                                json.put("ip", ip)
+
+                                result.success(json.toString())
                             }
 
                             override fun onUnavailable() {
