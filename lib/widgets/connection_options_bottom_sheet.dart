@@ -24,6 +24,7 @@ class _ConnectionOptionsBottomSheetState
   final List<String> transport_types = ['Bluetooth', 'USB OTG', 'LAN'];
   String? transport_type = "Bluetooth";
   bool useCustomTransport = false;
+  bool useMDNS = true;
 
   String statusMessage = "Connecting...";
 
@@ -41,9 +42,9 @@ class _ConnectionOptionsBottomSheetState
     await _connectDevice();
   }
 
-  Future<void> _setUseCustomTransport(bool value) async {
+  Future<void> _setUseMDNS(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('useCustomTransport', value);
+    await prefs.setBool('useCustomTransport', !value);
   }
 
   Future<void> _handleButton() async {
@@ -148,14 +149,14 @@ class _ConnectionOptionsBottomSheetState
   Widget build(BuildContext context) {
     final theme = CustomTheme.of(context);
     return Container(
-      height: MediaQuery.of(context).size.height / 3,
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: theme.secondaryBackground,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
         border: Border(top: BorderSide(color: theme.alternate, width: 2.0)),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
@@ -170,19 +171,24 @@ class _ConnectionOptionsBottomSheetState
           ),
           const SizedBox(height: 16.0),
           SwitchListTile(
-            title: Text('Connection Method Override'),
-            value: useCustomTransport,
+            title: Text('Auto-Discovery via mDNS'),
+            value: useMDNS,
             onChanged: (bool value) {
               setState(() {
-                useCustomTransport = value;
+                useMDNS = value;
               });
-              _setUseCustomTransport(value);
+              _setUseMDNS(value);
             },
             activeColor: theme.primary,
             activeTrackColor: theme.accent1,
             inactiveTrackColor: Colors.transparent,
           ),
-          if (useCustomTransport) ...[
+          if (!useMDNS) ...[
+            Text(
+              "Select the transport method:",
+              style: theme.labelMedium,
+            ),
+            const SizedBox(height: 10.0),
             Container(
               width: double.infinity,
               height: 50,
@@ -230,13 +236,7 @@ class _ConnectionOptionsBottomSheetState
               iconPadding:
                   const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
               color: theme.primary,
-              textStyle: theme.titleSmall.override(
-                fontFamily: theme.titleSmallFamily,
-                color: Colors.white,
-                letterSpacing: 0.0,
-                useGoogleFonts:
-                    GoogleFonts.asMap().containsKey(theme.titleSmallFamily),
-              ),
+              textStyle: theme.titleSmall,
               elevation: 0.0,
               borderRadius: BorderRadius.circular(8.0),
             ),
