@@ -59,92 +59,101 @@ class _SettingsPageState extends State<SettingsPage> {
     final theme = CustomTheme.of(context); // Access FlutterFlow theme
     final typography = theme.typography; // Access typography styles
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.secondaryBackground,
-        borderRadius: BorderRadius.circular(20.0),
-        border: Border(top: BorderSide(color: theme.alternate, width: 2.0)),
-      ),
+    return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // Change here
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Center(
-                  child: Text(
-                    'Network Settings',
-                    style: typography.titleLarge
-                        .copyWith(color: theme.primaryText),
+        padding: EdgeInsets.only(
+          bottom:
+              MediaQuery.of(context).viewInsets.bottom, // Adjust for keyboard
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.secondaryBackground,
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border(top: BorderSide(color: theme.alternate, width: 2.0)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Change here
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Text(
+                        'Network Settings',
+                        style: typography.titleLarge
+                            .copyWith(color: theme.primaryText),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min, // Change here
-                  children: [
-                    TextField(
-                      controller: _otgController,
-                      cursorColor: theme.primary,
-                      decoration: InputDecoration(
-                        labelText: 'USB OTG IP Address',
-                        labelStyle: typography.bodyLarge
-                            .copyWith(color: theme.primaryText),
-                        hintText: 'Enter OTG IP',
-                        hintStyle: typography.bodySmall,
-                        border: const OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.primary),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // Change here
+                      children: [
+                        TextField(
+                          controller: _otgController,
+                          cursorColor: theme.primary,
+                          decoration: InputDecoration(
+                            labelText: 'USB OTG IP Address',
+                            labelStyle: typography.bodyLarge
+                                .copyWith(color: theme.primaryText),
+                            hintText: 'Enter OTG IP',
+                            hintStyle: typography.bodySmall,
+                            border: const OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: theme.primary),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10), // Spacing
-                    TextField(
-                      controller: _bluetoothController,
-                      cursorColor: theme.primary,
-                      decoration: InputDecoration(
-                        labelText: 'Bluetooth IP Address',
-                        labelStyle: typography.bodyLarge
-                            .copyWith(color: theme.primaryText),
-                        hintText: 'Enter Bluetooth IP',
-                        hintStyle: typography.bodySmall,
-                        border: const OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.primary),
+                        const SizedBox(height: 10), // Spacing
+                        TextField(
+                          controller: _bluetoothController,
+                          cursorColor: theme.primary,
+                          decoration: InputDecoration(
+                            labelText: 'Bluetooth IP Address',
+                            labelStyle: typography.bodyLarge
+                                .copyWith(color: theme.primaryText),
+                            hintText: 'Enter Bluetooth IP',
+                            hintStyle: typography.bodySmall,
+                            border: const OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: theme.primary),
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 10), // Spacing
+                        ElevatedButton.icon(
+                          onPressed: _saveSettings,
+                          icon: Icon(Icons.save, color: theme.primaryText),
+                          label: Text(
+                            _buttonText,
+                            style: typography.bodyMedium
+                                .copyWith(color: theme.primaryText),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                theme.primary, // Button background color
+                            foregroundColor:
+                                theme.primaryText, // Button text color
+                          ),
+                        ),
+                      ].divide(const SizedBox(height: 5.0)),
                     ),
-                    const SizedBox(height: 10), // Spacing
-                    ElevatedButton.icon(
-                      onPressed: _saveSettings,
-                      icon: Icon(Icons.save, color: theme.primaryText),
-                      label: Text(
-                        _buttonText,
-                        style: typography.bodyMedium
-                            .copyWith(color: theme.primaryText),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            theme.primary, // Button background color
-                        foregroundColor: theme.primaryText, // Button text color
-                      ),
-                    ),
-                  ].divide(const SizedBox(height: 5.0)),
+                  ),
                 ),
-              ),
+              ].divide(const SizedBox(height: 10.0)),
             ),
-          ].divide(const SizedBox(height: 10.0)),
+          ),
         ),
       ),
     );
