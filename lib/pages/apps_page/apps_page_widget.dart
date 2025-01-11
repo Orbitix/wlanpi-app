@@ -79,7 +79,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget> {
                     context,
                     "Kismet",
                     sharedMethods.kismetStatus,
-                    "http://${SharedMethodsProvider.device_ip}:2501",
+                    "http://${SharedMethodsProvider().device_ip}:2501",
                     () {
                       sharedMethods.startStopService(
                           sharedMethods.kismetStatus["active"], "kismet");
@@ -91,7 +91,7 @@ class _AppsPageWidgetState extends State<AppsPageWidget> {
                     context,
                     "Grafana",
                     sharedMethods.grafanaStatus,
-                    "https://${SharedMethodsProvider.device_ip}:3000",
+                    "https://${SharedMethodsProvider().device_ip}:3000",
                     () {
                       sharedMethods.startStopService(
                           sharedMethods.grafanaStatus["active"],
