@@ -329,7 +329,7 @@ class MainActivity : FlutterActivity() {
             if (networkCapabilities != null) {
                 if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
                     Log.d("NetworkCheck", "Using Ethernet transport")
-                    ip = getWiredEthernetInterfaceIP()
+                    ip = mPrefs.getString("flutter.otgIpAddress", "169.254.43.1")
                     completion("USB OTG", ip)
                     return
                 }
@@ -339,12 +339,12 @@ class MainActivity : FlutterActivity() {
                     completion("Bluetooth", ip)
                     return
                 }
-                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    Log.d("NetworkCheck", "Using LAN transport")
-                    ip = mPrefs.getString("flutter.LANIpAddress", null)
-                    completion("LAN", ip)
-                    return
-                }
+                // if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_)) {
+                //     Log.d("NetworkCheck", "Using LAN transport")
+                //     ip = mPrefs.getString("flutter.LANIpAddress", null)
+                //     completion("LAN", ip)
+                //     return
+                // }
             }
         }
         Log.d("NetworkCheck", "No suitable transport type found")
