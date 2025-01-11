@@ -21,8 +21,8 @@ class ConnectionOptionsBottomSheet extends StatefulWidget {
 
 class _ConnectionOptionsBottomSheetState
     extends State<ConnectionOptionsBottomSheet> {
+  final List<String> transport_types = ['Bluetooth', 'USB OTG', 'LAN'];
   String? transport_type = "Bluetooth";
-  final List<String> transport_types = ['Bluetooth', 'USB OTG'];
   bool useCustomTransport = false;
 
   String statusMessage = "Connecting...";
@@ -42,19 +42,28 @@ class _ConnectionOptionsBottomSheetState
   }
 
   Future<void> _setUseCustomTransport(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('useCustomTransport', value);
   }
 
   Future<void> _handleButton() async {
-    try {
-      await _setTransportType().timeout(Duration(seconds: 15), onTimeout: () {
-        failedConnection(
-            "Connection Timed Out.\nMake sure you have a device connected over bluetooth or USB.");
-        throw TimeoutException("Operation Timed Out");
-      });
-    } catch (e) {
-      print(e);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (transport_type == "LAN" &&
+        prefs.getString('LANIpAddress') == "wlanpi-xxx.local") {
+      debugPrint("LAN IP not configured");
+      failedConnection(
+          "Please set the LAN address of your Pi before connecting.\nYou can do this in the settings tab on the Pi Page.");
+    } else {
+      try {
+        await _setTransportType().timeout(Duration(seconds: 15), onTimeout: () {
+          failedConnection(
+              "Connection Timed Out.\nMake sure you have a device connected over bluetooth or USB.");
+          throw TimeoutException("Operation Timed Out");
+        });
+      } catch (e) {
+        print(e);
+      }
     }
   }
 

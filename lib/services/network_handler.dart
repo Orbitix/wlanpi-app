@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
 
 class NetworkException implements Exception {
   final String message;
@@ -22,6 +23,17 @@ class JsonParseException implements Exception {
 class NetworkHandler {
   static const MethodChannel _channel =
       MethodChannel('network_interface_binding');
+
+  NetworkHandler() {
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == "onNetworkDisconnected") {
+        debugPrint("Setting Disconnect state");
+        SharedMethodsProvider().setConnected(false);
+        SharedMethodsProvider().stopStatsTimer();
+      }
+      return null;
+    });
+  }
 
   // connect and disconnect methods
   Future<Map<String, dynamic>> connectToDevice() async {

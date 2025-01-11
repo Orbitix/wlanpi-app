@@ -44,6 +44,10 @@ class _PiPageWidgetState extends State<PiPageWidget>
     if (prefs.getString("otgIpAddress") == null) {
       await prefs.setString('otgIpAddress', "169.254.42.1");
     }
+    if (prefs.getString("LANIpAddress") == null) {
+      await prefs.setString(
+          'LANIpAddress', "wlanpi-xxx.local"); // requires user to set it
+    }
   }
 
   Future<void> _disconnectDevice() async {

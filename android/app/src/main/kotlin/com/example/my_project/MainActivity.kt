@@ -32,6 +32,7 @@ class MainActivity : FlutterActivity() {
     private var httpServiceInfo: NsdServiceInfo? = null
     private var sshServiceInfo: NsdServiceInfo? = null
     private var resultHandled = false
+    private val activeConnections = mutableListOf<HttpURLConnection>()
     val PRIVATE_MODE = 0
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -126,9 +127,14 @@ class MainActivity : FlutterActivity() {
                             override fun onLost(network: Network) {
                                 super.onLost(network)
                                 Log.e("Network", "Network connection lost")
-                                if (network == activeNetwork) {
-                                    activeNetwork = null
-                                    activeNetworkCallback = null
+
+                                doDisconnect()
+
+                                runOnUiThread {
+                                    flutterEngine?.dartExecutor?.binaryMessenger?.let { messenger ->
+                                        MethodChannel(messenger, CHANNEL)
+                                                .invokeMethod("onNetworkDisconnected", null)
+                                    }
                                 }
                             }
                         }
@@ -158,17 +164,37 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun disconnectFromDevice(result: MethodChannel.Result) {
         if (activeNetworkCallback != null) {
-            connectivityManager?.bindProcessToNetwork(null)
-            Log.d("WebView Binding", "Unbound network for WebView")
-            cleanupNetworkRequest(activeNetworkCallback!!)
-            activeNetworkCallback = null
-            activeNetwork = null
+            doDisconnect()
             result.success("Disconnected")
         } else {
             result.error("DISCONNECT_FAILED", "No active network to disconnect", null)
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun doDisconnect() {
+        connectivityManager?.bindProcessToNetwork(null)
+        Log.d("WebView Binding", "Unbound network for WebView")
+
+        // Terminate active connections
+        synchronized(activeConnections) {
+            for (connection in activeConnections) {
+                try {
+                    connection.disconnect()
+                    Log.d("Network", "Disconnected active connection")
+                } catch (e: Exception) {
+                    Log.e("Network", "Error disconnecting active connection", e)
+                }
+            }
+            activeConnections.clear()
+        }
+
+        cleanupNetworkRequest(activeNetworkCallback!!)
+        activeNetworkCallback = null
+        activeNetwork = null
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -187,6 +213,11 @@ class MainActivity : FlutterActivity() {
                 "Bluetooth" -> {
                     ip = mPrefs.getString("flutter.bluetoothIpAddress", "169.254.43.1")
                     completion("Bluetooth", ip)
+                    return
+                }
+                "LAN" -> {
+                    ip = mPrefs.getString("flutter.LANIpAddress", null)
+                    completion("LAN", ip)
                     return
                 }
                 else -> {
@@ -302,6 +333,12 @@ class MainActivity : FlutterActivity() {
                     completion("Bluetooth", ip)
                     return
                 }
+                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.d("NetworkCheck", "Using LAN transport")
+                    ip = mPrefs.getString("flutter.LANIpAddress", null)
+                    completion("LAN", ip)
+                    return
+                }
             }
         }
         Log.d("NetworkCheck", "No suitable transport type found")
@@ -338,13 +375,13 @@ class MainActivity : FlutterActivity() {
                 Log.d("Network", "Performing request: $fullURL")
                 val url = URL(fullURL)
                 connection = network.openConnection(url) as HttpURLConnection
+                synchronized(activeConnections) { activeConnections.add(connection) }
                 connection.requestMethod = method
                 val responseCode = connection.responseCode
                 val response =
                         BufferedReader(InputStreamReader(connection.inputStream)).use {
                             it.readText()
                         }
-
                 if (responseCode == 200) {
                     result.success(response)
                 } else {
@@ -358,6 +395,7 @@ class MainActivity : FlutterActivity() {
                 }
             } finally {
                 connection?.disconnect()
+                synchronized(activeConnections) { activeConnections.remove(connection) }
             }
         }
     }
@@ -373,9 +411,8 @@ class MainActivity : FlutterActivity() {
             Log.d("Network", "Reusing active network")
             performRequest(activeNetwork!!, port, endpoint, method, result)
         } else {
-            Log.d("Network", "Network uninitialized. Connecting to device.")
-            connectToDevice(result)
-            performRequest(activeNetwork!!, port, endpoint, method, result)
+            Log.e("Network", "Network uninitialized.")
+            result.error("NETWORK_ERROR", "Network not initialised", null)
         }
     }
 

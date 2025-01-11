@@ -13,6 +13,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController _otgController = TextEditingController();
   final TextEditingController _bluetoothController = TextEditingController();
+  final TextEditingController _LANController = TextEditingController();
 
   String _buttonText = 'Save Settings';
 
@@ -27,6 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       _otgController.text = prefs.getString('otgIpAddress')!;
       _bluetoothController.text = prefs.getString('bluetoothIpAddress')!;
+      _LANController.text = prefs.getString('LANIpAddress')!;
     });
   }
 
@@ -34,13 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('otgIpAddress', _otgController.text);
     await prefs.setString('bluetoothIpAddress', _bluetoothController.text);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Settings saved successfully!'),
-        duration: Duration(seconds: 2), // Duration to show the SnackBar
-      ),
-    );
+    await prefs.setString('LANIpAddress', _LANController.text);
 
     // Change button text to "Saved"
     setState(() {
@@ -124,6 +120,22 @@ class _SettingsPageState extends State<SettingsPage> {
                             labelStyle: typography.bodyLarge
                                 .copyWith(color: theme.primaryText),
                             hintText: 'Enter Bluetooth IP',
+                            hintStyle: typography.bodySmall,
+                            border: const OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: theme.primary),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10), // Spacing
+                        TextField(
+                          controller: _LANController,
+                          cursorColor: theme.primary,
+                          decoration: InputDecoration(
+                            labelText: 'LAN IP Address',
+                            labelStyle: typography.bodyLarge
+                                .copyWith(color: theme.primaryText),
+                            hintText: 'Enter LAN IP',
                             hintStyle: typography.bodySmall,
                             border: const OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
