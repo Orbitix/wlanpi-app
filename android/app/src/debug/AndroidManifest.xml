@@ -14,7 +14,7 @@
 
 
     <application
-        android:label="WLANPI App"
+        android:label="WLAN Pi"
         tools:replace="android:label"
         android:icon="@mipmap/launcher_icon"
         android:networkSecurityConfig="@xml/network_security_config"
