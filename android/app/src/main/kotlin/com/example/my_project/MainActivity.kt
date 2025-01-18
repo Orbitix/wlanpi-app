@@ -8,7 +8,6 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.os.Build
 import android.os.Handler
-import android.util.Base64
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
@@ -19,11 +18,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import java.security.KeyStore
 import java.util.concurrent.Executors
-import javax.crypto.Cipher
-import javax.crypto.SecretKey
-import javax.crypto.spec.GCMParameterSpec
 import org.json.JSONObject
 
 class MainActivity : FlutterActivity() {
@@ -48,6 +43,15 @@ class MainActivity : FlutterActivity() {
                 call,
                 result ->
             when (call.method) {
+                "storeToken" -> {
+                    val token = call.argument<String>("token")
+                    if (token != null) {
+                        api_token = token
+                        result.success("Token received successfully")
+                    } else {
+                        result.error("ERROR", "Token not found", null)
+                    }
+                }
                 "connectToDevice" -> {
                     connectToDevice(result)
                 }
@@ -79,49 +83,6 @@ class MainActivity : FlutterActivity() {
                 }
                 else -> result.notImplemented()
             }
-        }
-    }
-
-    fun getAccessToken(): String? {
-        val sharedPreferences = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
-        val encryptedToken = sharedPreferences.getString("access_token", null)
-
-        if (encryptedToken != null) {
-            val decrypted = decryptToken(encryptedToken)
-
-            return decrypted
-        }
-        return null
-    }
-
-    fun getKeyFromKeystore(): SecretKey {
-        val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-
-        val keyAlias = "access_token" // Same alias used when saving the key in the keystore
-
-        val secretKeyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry
-        return secretKeyEntry.secretKey
-    }
-
-    fun decryptToken(encryptedToken: String): String? {
-        try {
-            val key = getKeyFromKeystore()
-
-            // Extract IV and the encrypted data from the stored encrypted token
-            val ivAndEncryptedData = Base64.decode(encryptedToken, Base64.DEFAULT)
-            val ivLength = 12 // Common size for AES GCM
-            val iv = ivAndEncryptedData.copyOfRange(0, ivLength)
-            val encryptedData = ivAndEncryptedData.copyOfRange(ivLength, ivAndEncryptedData.size)
-
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            val gcmSpec = GCMParameterSpec(128, iv)
-            cipher.init(Cipher.DECRYPT_MODE, key, gcmSpec)
-
-            val decryptedBytes = cipher.doFinal(encryptedData)
-            return String(decryptedBytes) // Return decrypted token
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
         }
     }
 
@@ -257,6 +218,7 @@ class MainActivity : FlutterActivity() {
         cleanupNetworkRequest(activeNetworkCallback!!)
         activeNetworkCallback = null
         activeNetwork = null
+        api_token = null
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -268,7 +230,7 @@ class MainActivity : FlutterActivity() {
         if (customTransportType) {
             when (transportSetting) {
                 "USB OTG" -> {
-                    ip = getWiredEthernetInterfaceIP()
+                    ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
                     completion("USB OTG", ip)
                     return
                 }
@@ -382,7 +344,7 @@ class MainActivity : FlutterActivity() {
             if (networkCapabilities != null) {
                 if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
                     Log.d("NetworkCheck", "Using Ethernet transport")
-                    ip = mPrefs.getString("flutter.otgIpAddress", "169.254.43.1")
+                    ip = mPrefs.getString("flutter.otgIpAddress", "169.254.42.1")
                     completion("USB OTG", ip)
                     return
                 }
@@ -404,21 +366,6 @@ class MainActivity : FlutterActivity() {
         completion(null, null)
     }
 
-    private fun getWiredEthernetInterfaceIP(): String? {
-        val interfaces = java.net.NetworkInterface.getNetworkInterfaces()
-        for (networkInterface in interfaces) {
-            if (networkInterface.name.startsWith("en")) {
-                val addresses = networkInterface.inetAddresses
-                for (address in addresses) {
-                    if (!address.isLoopbackAddress) {
-                        return address.hostAddress
-                    }
-                }
-            }
-        }
-        return null
-    }
-
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun performRequest(
             network: Network,
@@ -431,26 +378,41 @@ class MainActivity : FlutterActivity() {
             var connection: HttpURLConnection? = null
             try {
                 val fullURL = "http://${ip}:${port}${endpoint}"
-                Log.d("Network", "Performing request: $fullURL")
                 val url = URL(fullURL)
                 connection = network.openConnection(url) as HttpURLConnection
-                synchronized(activeConnections) { activeConnections.add(connection) }
                 connection.requestMethod = method
 
-                val token = getAccessToken()
-                Log.d("Newtork", "Token = $token")
+                // connection.setRequestProperty("Accept", "application/json")
+                // connection.setRequestProperty("Content-Type", "application/json")
+
+                val token = api_token
                 if (token != null) {
                     connection.setRequestProperty("Authorization", "Bearer $token")
                 } else {
                     Log.w("Token", "Token is null. Proceeding without Authorization header.")
                 }
 
+                connection.requestProperties.forEach { (key, value) ->
+                    Log.d("Network", "Request Header - $key: $value")
+                }
+
+                synchronized(activeConnections) { activeConnections.add(connection) }
+
+                Log.d("Network", "Sending request to $fullURL with method $method")
+
                 val responseCode = connection.responseCode
-                val response =
-                        BufferedReader(InputStreamReader(connection.inputStream)).use {
-                            it.readText()
-                        }
+
+                if (responseCode in 401..499) {
+                    Log.e("Network", "Bad authentication status: $responseCode", null)
+                }
+
                 if (responseCode == 200) {
+                    val response =
+                            BufferedReader(InputStreamReader(connection.inputStream)).use {
+                                it.readText()
+                            }
+
+                    Log.d("Network", "Response: $response")
                     result.success(response)
                 } else {
                     result.error("HTTP_ERROR", "HTTP error code: $responseCode", null)

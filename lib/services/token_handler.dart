@@ -73,4 +73,13 @@ class TokenHandler {
     await storage.delete(key: 'access_token');
     print('Token cleared from storage.');
   }
+
+  Future<void> sendTokenToNative() async {
+    String? token = await storage.read(key: 'access_token');
+    print("sending token to native code");
+
+    if (token != null) {
+      await _channel.invokeMethod('storeToken', {'token': token});
+    }
+  }
 }

@@ -49,9 +49,9 @@ class NetworkHandler {
         final token = await tokenHandler.fetchTokenWithSudo(
             jsonResponse["ip"], 22, "wlanpi", "-", "app");
 
-        print("recieved token: $token");
         if (token != null) {
           await tokenHandler.saveToken(token);
+          await tokenHandler.sendTokenToNative();
         }
         SharedMethodsProvider().device_ip = jsonResponse["ip"];
       } catch (e) {
