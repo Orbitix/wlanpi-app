@@ -71,7 +71,7 @@ class SharedMethodsProvider extends ChangeNotifier {
   };
 
   bool connected = false;
-  bool _connected = false;
+  final bool _connected = false;
   String device_ip = "";
 
   // Shared state
@@ -80,10 +80,10 @@ class SharedMethodsProvider extends ChangeNotifier {
   Map<String, dynamic> kismetStatus = {};
   Map<String, dynamic> grafanaStatus = {};
 
-  List<double> _cpuHistory = [0];
-  List<double> _cpuTempHistory = [0];
-  List<double> _ramHistory = [0];
-  List<double> _diskHistory = [0];
+  final List<double> _cpuHistory = [0];
+  final List<double> _cpuTempHistory = [0];
+  final List<double> _ramHistory = [0];
+  final List<double> _diskHistory = [0];
   String _uptime = "0m";
   String _ip = "-";
 

@@ -33,7 +33,7 @@ class LineChartWidget extends StatelessWidget {
           style: theme.bodyMedium,
         ),
         const SizedBox(height: 8.0),
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 150.0,
           child: LineChart(

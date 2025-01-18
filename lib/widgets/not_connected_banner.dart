@@ -5,7 +5,7 @@ import 'package:wlanpi_mobile/utils/flutter_flow_util.dart';
 import 'package:wlanpi_mobile/widgets/connection_options_bottom_sheet.dart';
 
 class NotConnectedBanner extends StatelessWidget {
-  const NotConnectedBanner({Key? key}) : super(key: key);
+  const NotConnectedBanner({super.key});
 
   @override
   Widget build(BuildContext context) {

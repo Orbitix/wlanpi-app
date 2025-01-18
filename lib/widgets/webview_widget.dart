@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:wlanpi_mobile/theme/theme.dart';
@@ -7,7 +6,7 @@ class WebViewPage extends StatefulWidget {
   final String title;
   final String url;
 
-  WebViewPage({super.key, required this.title, required this.url});
+  const WebViewPage({super.key, required this.title, required this.url});
 
   @override
   _WebViewPageState createState() => _WebViewPageState();
