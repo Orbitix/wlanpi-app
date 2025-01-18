@@ -25,6 +25,8 @@ class NetworkHandler {
   static const MethodChannel _channel =
       MethodChannel('network_interface_binding');
 
+  TokenHandler tokenHandler = TokenHandler();
+
   NetworkHandler() {
     _channel.setMethodCallHandler((call) async {
       if (call.method == "onNetworkDisconnected") {
@@ -44,12 +46,12 @@ class NetworkHandler {
 
       try {
         final Map<String, dynamic> jsonResponse = jsonDecode(response);
-        final token =
-            await fetchTokenWithSudo("169.254.43.1", 22, "wlanpi", "-", "app");
+        final token = await tokenHandler.fetchTokenWithSudo(
+            jsonResponse["ip"], 22, "wlanpi", "-", "app");
 
         print("recieved token: $token");
         if (token != null) {
-          await saveToken(token);
+          await tokenHandler.saveToken(token);
         }
         SharedMethodsProvider().device_ip = jsonResponse["ip"];
       } catch (e) {
