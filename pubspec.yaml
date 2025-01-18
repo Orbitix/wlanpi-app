@@ -66,6 +66,8 @@ dependencies:
     fl_chart: ^0.69.2
     percent_indicator: ^4.2.4
     smooth_page_indicator: ^1.2.0+3
+    dartssh2: ^2.11.0
+    flutter_secure_storage: ^4.2.1
 
 flutter_web_plugins: any
 dependency_overrides:

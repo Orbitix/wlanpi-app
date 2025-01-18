@@ -72,6 +72,13 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    private fun getToken(): String? {
+        val sharedPreferences = getSharedPreferences("FlutterSharedPreferences", PRIVATE_MODE)
+        var token = sharedPreferences.getString("flutter.access_token", null)
+        Log.d("Token", "Retrieved token: $token")
+        return token
+    }
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun connectToDevice(result: MethodChannel.Result) {
         findBestConnection { transportType, ipAddress ->
@@ -383,6 +390,14 @@ class MainActivity : FlutterActivity() {
                 connection = network.openConnection(url) as HttpURLConnection
                 synchronized(activeConnections) { activeConnections.add(connection) }
                 connection.requestMethod = method
+
+                val token = getToken()
+                if (token != null) {
+                    connection.setRequestProperty("Authorization", "Bearer $token")
+                } else {
+                    Log.w("Token", "Token is null. Proceeding without Authorization header.")
+                }
+
                 val responseCode = connection.responseCode
                 val response =
                         BufferedReader(InputStreamReader(connection.inputStream)).use {

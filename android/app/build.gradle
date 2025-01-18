@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace 'com.wlanpi.wlanpiapp'
+    namespace "com.wlanpi.wlanpiapp"
     compileSdkVersion 34
     
     compileOptions {

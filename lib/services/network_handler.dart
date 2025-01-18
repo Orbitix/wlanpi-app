@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wlanpi_mobile/services/shared_methods.dart';
+import 'package:wlanpi_mobile/services/token_handler.dart';
 
 class NetworkException implements Exception {
   final String message;
@@ -43,6 +44,13 @@ class NetworkHandler {
 
       try {
         final Map<String, dynamic> jsonResponse = jsonDecode(response);
+        final token =
+            await fetchTokenWithSudo("169.254.43.1", 22, "wlanpi", "-", "app");
+
+        print("recieved token: $token");
+        if (token != null) {
+          await saveToken(token);
+        }
         SharedMethodsProvider().device_ip = jsonResponse["ip"];
       } catch (e) {
         returnMessage['success'] = false;
