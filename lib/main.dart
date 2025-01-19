@@ -1,25 +1,36 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'flutter_flow/flutter_flow_theme.dart';
-import 'flutter_flow/flutter_flow_util.dart';
-import 'flutter_flow/nav/nav.dart';
+import 'package:provider/provider.dart';
+import 'package:wlanpi_mobile/pages/apps_page/apps_page_widget.dart';
+import 'package:wlanpi_mobile/pages/control_panel_page/control_panel_page_widget.dart';
+import 'package:wlanpi_mobile/pages/stats_page/stats_page_widget.dart';
+import 'package:wlanpi_mobile/services/shared_methods.dart';
+import 'theme/theme.dart';
+import 'utils/flutter_flow_util.dart';
+import 'pages/pi_page/pi_page_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
 
-  await FlutterFlowTheme.initialize();
+  await CustomTheme.initialize();
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SharedMethodsProvider()),
+        ChangeNotifierProvider(create: (_) => AppStateNotifier.instance),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
 
@@ -28,55 +39,99 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = FlutterFlowTheme.themeMode;
-
-  late AppStateNotifier _appStateNotifier;
-  late GoRouter _router;
-
-  bool displaySplashImage = true;
+  ThemeMode _themeMode = CustomTheme.themeMode;
 
   @override
   void initState() {
     super.initState();
-
-    _appStateNotifier = AppStateNotifier.instance;
-    _router = createRouter(_appStateNotifier);
-
-    Future.delayed(const Duration(milliseconds: 1000),
-        () => setState(() => _appStateNotifier.stopShowingSplashImage()));
   }
 
   void setThemeMode(ThemeMode mode) => setState(() {
         _themeMode = mode;
-        FlutterFlowTheme.saveThemeMode(mode);
+        CustomTheme.saveThemeMode(mode);
       });
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'WLANPI App',
+    return MaterialApp(
+      title: 'WLAN Pi',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en', '')],
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scrollbarTheme: ScrollbarThemeData(
-          thumbVisibility: WidgetStateProperty.all(false),
-          interactive: true,
-        ),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scrollbarTheme: ScrollbarThemeData(
-          thumbVisibility: WidgetStateProperty.all(false),
-          interactive: true,
-        ),
-      ),
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+      ],
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
       themeMode: _themeMode,
-      routerConfig: _router,
+      home: const MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _pages = <Widget>[
+    PiPageWidget(),
+    StatsPageWidget(),
+    AppsPageWidget(),
+    ControlPanelPageWidget(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = CustomTheme.of(context);
+    return Scaffold(
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        backgroundColor: theme.secondaryBackground,
+        indicatorColor: theme.accent1,
+        onDestinationSelected: _onItemTapped,
+        destinations: [
+          NavigationDestination(
+            icon: Icon(CupertinoIcons.tv, color: theme.primaryText),
+            selectedIcon:
+                Icon(CupertinoIcons.tv_fill, color: theme.primaryText),
+            label: 'My Pi',
+          ),
+          NavigationDestination(
+            icon: Icon(CupertinoIcons.graph_square, color: theme.primaryText),
+            selectedIcon: Icon(CupertinoIcons.graph_square_fill,
+                color: theme.primaryText),
+            label: 'Stats',
+          ),
+          NavigationDestination(
+            icon: Icon(CupertinoIcons.plus_square_on_square,
+                color: theme.primaryText),
+            selectedIcon: Icon(CupertinoIcons.plus_square_fill_on_square_fill,
+                color: theme.primaryText),
+            label: 'Apps',
+          ),
+          NavigationDestination(
+            icon: Icon(CupertinoIcons.hammer, color: theme.primaryText),
+            selectedIcon:
+                Icon(CupertinoIcons.hammer_fill, color: theme.primaryText),
+            label: 'Control Panel',
+          ),
+        ],
+      ),
     );
   }
 }

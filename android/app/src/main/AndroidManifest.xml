@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mycompany.wlanpiapp"
+    package="com.wlanpi.wlanpiapp"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
@@ -7,18 +7,32 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
                      android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.USB_PERMISSION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+    </queries>
+
 
     <application
-        android:label="WLANPI App"
+        android:label="WLAN Pi"
         tools:replace="android:label"
         android:icon="@mipmap/launcher_icon"
         android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:hardwareAccelerated="true"
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name=".MainActivity"
@@ -48,6 +62,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                
             </intent-filter>
             <!-- Deep linking -->
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
